@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <title>Rezultati svih odigranih utakmica</title>
   <script type="module" src="firebase.mjs"></script>
+
   <style>
     body {
       font-family: Arial;
@@ -19,7 +20,7 @@
     }
 
     .match {
-      padding: 16px 12px;
+      padding: 20px 12px;
       border-bottom: 1px solid #bbb;
       margin-bottom: 15px;
     }
@@ -27,31 +28,40 @@
     .meta {
       font-size: 14px;
       color: #666;
-      margin-bottom: 6px;
+      text-align: center;
+      margin-bottom: 12px;
     }
 
-    .score-line {
+    .score-wrapper {
       display: flex;
       justify-content: center;
       align-items: center;
-      font-size: 22px;
+      gap: 18px;
+    }
+
+    .team {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 110px;
+    }
+
+    .team img {
+      width: 70px;
+      height: 70px;
+    }
+
+    .team-name {
       font-weight: bold;
       margin-top: 6px;
     }
 
-    .red {
-      color: #c00000;
-      margin-right: 6px;
-    }
+    .red { color: #c00000; }
+    .blue { color: #0044cc; }
 
-    .blue {
-      color: #0044cc;
-      margin-left: 6px;
-    }
-
-    .dash {
-      margin: 0 6px;
-      color: #555;
+    .score {
+      font-size: 26px;
+      font-weight: bold;
     }
   </style>
 </head>
@@ -74,17 +84,30 @@ onValue(ref, snap => {
   Object.values(data)
     .sort((a, b) => b.timestamp - a.timestamp)
     .forEach(m => {
+
       list.innerHTML += `
         <div class="match">
-          
+
           <div class="meta">
             Kolo <b>${m.round}</b> – ${m.date} u ${m.time}
           </div>
 
-          <div class="score-line">
-            <span class="red">Crveni ${m.red}</span>
-            <span class="dash">-</span>
-            <span class="blue">${m.blue} Plavi</span>
+          <div class="score-wrapper">
+
+            <div class="team">
+              <img src="crveni.png">
+              <div class="team-name red">Crveni</div>
+            </div>
+
+            <div class="score">
+              ${m.red} - ${m.blue}
+            </div>
+
+            <div class="team">
+              <img src="plavi.png">
+              <div class="team-name blue">Plavi</div>
+            </div>
+
           </div>
 
         </div>
