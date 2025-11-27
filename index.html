@@ -25,6 +25,20 @@
       padding: 20px 12px;
       border-bottom: 1px solid #bbb;
       margin-bottom: 15px;
+      border-radius: 8px;
+      transition: background 0.2s ease;
+    }
+
+    .match.winner-red {
+      background: #fff5f5;
+    }
+
+    .match.winner-blue {
+      background: #f5f7ff;
+    }
+
+    .match.draw {
+      background: #f9f9f9;
     }
 
     .meta {
@@ -66,14 +80,31 @@
       font-weight: bold;
     }
 
-    .red { color: #c00000; }
-    .blue { color: #0044cc; }
+    .red {
+      color: #c00000;
+    }
+
+    .blue {
+      color: #0044cc;
+    }
 
     .score {
       font-size: 28px;
       font-weight: bold;
       min-width: 90px;
       text-align: center;
+    }
+
+    .score.winner-red {
+      color: #c00000;
+    }
+
+    .score.winner-blue {
+      color: #0044cc;
+    }
+
+    .score.draw {
+      color: #555;
     }
 
     /* ----- TABELA LIGE ----- */
@@ -102,6 +133,48 @@
 
     table tr:nth-child(even) td {
       background: #fafafa;
+    }
+
+    /* sticky header */
+    table thead th {
+      position: sticky;
+      top: 0;
+      z-index: 2;
+    }
+
+    .leader-row td {
+      background: #fff7d6 !important;
+      font-weight: bold;
+    }
+
+    /* ----- FORMA POSLEDNJIH 5 MEČEVA ----- */
+
+    #formSection {
+      margin-top: 30px;
+    }
+
+    #formSection h2 {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    .form-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin: 4px 0;
+    }
+
+    .team-label {
+      min-width: 70px;
+      text-align: right;
+      font-weight: bold;
+    }
+
+    .form-icons span {
+      font-size: 20px;
+      margin: 0 2px;
     }
 
     /* ----- MOBILNA OPTIMIZACIJA ----- */
@@ -157,6 +230,10 @@
         font-size: 12px;
         padding: 5px;
       }
+
+      .form-icons span {
+        font-size: 18px;
+      }
     }
   </style>
 </head>
@@ -186,6 +263,19 @@
   <tbody id="leagueBody"></tbody>
 </table>
 
+<!-- FORMA POSLEDNJIH 5 MEČEVA -->
+<div id="formSection">
+  <h2>Forma poslednjih 5 mečeva</h2>
+  <div class="form-row">
+    <span class="team-label red">Crveni</span>
+    <span id="formCrveni" class="form-icons"></span>
+  </div>
+  <div class="form-row">
+    <span class="team-label blue">Plavi</span>
+    <span id="formPlavi" class="form-icons"></span>
+  </div>
+</div>
+
 <script type="module">
 import { onValue } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
@@ -198,10 +288,26 @@ onValue(ref, snap => {
 
   const matches = Object.values(data).sort((a, b) => b.timestamp - a.timestamp);
 
-  /* ----- PRIKAZ UTAKMICA ----- */
+  /* ----- PRIKAZ UTAKMICA + HIGHLIGHT POBEDNIKA ----- */
   matches.forEach(m => {
+    const isRedWin = m.red > m.blue;
+    const isBlueWin = m.blue > m.red;
+    const isDraw = m.red === m.blue;
+
+    const matchClass = isDraw
+      ? "draw"
+      : isRedWin
+        ? "winner-red"
+        : "winner-blue";
+
+    const scoreClass = isDraw
+      ? "draw"
+      : isRedWin
+        ? "winner-red"
+        : "winner-blue";
+
     list.innerHTML += `
-      <div class="match">
+      <div class="match ${matchClass}">
 
         <div class="meta">
           Kolo <b>${m.round}</b> – ${m.date} u ${m.time}
@@ -216,7 +322,7 @@ onValue(ref, snap => {
             </div>
           </div>
 
-          <div class="score">
+          <div class="score ${scoreClass}">
             ${m.red} - ${m.blue}
           </div>
 
@@ -235,7 +341,6 @@ onValue(ref, snap => {
 
   /* ----- TABELA LIGE ----- */
   function calculateTable(matches) {
-
     const table = {
       Crveni: { U:0, P:0, N:0, I:0, GD:0, GP:0, GR:0, B:0 },
       Plavi:  { U:0, P:0, N:0, I:0, GD:0, GP:0, GR:0, B:0 }
@@ -278,7 +383,7 @@ onValue(ref, snap => {
     return table;
   }
 
-  function renderTable(table) {
+  function renderTable(table, leaderTeam) {
     const body = document.getElementById("leagueBody");
     body.innerHTML = "";
 
@@ -286,8 +391,10 @@ onValue(ref, snap => {
 
     teams.forEach(team => {
       const t = table[team];
+      const isLeader = team === leaderTeam;
+
       body.innerHTML += `
-        <tr>
+        <tr class="${isLeader ? "leader-row" : ""}">
           <td><b>${team}</b></td>
           <td>${t.U}</td>
           <td>${t.P}</td>
@@ -301,8 +408,53 @@ onValue(ref, snap => {
     });
   }
 
+  /* ----- FORMA POSLEDNJIH 5 MEČEVA ----- */
+
+  function calculateForm(matches) {
+    const formCrveni = [];
+    const formPlavi = [];
+
+    matches.forEach(m => {
+      if (m.red > m.blue) {
+        formCrveni.push("W");
+        formPlavi.push("L");
+      } else if (m.red < m.blue) {
+        formCrveni.push("L");
+        formPlavi.push("W");
+      } else {
+        formCrveni.push("D");
+        formPlavi.push("D");
+      }
+    });
+
+    return {
+      Crveni: formCrveni.slice(0, 5),
+      Plavi: formPlavi.slice(0, 5)
+    };
+  }
+
+  function renderForm(form) {
+    const map = { W: "🟢", D: "🟡", L: "🔴" };
+    const c = document.getElementById("formCrveni");
+    const p = document.getElementById("formPlavi");
+
+    c.innerHTML = form.Crveni.map(x => `<span>${map[x]}</span>`).join("");
+    p.innerHTML = form.Plavi.map(x => `<span>${map[x]}</span>`).join("");
+  }
+
   const table = calculateTable(matches);
-  renderTable(table);
+
+  let leaderTeam = null;
+  if (table.Crveni.B > table.Plavi.B) {
+    leaderTeam = "Crveni";
+  } else if (table.Plavi.B > table.Crveni.B) {
+    leaderTeam = "Plavi";
+  }
+
+  renderTable(table, leaderTeam);
+
+  const form = calculateForm(matches);
+  renderForm(form);
 
 });
 </script>
