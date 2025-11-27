@@ -12,7 +12,6 @@
 <body>
 
 <h1>Rezultati – Crveni vs Plavi</h1>
-
 <ul id="list"></ul>
 
 <script type="module">
@@ -28,11 +27,12 @@ onValue(ref, snap => {
   Object.values(data)
     .sort((a, b) => b.time - a.time)
     .forEach(m => {
-      const date = new Date(m.time).toLocaleString();
       list.innerHTML += `
-        <li>${date}: 
-          <b>Crveni ${m.red}</b> – <b>Plavi ${m.blue}</b>
-        </li>`;
+        <li>
+          <b>${m.date}</b>: 
+          Crveni ${m.red} – Plavi ${m.blue}
+        </li>
+      `;
     });
 });
 </script>
