@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin – Igrači</title>
+
+  <script type="module" src="firebase.mjs"></script>
+
+  <style>
+    body {
+      font-family: Arial;
+      max-width: 700px;
+      margin: 20px auto;
+      padding: 0 20px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    h2 {
+      margin-top: 35px;
+      margin-bottom: 10px;
+    }
+
+    .player-box {
+      background: #f8f8f8;
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 25px;
+    }
+
+    .row {
+      margin-bottom: 12px;
+      display: flex;
+      gap: 10px;
+    }
+
+    input {
+      flex: 1;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #aaa;
+    }
+
+    button {
+      padding: 10px 14px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .add-btn {
+      background: #0044cc;
+      color: white;
+    }
+
+    .add-btn:hover {
+      background: #0033a0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    th {
+      background: #ececec;
+      padding: 10px;
+      border-bottom: 2px solid #bbb;
+    }
+
+    td {
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+      text-align: left;
+    }
+
+    .btn-del {
+      background: #c00000;
+      color: white;
+      padding: 6px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    #back {
+      display: block;
+      margin: 35px auto;
+      text-align: center;
+      color: #0044cc;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+<script>
+  if (localStorage.getItem("admin") !== "1") {
+    window.location.href = "login.html";
+  }
+</script>
+
+<h1>Upravljanje igračima</h1>
+
+<!------------------ CRVENI -------------------->
+<h2 style="color:#c00000;">Crveni</h2>
+
+<div class="player-box">
+  <div class="row">
+    <input id="crveniName" placeholder="Ime igrača">
+    <button class="add-btn" onclick="addPlayer('crveni')">Dodaj</button>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Igrač</th>
+        <th>Akcija</th>
+      </tr>
+    </thead>
+    <tbody id="crveniList"></tbody>
+  </table>
+</div>
+
+
+<!------------------ PLAVI -------------------->
+<h2 style="color:#0044cc;">Plavi</h2>
+
+<div class="player-box">
+  <div class="row">
+    <input id="plaviName" placeholder="Ime igrača">
+    <button class="add-btn" onclick="addPlayer('plavi')">Dodaj</button>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Igrač</th>
+        <th>Akcija</th>
+      </tr>
+    </thead>
+    <tbody id="plaviList"></tbody>
+  </table>
+</div>
+
+
+<div id="back" onclick="window.location.href='index.html'">← Nazad na rezultate</div>
+
+<script type="module">
+import { onValue, push, remove } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+
+const base = window.dbRef("players");
+
+/* ---------------- ADD PLAYER ---------------- */
+window.addPlayer = function(team) {
+  const input = document.getElementById(team === "crveni" ? "crveniName" : "plaviName");
+  const name = input.value.trim();
+
+  if (!name) return alert("Unesi ime!");
+
+  // default stats
+  const data = {
+    name,
+    games: 0,
+    goals: 0,
+    assists: 0
+  };
+
+  push(window.dbRef(`players/${team}`), data);
+  input.value = "";
+};
+
+
+/* ---------------- LIST PLAYERS ---------------- */
+function loadPlayers(team) {
+  const tbody = document.getElementById(team + "List");
+
+  onValue(window.dbRef(`players/${team}`), snap => {
+    const data = snap.val() || {};
+    tbody.innerHTML = "";
+
+    Object.entries(data).forEach(([id, p]) => {
+      tbody.innerHTML += `
+        <tr>
+          <td>${p.name}</td>
+          <td>
+            <button class="btn-del" onclick="deletePlayer('${team}','${id}')">Obriši</button>
+          </td>
+        </tr>
+      `;
+    });
+  });
+}
+
+loadPlayers("crveni");
+loadPlayers("plavi");
+
+
+/* ---------------- DELETE PLAYER ---------------- */
+window.deletePlayer = function(team, id) {
+  if (!confirm("Obrisati igrača?")) return;
+  remove(window.dbRef(`players/${team}/${id}`));
+};
+</script>
+
+</body>
+</html>
