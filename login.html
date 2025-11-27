@@ -3,20 +3,46 @@
 <head>
   <meta charset="UTF-8">
   <title>Login</title>
+
   <style>
-    body { font-family: Arial; max-width: 400px; margin: 40px auto; }
-    input, button { width: 100%; padding: 12px; margin: 8px 0; }
+    body {
+      font-family: Arial;
+      max-width: 400px;
+      margin: 100px auto;
+      text-align: center;
+    }
+    input {
+      padding: 10px;
+      width: 70%;
+      margin-bottom: 15px;
+    }
+    button {
+      padding: 10px 20px;
+      background: #0044cc;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
 
-<h2>Admin login</h2>
-<input type="password" id="pass" placeholder="Šifra">
+<script>
+  if (localStorage.getItem("admin") === "1") {
+    window.location.href = "admin.html";
+  }
+</script>
+
+<h1>Admin login</h1>
+
+<input id="pass" type="password" placeholder="Šifra">
+<br>
 <button onclick="login()">Uđi</button>
 
 <script>
 function login() {
-  if (document.getElementById("pass").value === "novcic1234") {
+  if (document.getElementById("pass").value === "admin123") {
     localStorage.setItem("admin", "1");
     window.location.href = "admin.html";
   } else {
