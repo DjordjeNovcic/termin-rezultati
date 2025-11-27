@@ -6,13 +6,29 @@
   <script type="module" src="firebase.mjs"></script>
   <style>
     body { font-family: Arial; max-width: 600px; margin: 20px auto; }
-    li { padding: 10px; border-bottom: 1px solid #ddd; }
+    .match {
+      padding: 12px;
+      border-bottom: 1px solid #ddd;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .teams {
+      display: flex;
+      justify-content: space-between;
+      font-size: 20px;
+      font-weight: bold;
+    }
+    .red  { color: #c00000; }
+    .blue { color: #0044cc; }
+    .meta { color: #555; font-size: 14px; }
   </style>
 </head>
 <body>
 
 <h1>Rezultati – Crveni vs Plavi</h1>
-<ul id="list"></ul>
+
+<div id="list"></div>
 
 <script type="module">
 import { onValue } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
@@ -25,13 +41,19 @@ onValue(ref, snap => {
   list.innerHTML = "";
 
   Object.values(data)
-    .sort((a, b) => b.time - a.time)
+    .sort((a, b) => b.timestamp - a.timestamp)
     .forEach(m => {
       list.innerHTML += `
-        <li>
-          <b>${m.date}</b>: 
-          Crveni ${m.red} – Plavi ${m.blue}
-        </li>
+        <div class="match">
+          <div class="meta">
+            Kolo <b>${m.round}</b> – ${m.date} u ${m.time}
+          </div>
+
+          <div class="teams">
+            <span class="red">Crveni ${m.red}</span>
+            <span class="blue">Plavi ${m.blue}</span>
+          </div>
+        </div>
       `;
     });
 });
