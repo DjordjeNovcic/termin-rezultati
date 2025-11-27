@@ -19,6 +19,8 @@
       font-size: 26px;
     }
 
+    /* ----- MEČ KARTICE ----- */
+
     .match {
       padding: 20px 12px;
       border-bottom: 1px solid #bbb;
@@ -74,7 +76,25 @@
       text-align: center;
     }
 
-    /* 📱 MOBILE OPTIMIZACIJA */
+    /* ----- TABELA LIGE ----- */
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+
+    table th, table td {
+      padding: 6px;
+      border-bottom: 1px solid #ccc;
+      text-align: center;
+    }
+
+    table th {
+      background: #f7f7f7;
+    }
+
+    /* ----- MOBILNA OPTIMIZACIJA ----- */
     @media (max-width: 600px) {
 
       body {
@@ -117,6 +137,11 @@
         font-size: 24px;
         min-width: 60px;
       }
+
+      table th, table td {
+        padding: 4px;
+        font-size: 13px;
+      }
     }
   </style>
 </head>
@@ -125,6 +150,27 @@
 <h1>Rezultati svih odigranih utakmica</h1>
 
 <div id="list"></div>
+
+<!-- Tabela lige -->
+<h2 style="text-align:center; margin-top:40px;">Tabela</h2>
+
+<table id="league">
+  <thead>
+    <tr>
+      <th>Tim</th>
+      <th>U</th>
+      <th>P</th>
+      <th>N</th>
+      <th>I</th>
+      <th>GD</th>
+      <th>GP</th>
+      <th>GR</th>
+      <th>B</th>
+    </tr>
+  </thead>
+  <tbody id="leagueBody"></tbody>
+</table>
+
 
 <script type="module">
 import { onValue } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
@@ -136,42 +182,115 @@ onValue(ref, snap => {
   const list = document.getElementById("list");
   list.innerHTML = "";
 
-  Object.values(data)
-    .sort((a, b) => b.timestamp - a.timestamp)
-    .forEach(m => {
+  const matches = Object.values(data).sort((a, b) => b.timestamp - a.timestamp);
 
-      list.innerHTML += `
-        <div class="match">
+  // --- RENDER REZULTATA ---
+  matches.forEach(m => {
+    list.innerHTML += `
+      <div class="match">
 
-          <div class="meta">
-            Kolo <b>${m.round}</b> – ${m.date} u ${m.time}
+        <div class="meta">
+          Kolo <b>${m.round}</b> – ${m.date} u ${m.time}
+        </div>
+
+        <div class="score-wrapper">
+
+          <div class="team">
+            <img src="crveni.png" alt="Crveni">
+            <div class="team-name red">
+              <a href="crveni.html" class="red">Crveni</a>
+            </div>
           </div>
 
-          <div class="score-wrapper">
+          <div class="score">
+            ${m.red} - ${m.blue}
+          </div>
 
-            <div class="team">
-              <img src="crveni.png" alt="Crveni">
-              <div class="team-name red">
-                <a href="crveni.html" class="red">Crveni</a>
-              </div>
+          <div class="team">
+            <img src="plavi.png" alt="Plavi">
+            <div class="team-name blue">
+              <a href="plavi.html" class="blue">Plavi</a>
             </div>
-
-            <div class="score">
-              ${m.red} - ${m.blue}
-            </div>
-
-            <div class="team">
-              <img src="plavi.png" alt="Plavi">
-              <div class="team-name blue">
-                <a href="plavi.html" class="blue">Plavi</a>
-              </div>
-            </div>
-
           </div>
 
         </div>
-      `;
+
+      </div>
+    `;
+  });
+
+
+  // --- PRAVIMO TABELU LIGE ---
+  function calculateTable(matches) {
+
+    const table = {
+      Crveni: { U:0, P:0, N:0, I:0, GD:0, GP:0, GR:0, B:0 },
+      Plavi:  { U:0, P:0, N:0, I:0, GD:0, GP:0, GR:0, B:0 }
+    };
+
+    matches.forEach(m => {
+      const r = m.red;
+      const b = m.blue;
+
+      table.Crveni.U++;
+      table.Plavi.U++;
+
+      table.Crveni.GD += r;
+      table.Crveni.GP += b;
+
+      table.Plavi.GD += b;
+      table.Plavi.GP += r;
+
+      if (r > b) {
+        table.Crveni.P++;
+        table.Plavi.I++;
+        table.Crveni.B += 3;
+      } 
+      else if (b > r) {
+        table.Plavi.P++;
+        table.Crveni.I++;
+        table.Plavi.B += 3;
+      } 
+      else {
+        table.Crveni.N++;
+        table.Plavi.N++;
+        table.Crveni.B += 1;
+        table.Plavi.B += 1;
+      }
     });
+
+    table.Crveni.GR = table.Crveni.GD - table.Crveni.GP;
+    table.Plavi.GR  = table.Plavi.GD - table.Plavi.GP;
+
+    return table;
+  }
+
+  function renderTable(table) {
+    const body = document.getElementById("leagueBody");
+    body.innerHTML = "";
+
+    const teams = ["Crveni", "Plavi"];
+
+    teams.forEach(team => {
+      const t = table[team];
+      body.innerHTML += `
+        <tr>
+          <td><b>${team}</b></td>
+          <td>${t.U}</td>
+          <td>${t.P}</td>
+          <td>${t.N}</td>
+          <td>${t.I}</td>
+          <td>${t.GD}</td>
+          <td>${t.GP}</td>
+          <td>${t.GR}</td>
+          <td>${t.B}</td>
+        </tr>`;
+    });
+  }
+
+  const table = calculateTable(matches);
+  renderTable(table);
+
 });
 </script>
 
