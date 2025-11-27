@@ -3,30 +3,26 @@
 <head>
   <meta charset="UTF-8">
   <title>Login</title>
-  <script type="module" src="firebase.mjs"></script>
-
   <style>
-    body { font-family: Arial; padding: 40px; max-width: 400px; margin: auto; }
-    input { padding: 10px; width: 100%; margin-bottom: 10px; }
-    button { padding: 10px; width: 100%; }
+    body { font-family: Arial; max-width: 400px; margin: 40px auto; }
+    input, button { width: 100%; padding: 12px; margin: 8px 0; }
   </style>
 </head>
 <body>
 
-<h2>Admin Login</h2>
-<input id="pass" type="password" placeholder="Šifra">
+<h2>Admin login</h2>
+<input type="password" id="pass" placeholder="Šifra">
 <button onclick="login()">Uđi</button>
 
 <script>
-  function login() {
-    const pass = document.getElementById('pass').value;
-    if (pass === "admin123") {
-      localStorage.setItem("admin", "1");
-      window.location.href = "admin.html";
-    } else {
-      alert("Pogrešna šifra!");
-    }
+function login() {
+  if (document.getElementById("pass").value === "admin123") {
+    localStorage.setItem("admin", "1");
+    window.location.href = "admin.html";
+  } else {
+    alert("Pogrešna šifra!");
   }
+}
 </script>
 
 </body>
