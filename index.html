@@ -3,61 +3,62 @@
 <head>
   <meta charset="UTF-8">
   <title>Rezultati svih odigranih utakmica</title>
+
   <script type="module" src="firebase.mjs"></script>
 
   <style>
     body {
-      font-family: Arial;
+      font-family: Arial, sans-serif;
       max-width: 900px;
       margin: 20px auto;
       padding: 0 15px;
     }
 
+    /* ADMIN LOGIN BUTTON */
     #adminBtn {
       position: fixed;
       top: 15px;
       right: 15px;
       padding: 8px 14px;
-      font-size: 14px;
-      border-radius: 6px;
-      border: none;
       background: #0044cc;
       color: white;
+      border-radius: 6px;
+      font-size: 14px;
+      border: none;
       cursor: pointer;
       z-index: 99;
     }
 
     h1 {
       text-align: center;
-      margin-bottom: 30px;
-      font-size: 26px;
+      margin-bottom: 35px;
+      font-size: 28px;
     }
 
-    /* ----- MEČ KARTICE ----- */
-
+    /* ---- MATCH CARDS ---- */
     .match {
-      padding: 20px 12px;
-      border-bottom: 1px solid #bbb;
-      margin-bottom: 15px;
-      border-radius: 8px;
+      padding: 25px;
+      margin-bottom: 25px;
+      border-radius: 12px;
+      border: 1px solid #ddd;
     }
 
-    .match.winner-red { background: #fff5f5; }
-    .match.winner-blue { background: #f5f7ff; }
-    .match.draw { background: #f9f9f9; }
+    .winner-red { background: #fff4f4; }
+    .winner-blue { background: #f4f6ff; }
+    .draw { background: #f8f8f8; }
 
     .meta {
       font-size: 14px;
-      color: #666;
       text-align: center;
-      margin-bottom: 12px;
+      color: #666;
+      margin-bottom: 15px;
     }
 
     .score-wrapper {
       display: flex;
       justify-content: center;
       align-items: center;
-      gap: 20px;
+      gap: 35px;
       flex-wrap: wrap;
     }
 
@@ -74,52 +75,59 @@
     }
 
     .team-name {
-      font-weight: bold;
       margin-top: 6px;
       font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      text-decoration: underline;
     }
 
     .red { color: #c00000; }
     .blue { color: #0044cc; }
 
+    .see-squad {
+      font-size: 13px;
+      color: #0044cc;
+      margin-top: 4px;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+
     .score {
-      font-size: 32px;
+      font-size: 36px;
       font-weight: bold;
-      min-width: 90px;
       text-align: center;
+      min-width: 100px;
     }
 
     .score.winner-red { color: #c00000; }
     .score.winner-blue { color: #0044cc; }
     .score.draw { color: #555; }
 
-    /* ----- COMPACT TABELA ----- */
-
+    /* ---- TABLE WRAPPER ---- */
     .table-wrapper {
       width: 100%;
       overflow-x: auto;
-      margin-top: 20px;
+      margin-top: 25px;
     }
 
     #league {
       width: 100%;
       border-collapse: collapse;
+      table-layout: fixed;
       text-align: center;
-      table-layout: fixed; /* KOMPAKTNO */
     }
 
     #league th {
       background: #ececec;
-      padding: 6px;
-      font-size: 14px;
-      border-bottom: 2px solid #aaa;
+      padding: 10px;
+      border-bottom: 2px solid #bbb;
       white-space: nowrap;
     }
 
     #league td {
-      padding: 6px;
-      font-size: 14px;
-      border-bottom: 1px solid #ccc;
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
       white-space: nowrap;
     }
 
@@ -128,25 +136,31 @@
     }
 
     .leader-row td {
-      background: #fff7d6 !important;
+      background: #fff4d0 !important;
       font-weight: bold;
     }
 
-    /* ----- FORMA ----- */
-
-    #formSection { margin-top: 30px; }
+    /* ---- LAST 5 FORM ---- */
+    #formSection {
+      margin-top: 40px;
+    }
 
     #formSection h2 {
       text-align: center;
-      margin-bottom: 10px;
+      margin-bottom: 15px;
     }
 
     .form-row {
       display: flex;
-      align-items: center;
       justify-content: center;
+      align-items: center;
       gap: 10px;
       margin: 4px 0;
+    }
+
+    .form-icons span {
+      font-size: 22px;
+      margin: 0 2px;
     }
 
     .team-label {
@@ -155,20 +169,61 @@
       font-weight: bold;
     }
 
-    .form-icons span {
-      font-size: 20px;
-      margin: 0 2px;
+    /* ---- TEAM SECTION ---- */
+    #teamSection {
+      margin-top: 50px;
+    }
+
+    .team-section {
+      margin-top: 40px;
+      padding-top: 30px;
+      border-top: 1px solid #ddd;
+    }
+
+    .team-header {
+      text-align: center;
+      font-size: 22px;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+
+    .team-photo {
+      display: block;
+      margin: 0 auto 20px auto;
+      max-width: 320px;
+      border-radius: 8px;
+    }
+
+    .player-table {
+      width: 100%;
+      max-width: 500px;
+      margin: 0 auto;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+
+    .player-table th {
+      background: #ececec;
+      padding: 8px;
+      border-bottom: 2px solid #ccc;
+    }
+
+    .player-table td {
+      padding: 8px;
+      border-bottom: 1px solid #ddd;
+      text-align: center;
     }
   </style>
 </head>
 <body>
 
-<button id="adminBtn">Admin</button>
+<button id="adminBtn">Login</button>
 
 <h1>Rezultati svih odigranih utakmica</h1>
 
 <div id="list"></div>
 
+<!-- TABELA LIGE -->
 <div class="table-wrapper">
   <table id="league">
     <thead>
@@ -188,64 +243,129 @@
   </table>
 </div>
 
+<!-- FORMA POSLEDNJIH 5 -->
 <div id="formSection">
   <h2>Forma poslednjih 5 mečeva</h2>
+
   <div class="form-row">
     <span class="team-label red">Crveni</span>
     <span id="formCrveni" class="form-icons"></span>
   </div>
+
   <div class="form-row">
     <span class="team-label blue">Plavi</span>
     <span id="formPlavi" class="form-icons"></span>
   </div>
 </div>
 
+<!-- TEAM VIEWER -->
+<div id="teamSection"></div>
+
 <script type="module">
 import { onValue } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
 const ref = window.dbRef("matches");
 
+/* ----- Igrači (dok ne pređemo na Firebase) ----- */
+const players = {
+  crveni: [
+    { name: "Marko", games: 5, goals: 3, assists: 2 },
+    { name: "Luka", games: 4, goals: 1, assists: 1 },
+    { name: "Dejan", games: 5, goals: 6, assists: 0 }
+  ],
+  plavi: [
+    { name: "Nikola", games: 5, goals: 4, assists: 1 },
+    { name: "Ivan", games: 4, goals: 0, assists: 3 },
+    { name: "Stefan", games: 3, goals: 2, assists: 1 }
+  ]
+};
+
+/* ----- PRIKAZ EKIPE ----- */
+window.showTeamSection = function(team) {
+  const el = document.getElementById("teamSection");
+
+  const photo = team === "crveni" ? "crveni-ekipa.jpg" : "plavi-ekipa.jpg";
+  const title = team === "crveni" ? "Ekipa Crvenih" : "Ekipa Plavih";
+
+  let html = `
+    <div class="team-section">
+      <div class="team-header">${title}</div>
+
+      <img src="${photo}" class="team-photo">
+
+      <table class="player-table">
+        <thead>
+          <tr>
+            <th>Igrač</th>
+            <th>Utakmice</th>
+            <th>Golovi</th>
+            <th>Asistencije</th>
+          </tr>
+        </thead>
+        <tbody>
+  `;
+
+  players[team].forEach(p => {
+    html += `
+      <tr>
+        <td>${p.name}</td>
+        <td>${p.games}</td>
+        <td>${p.goals}</td>
+        <td>${p.assists}</td>
+      </tr>`;
+  });
+
+  html += `
+        </tbody>
+      </table>
+    </div>
+  `;
+
+  el.innerHTML = html;
+  el.scrollIntoView({ behavior: "smooth" });
+};
+
+/* ----- PRIKAZ MEČEVA ----- */
 onValue(ref, snap => {
   const data = snap.val() || {};
-  const list = document.getElementById("list");
-  list.innerHTML = "";
+  const listEl = document.getElementById("list");
+  listEl.innerHTML = "";
 
   const matches = Object.values(data).sort((a,b)=>b.timestamp - a.timestamp);
 
-  /* MEČEVI */
   matches.forEach(m => {
     const isRedWin = m.red > m.blue;
     const isBlueWin = m.blue > m.red;
     const isDraw = m.red === m.blue;
 
     const cardClass = isDraw ? "draw" : isRedWin ? "winner-red" : "winner-blue";
-    const scoreClass = isDraw ? "draw" : isRedWin ? "winner-red" : "winner-blue";
+    const scoreClass = cardClass;
 
-    list.innerHTML += `
+    listEl.innerHTML += `
       <div class="match ${cardClass}">
-        <div class="meta">
-          Kolo <b>${m.round}</b> – ${m.date} u ${m.time}
-        </div>
+        <div class="meta">Kolo <b>${m.round}</b> — ${m.date} u ${m.time}</div>
 
         <div class="score-wrapper">
+
           <div class="team">
             <img src="crveni.png">
-            <div class="team-name red">Crveni</div>
+            <div class="team-name red" onclick="showTeamSection('crveni')">Crveni</div>
+            <div class="see-squad" onclick="showTeamSection('crveni')">Vidi ekipu</div>
           </div>
 
-          <div class="score ${scoreClass}">
-            ${m.red} - ${m.blue}
-          </div>
+          <div class="score ${scoreClass}">${m.red} - ${m.blue}</div>
 
           <div class="team">
             <img src="plavi.png">
-            <div class="team-name blue">Plavi</div>
+            <div class="team-name blue" onclick="showTeamSection('plavi')">Plavi</div>
+            <div class="see-squad" onclick="showTeamSection('plavi')">Vidi ekipu</div>
           </div>
+
         </div>
       </div>`;
   });
 
-  /* TABELA */
+  /* ----- LIGA TABELA ----- */
   function calculateTable(matches) {
     const table = {
       Crveni: { U:0, P:0, N:0, I:0, GD:0, GP:0, GR:0, B:0 },
@@ -295,7 +415,7 @@ onValue(ref, snap => {
   const table = calculateTable(matches);
   renderTable(table);
 
-  /* FORMA */
+  /* ----- FORMA ----- */
   function calculateForm(matches){
     const c=[],p=[];
     matches.forEach(m=>{
@@ -320,21 +440,20 @@ onValue(ref, snap => {
 
   renderForm(calculateForm(matches));
 });
-</script>
 
-<script>
-  const btn=document.getElementById("adminBtn");
-  function refreshBtn(){
-    const isAdmin=localStorage.getItem("admin")==="1";
-    if(isAdmin){
-      btn.innerText="Admin panel";
-      btn.onclick=()=>window.location.href="admin.html";
-    } else {
-      btn.innerText="Login";
-      btn.onclick=()=>window.location.href="login.html";
-    }
+/* ----- LOGIN BUTTON SWITCH ----- */
+const btn=document.getElementById("adminBtn");
+function refreshBtn(){
+  const isAdmin=localStorage.getItem("admin")==="1";
+  if(isAdmin){
+    btn.innerText="Admin panel";
+    btn.onclick=()=>window.location.href="admin.html";
+  } else {
+    btn.innerText="Login";
+    btn.onclick=()=>window.location.href="login.html";
   }
-  refreshBtn();
+}
+refreshBtn();
 </script>
 
 </body>
