@@ -36,7 +36,8 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      gap: 18px;
+      gap: 22px;
+      flex-wrap: wrap;
     }
 
     .team {
@@ -44,6 +45,7 @@
       flex-direction: column;
       align-items: center;
       width: 110px;
+      text-align: center;
     }
 
     .team img {
@@ -54,14 +56,27 @@
     .team-name {
       font-weight: bold;
       margin-top: 6px;
+      font-size: 16px;
+    }
+
+    .team-name a {
+      text-decoration: none;
+      font-weight: bold;
     }
 
     .red { color: #c00000; }
     .blue { color: #0044cc; }
 
     .score {
-      font-size: 26px;
+      font-size: 28px;
       font-weight: bold;
+      min-width: 90px;
+      text-align: center;
+    }
+
+    .dash {
+      margin: 0 6px;
+      color: #555;
     }
   </style>
 </head>
@@ -95,8 +110,10 @@ onValue(ref, snap => {
           <div class="score-wrapper">
 
             <div class="team">
-              <img src="crveni.png">
-              <div class="team-name red">Crveni</div>
+              <img src="crveni.png" alt="Crveni">
+              <div class="team-name red">
+                <a href="crveni.html" class="red">Crveni</a>
+              </div>
             </div>
 
             <div class="score">
@@ -104,8 +121,10 @@ onValue(ref, snap => {
             </div>
 
             <div class="team">
-              <img src="plavi.png">
-              <div class="team-name blue">Plavi</div>
+              <img src="plavi.png" alt="Plavi">
+              <div class="team-name blue">
+                <a href="plavi.html" class="blue">Plavi</a>
+              </div>
             </div>
 
           </div>
