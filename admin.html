@@ -2,162 +2,87 @@
 <html lang="sr">
 <head>
   <meta charset="UTF-8">
-  <title>Admin – Rezultati</title>
+  <title>Admin panel</title>
   <script type="module" src="firebase.mjs"></script>
+
   <style>
-    body { font-family: Arial; max-width: 450px; margin: 20px auto; }
-    input, button { width: 100%; padding: 10px; margin: 6px 0; }
-    h2 { margin-bottom: 8px; }
-    .match {
-      border: 1px solid #ccc;
-      padding: 12px;
-      margin: 10px 0;
-      border-radius: 8px;
+    body {
+      font-family: Arial;
+      max-width: 600px;
+      margin: 30px auto;
+      padding: 0 20px;
     }
-    .row { margin: 6px 0; display: flex; gap: 10px; }
-    .row input { flex: 1; }
-    .btns { display: flex; gap: 10px; }
+
+    #logout {
+      position: fixed;
+      top: 15px;
+      right: 15px;
+      padding: 8px 14px;
+      background: #c00000;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+    }
   </style>
 </head>
 <body>
 
-<h2>Novi rezultat (Crveni vs Plavi)</h2>
-<button onclick="logout()">Logout</button>
+<!-- LOCK ADMIN PAGE -->
+<script>
+  if (localStorage.getItem("admin") !== "1") {
+    window.location.href = "login.html";
+  }
+</script>
 
-<label>Kolo:</label>
-<input id="round" type="number">
+<button id="logout" onclick="logout()">Logout</button>
 
-<label>Datum:</label>
-<input id="matchDate" type="date">
+<h1>Admin panel</h1>
 
-<label>Vreme:</label>
-<input id="matchTime" type="time">
+<div>
+  <label>Kolo:</label>
+  <input id="round" type="number">
 
-<label>Golovi – Crveni:</label>
-<input id="red" type="number">
+  <label>Datum:</label>
+  <input id="date" type="date">
 
-<label>Golovi – Plavi:</label>
-<input id="blue" type="number">
+  <label>Vreme:</label>
+  <input id="time" type="time">
 
-<button onclick="saveMatch()">Sačuvaj rezultat</button>
+  <label>Crveni:</label>
+  <input id="red" type="number">
 
-<hr><h2>Svi rezultati</h2>
+  <label>Plavi:</label>
+  <input id="blue" type="number">
 
-<div id="matchList"></div>
+  <button onclick="saveMatch()">Sačuvaj</button>
+</div>
 
 <script type="module">
-import { onValue, set, remove } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+import { push } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+const ref = window.dbRef("matches");
 
-if (!localStorage.getItem("admin")) {
-  window.location.href = "login.html";
-}
-
-const refMatches = window.dbRef("matches");
-
-// automatski predlog kola
-onValue(refMatches, snap => {
-  const data = snap.val() || {};
-  const list = Object.values(data);
-
-  let nextRound = 1;
-  if (list.length > 0) {
-    nextRound = Math.max(...list.map(m => m.round || 0)) + 1;
-  }
-  document.getElementById("round").value = nextRound;
-});
-
-// unos meča
 window.saveMatch = function() {
-  const round = Number(document.getElementById("round").value);
-  const date = document.getElementById("matchDate").value;
-  const time = document.getElementById("matchTime").value;
-  const red = Number(document.getElementById("red").value);
-  const blue = Number(document.getElementById("blue").value);
-
-  if (!round || !date || !time || isNaN(red) || isNaN(blue)) {
-    alert("Popuni sva polja!");
-    return;
-  }
-
-  window.pushTo("matches", {
-    round, date, time, red, blue,
+  const obj = {
+    round: round.value,
+    date: date.value,
+    time: time.value,
+    red: Number(red.value),
+    blue: Number(blue.value),
     timestamp: Date.now()
-  });
+  };
 
+  push(ref, obj);
   alert("Sačuvano!");
-
-  document.getElementById("red").value = "";
-  document.getElementById("blue").value = "";
-  document.getElementById("matchTime").value = "";
 };
+</script>
 
-// prikaz + edit/delete
-onValue(refMatches, snap => {
-  const data = snap.val() || {};
-  const container = document.getElementById("matchList");
-  container.innerHTML = "";
-
-  Object.entries(data)
-    .sort((a, b) => b[1].timestamp - a[1].timestamp)
-    .forEach(([id, m]) => {
-
-      container.innerHTML += `
-        <div class="match" id="m_${id}">
-          <div class="row">
-            <input id="r_${id}" type="number" value="${m.round}">
-            <input id="d_${id}" type="date" value="${m.date}">
-          </div>
-
-          <div class="row">
-            <input id="t_${id}" type="time" value="${m.time}">
-          </div>
-
-          <div class="row">
-            <input id="red_${id}" type="number" value="${m.red}">
-            <input id="blue_${id}" type="number" value="${m.blue}">
-          </div>
-
-          <div class="btns">
-            <button onclick="saveEdit('${id}')">Sačuvaj izmene</button>
-            <button onclick="deleteMatch('${id}')">Obriši</button>
-          </div>
-        </div>
-      `;
-    });
-});
-
-// snimanje izmena
-window.saveEdit = function(id) {
-  const round = Number(document.getElementById("r_" + id).value);
-  const date  = document.getElementById("d_" + id).value;
-  const time  = document.getElementById("t_" + id).value;
-  const red   = Number(document.getElementById("red_" + id).value);
-  const blue  = Number(document.getElementById("blue_" + id).value);
-
-  if (!round || !date || !time || isNaN(red) || isNaN(blue)) {
-    alert("Neispravan unos!");
-    return;
-  }
-
-  set(window.dbRef("matches/" + id), {
-    round, date, time, red, blue,
-    timestamp: Date.now()
-  });
-
-  alert("Izmenjeno.");
-};
-
-// brisanje meča
-window.deleteMatch = function(id) {
-  if (confirm("Sigurno obrisati meč?")) {
-    remove(window.dbRef("matches/" + id));
-  }
-};
-
-window.logout = function() {
+<script>
+function logout() {
   localStorage.removeItem("admin");
-  window.location.href = "login.html";
-};
+  window.location.href = "index.html";
+}
 </script>
 
 </body>
