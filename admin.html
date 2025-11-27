@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin panel</title>
+  <script type="module" src="firebase.js"></script>
+
+  <style>
+    body { font-family: Arial; padding: 20px; max-width: 600px; margin: auto; }
+    input { padding: 8px; margin-right: 5px; }
+    button { padding: 8px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { padding: 10px; border-bottom: 1px solid #ccc; }
+  </style>
+</head>
+<body>
+
+<h2>Admin panel</h2>
+<button onclick="logout()">Logout</button>
+
+<h3>Dodaj igrača</h3>
+<input id="playerName" placeholder="Ime">
+<button onclick="addPlayer()">Dodaj</button>
+
+<h3>Igrači</h3>
+<table id="playersTable">
+  <thead>
+    <tr><th>Igrač</th><th>Pobede</th><th>+1</th></tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
+<h3>Dodaj današnji rezultat</h3>
+<select id="winnerSelect"></select>
+<button onclick="addMatch()">Sačuvaj meč</button>
+
+<script type="module">
+  if (!localStorage.getItem("admin")) {
+    window.location.href = "login.html";
+  }
+
+  import { onValue } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+
+  // Load players
+  const playersRef = window.dbRef("players");
+  const matchesRef = window.dbRef("matches");
+
+  onValue(playersRef, (snap) => {
+    const data = snap.val() || {};
+    renderPlayers(data);
+    renderWinnerSelect(data);
+  });
+
+  function addPlayer() {
+    const name = document.getElementById("playerName").value.trim();
+    if (!name) return;
+    window.pushTo("players", { name, wins: 0 });
+    document.getElementById("playerName").value = "";
+  }
+
+  function addWin(key) {
+    window.setTo(`players/${key}/wins`, playersCache[key].wins + 1);
+  }
+
+  let playersCache = {};
+
+  function renderPlayers(players) {
+    playersCache = players;
+    const tbody = document.querySelector("#playersTable tbody");
+    tbody.innerHTML = "";
+    
+    Object.entries(players).forEach(([key, p]) => {
+      const row = `
+        <tr>
+          <td>${p.name}</td>
+          <td>${p.wins}</td>
+          <td><button onclick="increment('${key}')">+1</button></td>
+        </tr>`;
+      tbody.innerHTML += row;
+    });
+  }
+
+  window.increment = function(key) {
+    window.setTo(`players/${key}/wins`, playersCache[key].wins + 1);
+  };
+
+  function renderWinnerSelect(players) {
+    const sel = document.getElementById("winnerSelect");
+    sel.innerHTML = "";
+    Object.entries(players).forEach(([key, p]) => {
+      sel.innerHTML += `<option value="${key}">${p.name}</option>`;
+    });
+  }
+
+  function addMatch() {
+    const winner = document.getElementById("winnerSelect").value;
+    window.pushTo("matches", {
+      winner,
+      time: Date.now()
+    });
+    alert("Sačuvano!");
+  }
+
+  function logout() {
+    localStorage.removeItem("admin");
+    window.location.href = "login.html";
+  }
+</script>
+
+</body>
+</html>
