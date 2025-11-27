@@ -143,3 +143,165 @@
 
 <div class="form-group">
   <label>Datum:</label>
+  <input id="date" type="date">
+</div>
+
+<div class="form-group">
+  <label>Vreme:</label>
+  <input id="time" type="time">
+</div>
+
+<div class="form-group">
+  <label>Golovi Crvenih:</label>
+  <input id="red" type="number" min="0" max="20">
+</div>
+
+<div class="form-group">
+  <label>Golovi Plavih:</label>
+  <input id="blue" type="number" min="0" max="20">
+</div>
+
+<button id="saveBtn" class="save-btn" onclick="saveMatch()">Sačuvaj</button>
+<button id="cancelBtn" class="cancel-btn" onclick="cancelEdit()">Otkaži</button>
+
+<!-- LISTA MEČEVA -->
+<h2 style="margin-top:40px; text-align:center;">Svi mečevi</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Kolo</th>
+      <th>Datum</th>
+      <th>Vreme</th>
+      <th>Rezultat</th>
+      <th>Akcije</th>
+    </tr>
+  </thead>
+  <tbody id="matchList"></tbody>
+</table>
+
+<script type="module">
+import { onValue, push, update, remove } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+
+const matchesRef = window.dbRef("matches");
+let editId = null;
+
+/* --- LISTA MEČEVA --- */
+onValue(matchesRef, snap => {
+  const data = snap.val() || {};
+  const list = Object.entries(data).sort((a,b)=>b[1].timestamp - a[1].timestamp);
+
+  const tbody = document.getElementById("matchList");
+  tbody.innerHTML = "";
+
+  list.forEach(([id, m]) => {
+    tbody.innerHTML += `
+      <tr>
+        <td>${m.round}</td>
+        <td>${m.date}</td>
+        <td>${m.time}</td>
+        <td>
+          <span style="color:#c00000;">Crveni ${m.red}</span>
+          &nbsp;–&nbsp;
+          <span style="color:#0044cc;">${m.blue} Plavi</span>
+        </td>
+        <td>
+          <button class="btn-edit" onclick="editMatch('${id}')">Edit</button>
+          <button class="btn-del" onclick="deleteMatch('${id}')">Delete</button>
+        </td>
+      </tr>
+    `;
+  });
+});
+
+/* --- SAVE / EDIT VALIDACIJA --- */
+window.saveMatch = function() {
+
+  const r = Number(red.value);
+  const p = Number(blue.value);
+
+  if (r < 0 || p < 0) {
+    alert("Golovi ne mogu biti negativni!");
+    return;
+  }
+  if (r > 20 || p > 20) {
+    alert("Maksimum je 20 golova!");
+    return;
+  }
+
+  const obj = {
+    round: round.value,
+    date: date.value,
+    time: time.value,
+    red: r,
+    blue: p,
+    timestamp: Date.now()
+  };
+
+  if (!editId) {
+    push(matchesRef, obj);
+    alert("Meč dodat!");
+  } else {
+    update(window.dbRef("matches/" + editId), obj);
+    alert("Meč izmenjen!");
+    editId = null;
+    document.getElementById("saveBtn").innerText = "Sačuvaj";
+    document.getElementById("cancelBtn").style.display = "none";
+  }
+
+  round.value = "";
+  date.value = "";
+  time.value = "";
+  red.value = "";
+  blue.value = "";
+};
+
+/* --- POPUNI FORMU ZA EDIT --- */
+window.editMatch = function(id) {
+  editId = id;
+
+  window.onValue(window.dbRef("matches/" + id), snap => {
+    const m = snap.val();
+    round.value = m.round;
+    date.value = m.date;
+    time.value = m.time;
+    red.value = m.red;
+    blue.value = m.blue;
+  });
+
+  document.getElementById("saveBtn").innerText = "Izmeni";
+  document.getElementById("cancelBtn").style.display = "block";
+};
+
+/* --- OTKAZI IZMENU --- */
+window.cancelEdit = function() {
+  editId = null;
+
+  round.value = "";
+  date.value = "";
+  time.value = "";
+  red.value = "";
+  blue.value = "";
+
+  document.getElementById("saveBtn").innerText = "Sačuvaj";
+  document.getElementById("cancelBtn").style.display = "none";
+};
+
+/* --- DELETE MEČA --- */
+window.deleteMatch = function(id) {
+  if (!confirm("Da li si siguran da želiš da obrišeš ovaj meč?")) return;
+  remove(window.dbRef("matches/" + id));
+  alert("Meč obrisan!");
+};
+
+</script>
+
+<script>
+function logout() {
+  localStorage.removeItem("admin");
+  window.location.href = "index.html";
+}
+</script>
+
+</body>
+</html>
