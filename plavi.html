@@ -2,39 +2,105 @@
 <html lang="sr">
 <head>
   <meta charset="UTF-8">
-  <title>Plavi – Ekipa</title>
+  <title>Ekipa Plavih</title>
+
   <style>
-    body { 
-      font-family: Arial; 
-      max-width: 700px; 
-      margin: 30px auto; 
-      text-align: center;
+    body {
+      font-family: Arial;
+      max-width: 800px;
+      margin: 25px auto;
       padding: 0 20px;
     }
-    h1 { margin-bottom: 25px; }
-    img {
-      width: 100%;
-      max-width: 600px;
-      border-radius: 12px;
-      border: 3px solid #0044cc;
-      margin-bottom: 20px;
-    }
-    a {
-      display: inline-block;
-      margin-top: 20px;
+
+    h1 {
+      text-align: center;
+      margin-bottom: 25px;
       color: #0044cc;
-      text-decoration: none;
+    }
+
+    .team-photo {
+      display: block;
+      margin: 0 auto 25px auto;
+      max-width: 350px;
+      border-radius: 10px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    th {
+      background: #ececec;
+      padding: 10px;
+      border-bottom: 2px solid #aaa;
+    }
+
+    td {
+      padding: 10px;
+      text-align: center;
+      border-bottom: 1px solid #ddd;
+    }
+
+    tr:nth-child(even) td {
+      background: #fafafa;
+    }
+
+    .back {
+      margin-top: 30px;
+      display: block;
+      text-align: center;
       font-size: 16px;
+      color: #0044cc;
+      cursor: pointer;
+      text-decoration: underline;
     }
   </style>
 </head>
 <body>
 
-<h1>Ekipa – Plavi</h1>
+<h1>Ekipa Plavih</h1>
 
-<img src="plavi-team.png" alt="Ekipa Plavih">
+<img src="plavi-team.png" class="team-photo">
 
-<a href="index.html">← Nazad na rezultate</a>
+<table>
+  <thead>
+    <tr>
+      <th>Igrač</th>
+      <th>Utakmice</th>
+      <th>Golovi</th>
+      <th>Asistencije</th>
+    </tr>
+  </thead>
+  <tbody id="players"></tbody>
+</table>
+
+<div class="back" onclick="window.location.href='index.html'">
+  ← Nazad na rezultate
+</div>
+
+<script>
+// privremeno — kasnije se kači na Firebase
+const players = [
+  { name: "Nikola", games: 5, goals: 4, assists: 1 },
+  { name: "Ivan", games: 4, goals: 0, assists: 3 },
+  { name: "Stefan", games: 3, goals: 2, assists: 1 }
+];
+
+const tbody = document.getElementById("players");
+
+players.forEach(p => {
+  tbody.innerHTML += `
+    <tr>
+      <td>${p.name}</td>
+      <td>${p.games}</td>
+      <td>${p.goals}</td>
+      <td>${p.assists}</td>
+    </tr>
+  `;
+});
+</script>
 
 </body>
 </html>
