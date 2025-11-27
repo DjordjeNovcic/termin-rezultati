@@ -5,8 +5,9 @@
   <title>Admin – Rezultati</title>
   <script type="module" src="firebase.mjs"></script>
   <style>
-    body { font-family: Arial; max-width: 400px; margin: 20px auto; }
-    input, button { width: 100%; padding: 12px; margin: 8px 0; }
+    body { font-family: Arial; max-width: 450px; margin: 20px auto; }
+    input, button { width: 100%; padding: 12px; margin: 8px 0; font-size: 16px; }
+    h2 { margin-bottom: 5px; }
   </style>
 </head>
 <body>
@@ -14,8 +15,14 @@
 <h2>Dodaj rezultat (Crveni vs Plavi)</h2>
 <button onclick="logout()">Logout</button>
 
-<label>Datum meča:</label>
+<label>Kolo:</label>
+<input id="round" type="number" placeholder="Broj kola">
+
+<label>Datum:</label>
 <input id="matchDate" type="date">
+
+<label>Vreme:</label>
+<input id="matchTime" type="time">
 
 <label>Golovi – Crveni:</label>
 <input id="red" type="number" placeholder="Crveni">
@@ -30,37 +37,56 @@
     window.location.href = "login.html";
   }
 
-  function saveMatch() {
-    const red = document.getElementById("red").value;
-    const blue = document.getElementById("blue").value;
-    let date = document.getElementById("matchDate").value;
+  import { onValue } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
-    if (!red || !blue) {
-      alert("Popuni golove!");
+  // automatski predloži sledeće kolo
+  const refMatches = window.dbRef("matches");
+  let latestRound = 0;
+
+  onValue(refMatches, snap => {
+    const data = snap.val() || {};
+    const list = Object.values(data);
+
+    if (list.length > 0) {
+      const maxRound = Math.max(...list.map(m => m.round || 0));
+      latestRound = maxRound + 1;
+    } else {
+      latestRound = 1;
+    }
+
+    document.getElementById("round").value = latestRound;
+  });
+
+  function saveMatch() {
+    const round = Number(document.getElementById("round").value);
+    const date = document.getElementById("matchDate").value;
+    const time = document.getElementById("matchTime").value;
+    const red = Number(document.getElementById("red").value);
+    const blue = Number(document.getElementById("blue").value);
+
+    if (!round || !date || !time || isNaN(red) || isNaN(blue)) {
+      alert("Popuni sva polja!");
       return;
     }
 
-    // Ako nije izabran datum → današnji
-    if (!date) {
-      const today = new Date();
-      date = today.toISOString().split("T")[0]; // yyyy-mm-dd
-    }
-
     window.pushTo("matches", {
-      red: Number(red),
-      blue: Number(blue),
-      date: date,
-      time: Date.now()
+      round,
+      date,
+      time,
+      red,
+      blue,
+      timestamp: Date.now()
     });
 
     alert("Sačuvano!");
 
+    // reset polja
+    document.getElementById("matchTime").value = "";
     document.getElementById("red").value = "";
     document.getElementById("blue").value = "";
-    document.getElementById("matchDate").value = "";
   }
 
-  window.logout = function() {
+  window.logout = () => {
     localStorage.removeItem("admin");
     window.location.href = "login.html";
   };
