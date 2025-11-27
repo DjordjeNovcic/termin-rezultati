@@ -13,7 +13,6 @@
       padding: 0 15px;
     }
 
-    /* --- ADMIN LOGIN BUTTON --- */
     #adminBtn {
       position: fixed;
       top: 15px;
@@ -34,14 +33,13 @@
       font-size: 26px;
     }
 
-    /* ----- MATCH CARD ----- */
+    /* ----- MEČ KARTICE ----- */
 
     .match {
       padding: 20px 12px;
       border-bottom: 1px solid #bbb;
       margin-bottom: 15px;
       border-radius: 8px;
-      transition: background 0.2s ease;
     }
 
     .match.winner-red { background: #fff5f5; }
@@ -59,7 +57,7 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      gap: 22px;
+      gap: 20px;
       flex-wrap: wrap;
     }
 
@@ -67,7 +65,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      width: 120px;
+      width: 110px;
     }
 
     .team img {
@@ -87,7 +85,7 @@
     .score {
       font-size: 32px;
       font-weight: bold;
-      min-width: 100px;
+      min-width: 90px;
       text-align: center;
     }
 
@@ -95,9 +93,7 @@
     .score.winner-blue { color: #0044cc; }
     .score.draw { color: #555; }
 
-    /* ======================== */
-    /* 🔥 RESPONSIVE TABLE WRAP */
-    /* ======================== */
+    /* ----- COMPACT TABELA ----- */
 
     .table-wrapper {
       width: 100%;
@@ -105,29 +101,23 @@
       margin-top: 20px;
     }
 
-    /* ----- TABLE ----- */
-
     #league {
-      width: 95%;
-      max-width: 900px;
-      margin: 0 auto;
+      width: 100%;
       border-collapse: collapse;
       text-align: center;
-      white-space: nowrap;
+      table-layout: fixed; /* KOMPAKTNO */
     }
 
     #league th {
       background: #ececec;
-      font-weight: bold;
-      padding: 10px;
+      padding: 6px;
+      font-size: 14px;
       border-bottom: 2px solid #aaa;
-      font-size: 15px;
       white-space: nowrap;
-      min-width: 120px;
     }
 
     #league td {
-      padding: 8px;
+      padding: 6px;
       font-size: 14px;
       border-bottom: 1px solid #ccc;
       white-space: nowrap;
@@ -142,8 +132,7 @@
       font-weight: bold;
     }
 
-
-    /* --- FORMA POSLEDNJIH MEČEVA --- */
+    /* ----- FORMA ----- */
 
     #formSection { margin-top: 30px; }
 
@@ -170,7 +159,6 @@
       font-size: 20px;
       margin: 0 2px;
     }
-
   </style>
 </head>
 <body>
@@ -181,27 +169,25 @@
 
 <div id="list"></div>
 
-<!-- TABELA WRAPPER (ZA RESPONSIVE) -->
 <div class="table-wrapper">
   <table id="league">
     <thead>
       <tr>
         <th>Tim</th>
-        <th>Utakmice</th>
-        <th>Pobede</th>
-        <th>Nerešeno</th>
-        <th>Porazi</th>
-        <th>Golovi dati</th>
-        <th>Golovi primljeni</th>
-        <th>Gol razlika</th>
-        <th>Bodovi</th>
+        <th>U</th>
+        <th>P</th>
+        <th>N</th>
+        <th>I</th>
+        <th>GD</th>
+        <th>GP</th>
+        <th>GR</th>
+        <th>B</th>
       </tr>
     </thead>
     <tbody id="leagueBody"></tbody>
   </table>
 </div>
 
-<!-- FORMA POSLEDNJIH 5 MEČEVA -->
 <div id="formSection">
   <h2>Forma poslednjih 5 mečeva</h2>
   <div class="form-row">
@@ -214,23 +200,20 @@
   </div>
 </div>
 
-<!-- FIREBASE LOGIKA -->
 <script type="module">
 import { onValue } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
 const ref = window.dbRef("matches");
 
 onValue(ref, snap => {
-
   const data = snap.val() || {};
   const list = document.getElementById("list");
   list.innerHTML = "";
 
   const matches = Object.values(data).sort((a,b)=>b.timestamp - a.timestamp);
 
-  /* --- RENDER MATCHES --- */
+  /* MEČEVI */
   matches.forEach(m => {
-
     const isRedWin = m.red > m.blue;
     const isBlueWin = m.blue > m.red;
     const isDraw = m.red === m.blue;
@@ -245,7 +228,6 @@ onValue(ref, snap => {
         </div>
 
         <div class="score-wrapper">
-
           <div class="team">
             <img src="crveni.png">
             <div class="team-name red">Crveni</div>
@@ -259,32 +241,26 @@ onValue(ref, snap => {
             <img src="plavi.png">
             <div class="team-name blue">Plavi</div>
           </div>
-
         </div>
       </div>`;
   });
 
-  /* ================================ */
-  /*   TABELA LIGE – IZRAČUNAVANJE    */
-  /* ================================ */
-
+  /* TABELA */
   function calculateTable(matches) {
-
     const table = {
       Crveni: { U:0, P:0, N:0, I:0, GD:0, GP:0, GR:0, B:0 },
       Plavi:  { U:0, P:0, N:0, I:0, GD:0, GP:0, GR:0, B:0 }
     };
 
-    matches.forEach(m => {
-      const r=m.red, b=m.blue;
-
+    matches.forEach(m=>{
+      let r=m.red, b=m.blue;
       table.Crveni.U++; table.Plavi.U++;
       table.Crveni.GD+=r; table.Crveni.GP+=b;
       table.Plavi.GD+=b; table.Plavi.GP+=r;
 
-      if (r>b){ table.Crveni.P++; table.Plavi.I++; table.Crveni.B+=3; }
+      if(r>b){ table.Crveni.P++; table.Plavi.I++; table.Crveni.B+=3; }
       else if(b>r){ table.Plavi.P++; table.Crveni.I++; table.Plavi.B+=3; }
-      else{ table.Crveni.N++; table.Plavi.N++; table.Crveni.B++; table.Plavi.B++; }
+      else { table.Crveni.N++; table.Plavi.N++; table.Crveni.B++; table.Plavi.B++; }
     });
 
     table.Crveni.GR = table.Crveni.GD - table.Crveni.GP;
@@ -294,14 +270,13 @@ onValue(ref, snap => {
   }
 
   function renderTable(table){
-    const body = document.getElementById("leagueBody");
-    body.innerHTML = "";
+    const body=document.getElementById("leagueBody");
+    body.innerHTML="";
 
     let leader = table.Crveni.B > table.Plavi.B ? "Crveni" : "Plavi";
 
-    ["Crveni","Plavi"].forEach(team => {
-      const t = table[team];
-
+    ["Crveni","Plavi"].forEach(team=>{
+      const t=table[team];
       body.innerHTML += `
         <tr class="${team===leader?'leader-row':''}">
           <td><b>${team}</b></td>
@@ -320,14 +295,13 @@ onValue(ref, snap => {
   const table = calculateTable(matches);
   renderTable(table);
 
-  /* ========FORMA======= */
-
+  /* FORMA */
   function calculateForm(matches){
     const c=[],p=[];
     matches.forEach(m=>{
       if(m.red>m.blue){ c.push("W"); p.push("L"); }
       else if(m.red<m.blue){ c.push("L"); p.push("W"); }
-      else{ c.push("D"); p.push("D"); }
+      else { c.push("D"); p.push("D"); }
     });
     return {
       Crveni:c.slice(0,5),
@@ -345,11 +319,9 @@ onValue(ref, snap => {
   }
 
   renderForm(calculateForm(matches));
-
 });
 </script>
 
-<!-- LOGIN/ADMIN BUTTON LOGIKA -->
 <script>
   const btn=document.getElementById("adminBtn");
   function refreshBtn(){
