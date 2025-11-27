@@ -14,8 +14,15 @@
 <h2>Dodaj rezultat (Crveni vs Plavi)</h2>
 <button onclick="logout()">Logout</button>
 
-<input id="red" type="number" placeholder="Crveni – broj golova">
-<input id="blue" type="number" placeholder="Plavi – broj golova">
+<label>Datum meča:</label>
+<input id="matchDate" type="date">
+
+<label>Golovi – Crveni:</label>
+<input id="red" type="number" placeholder="Crveni">
+
+<label>Golovi – Plavi:</label>
+<input id="blue" type="number" placeholder="Plavi">
+
 <button onclick="saveMatch()">Sačuvaj rezultat</button>
 
 <script type="module">
@@ -26,21 +33,31 @@
   function saveMatch() {
     const red = document.getElementById("red").value;
     const blue = document.getElementById("blue").value;
+    let date = document.getElementById("matchDate").value;
 
-    if (red === "" || blue === "") {
-      alert("Popuni oba rezultata!");
+    if (!red || !blue) {
+      alert("Popuni golove!");
       return;
+    }
+
+    // Ako nije izabran datum → današnji
+    if (!date) {
+      const today = new Date();
+      date = today.toISOString().split("T")[0]; // yyyy-mm-dd
     }
 
     window.pushTo("matches", {
       red: Number(red),
       blue: Number(blue),
+      date: date,
       time: Date.now()
     });
 
     alert("Sačuvano!");
+
     document.getElementById("red").value = "";
     document.getElementById("blue").value = "";
+    document.getElementById("matchDate").value = "";
   }
 
   window.logout = function() {
