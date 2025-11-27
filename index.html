@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+  <meta charset="UTF-8">
+  <title>Rezultati</title>
+  <script type="module" src="firebase.js"></script>
+  <style>
+    body { font-family: Arial; max-width: 600px; margin: auto; padding: 20px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { padding: 10px; border-bottom: 1px solid #ccc; }
+  </style>
+</head>
+<body>
+
+<h1>Leaderboard</h1>
+
+<table id="leaderboard">
+  <thead><tr><th>Igrač</th><th>Pobede</th></tr></thead>
+  <tbody></tbody>
+</table>
+
+<script type="module">
+  import { onValue } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+
+  const playersRef = window.dbRef("players");
+
+  onValue(playersRef, (snap) => {
+    const data = snap.val() || {};
+    const arr = Object.values(data).sort((a,b) => b.wins - a.wins);
+    const tbody = document.querySelector("#leaderboard tbody");
+    tbody.innerHTML = "";
+    arr.forEach(p => {
+      tbody.innerHTML += `<tr><td>${p.name}</td><td>${p.wins}</td></tr>`;
+    });
+  });
+</script>
+
+</body>
+</html>
