@@ -7,12 +7,18 @@
 
   <style>
     body {
-      font-family: Arial;
-      max-width: 600px;
-      margin: 30px auto;
+      font-family: Arial, sans-serif;
+      max-width: 420px;
+      margin: 40px auto;
       padding: 0 20px;
     }
 
+    h1 {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    /* logout */
     #logout {
       position: fixed;
       top: 15px;
@@ -25,11 +31,47 @@
       cursor: pointer;
       font-size: 14px;
     }
+
+    /* forma */
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 4px;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #aaa;
+      border-radius: 6px;
+      font-size: 15px;
+    }
+
+    button.save-btn {
+      width: 100%;
+      padding: 12px;
+      margin-top: 10px;
+      background: #0044cc;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button.save-btn:hover {
+      background: #0033aa;
+    }
+
   </style>
 </head>
 <body>
 
-<!-- LOCK ADMIN PAGE -->
+<!-- ZAŠTITA RUTE -->
 <script>
   if (localStorage.getItem("admin") !== "1") {
     window.location.href = "login.html";
@@ -40,24 +82,32 @@
 
 <h1>Admin panel</h1>
 
-<div>
+<div class="form-group">
   <label>Kolo:</label>
   <input id="round" type="number">
+</div>
 
+<div class="form-group">
   <label>Datum:</label>
   <input id="date" type="date">
+</div>
 
+<div class="form-group">
   <label>Vreme:</label>
   <input id="time" type="time">
-
-  <label>Crveni:</label>
-  <input id="red" type="number">
-
-  <label>Plavi:</label>
-  <input id="blue" type="number">
-
-  <button onclick="saveMatch()">Sačuvaj</button>
 </div>
+
+<div class="form-group">
+  <label>Golovi Crvenih:</label>
+  <input id="red" type="number">
+</div>
+
+<div class="form-group">
+  <label>Golovi Plavih:</label>
+  <input id="blue" type="number">
+</div>
+
+<button class="save-btn" onclick="saveMatch()">Sačuvaj</button>
 
 <script type="module">
 import { push } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
