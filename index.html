@@ -74,9 +74,49 @@
       text-align: center;
     }
 
-    .dash {
-      margin: 0 6px;
-      color: #555;
+    /* 📱 MOBILE OPTIMIZACIJA */
+    @media (max-width: 600px) {
+
+      body {
+        padding: 0 10px;
+      }
+
+      h1 {
+        font-size: 22px;
+        margin-bottom: 20px;
+      }
+
+      .match {
+        padding: 16px 8px;
+        margin-bottom: 12px;
+      }
+
+      .meta {
+        font-size: 13px;
+        margin-bottom: 10px;
+      }
+
+      .score-wrapper {
+        gap: 14px;
+      }
+
+      .team {
+        width: 90px;
+      }
+
+      .team img {
+        width: 55px;
+        height: 55px;
+      }
+
+      .team-name {
+        font-size: 14px;
+      }
+
+      .score {
+        font-size: 24px;
+        min-width: 60px;
+      }
     }
   </style>
 </head>
