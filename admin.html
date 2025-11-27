@@ -49,7 +49,8 @@
       font-size: 15px;
     }
 
-    button.save-btn, button.cancel-btn {
+    button.save-btn,
+    button.cancel-btn {
       width: 100%;
       padding: 12px;
       margin-top: 10px;
@@ -81,6 +82,8 @@
     /* LISTA MEČEVA */
     table {
       width: 100%;
+      max-width: 650px;
+      margin: 0 auto;
       border-collapse: collapse;
       margin-top: 35px;
     }
@@ -125,6 +128,7 @@
 </head>
 <body>
 
+<!-- PROVERA LOGIN-A -->
 <script>
   if (localStorage.getItem("admin") !== "1") {
     window.location.href = "login.html";
@@ -164,7 +168,7 @@
 <button id="saveBtn" class="save-btn" onclick="saveMatch()">Sačuvaj</button>
 <button id="cancelBtn" class="cancel-btn" onclick="cancelEdit()">Otkaži</button>
 
-<!-- LISTA MEČEVA -->
+<!-- LISTA -->
 <h2 style="margin-top:40px; text-align:center;">Svi mečevi</h2>
 
 <table>
@@ -214,7 +218,7 @@ onValue(matchesRef, snap => {
   });
 });
 
-/* --- SAVE / EDIT VALIDACIJA --- */
+/* --- SAVE + VALIDACIJA --- */
 window.saveMatch = function() {
 
   const r = Number(red.value);
@@ -256,7 +260,7 @@ window.saveMatch = function() {
   blue.value = "";
 };
 
-/* --- POPUNI FORMU ZA EDIT --- */
+/* --- EDIT --- */
 window.editMatch = function(id) {
   editId = id;
 
@@ -273,7 +277,7 @@ window.editMatch = function(id) {
   document.getElementById("cancelBtn").style.display = "block";
 };
 
-/* --- OTKAZI IZMENU --- */
+/* --- OTKAZI EDIT --- */
 window.cancelEdit = function() {
   editId = null;
 
@@ -287,7 +291,7 @@ window.cancelEdit = function() {
   document.getElementById("cancelBtn").style.display = "none";
 };
 
-/* --- DELETE MEČA --- */
+/* --- DELETE --- */
 window.deleteMatch = function(id) {
   if (!confirm("Da li si siguran da želiš da obrišeš ovaj meč?")) return;
   remove(window.dbRef("matches/" + id));
