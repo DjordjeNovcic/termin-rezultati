@@ -49,20 +49,33 @@
       font-size: 15px;
     }
 
-    button.save-btn {
+    button.save-btn, button.cancel-btn {
       width: 100%;
       padding: 12px;
       margin-top: 10px;
-      background: #0044cc;
-      color: white;
       border: none;
       border-radius: 6px;
       font-size: 16px;
       cursor: pointer;
     }
 
-    button.save-btn:hover {
+    .save-btn {
+      background: #0044cc;
+      color: white;
+    }
+
+    .save-btn:hover {
       background: #0033aa;
+    }
+
+    .cancel-btn {
+      background: #666;
+      color: white;
+      display: none;
+    }
+
+    .cancel-btn:hover {
+      background: #444;
     }
 
     /* LISTA MEČEVA */
@@ -130,132 +143,3 @@
 
 <div class="form-group">
   <label>Datum:</label>
-  <input id="date" type="date">
-</div>
-
-<div class="form-group">
-  <label>Vreme:</label>
-  <input id="time" type="time">
-</div>
-
-<div class="form-group">
-  <label>Golovi Crvenih:</label>
-  <input id="red" type="number">
-</div>
-
-<div class="form-group">
-  <label>Golovi Plavih:</label>
-  <input id="blue" type="number">
-</div>
-
-<button id="saveBtn" class="save-btn" onclick="saveMatch()">Sačuvaj</button>
-
-<!-- LISTA MEČEVA -->
-<h2 style="margin-top:40px; text-align:center;">Svi mečevi</h2>
-
-<table>
-  <thead>
-    <tr>
-      <th>Kolo</th>
-      <th>Datum</th>
-      <th>Vreme</th>
-      <th>Rezultat</th>
-      <th>Akcije</th>
-    </tr>
-  </thead>
-  <tbody id="matchList"></tbody>
-</table>
-
-<script type="module">
-import { onValue, push, update, remove } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
-const matchesRef = window.dbRef("matches");
-
-let editId = null;
-
-/* --- LISTA MEČEVA --- */
-onValue(matchesRef, snap => {
-  const data = snap.val() || {};
-  const list = Object.entries(data).sort((a,b)=>b[1].timestamp - a[1].timestamp);
-
-  const tbody = document.getElementById("matchList");
-  tbody.innerHTML = "";
-
-  list.forEach(([id, m]) => {
-    tbody.innerHTML += `
-      <tr>
-        <td>${m.round}</td>
-        <td>${m.date}</td>
-        <td>${m.time}</td>
-        <td>${m.red} - ${m.blue}</td>
-        <td>
-          <button class="btn-edit" onclick="editMatch('${id}')">Edit</button>
-          <button class="btn-del" onclick="deleteMatch('${id}')">Delete</button>
-        </td>
-      </tr>
-    `;
-  });
-});
-
-/* --- SAVE I EDIT --- */
-window.saveMatch = function() {
-
-  const obj = {
-    round: round.value,
-    date: date.value,
-    time: time.value,
-    red: Number(red.value),
-    blue: Number(blue.value),
-    timestamp: editId ? Date.now() : Date.now()
-  };
-
-  if (!editId) {
-    push(matchesRef, obj);
-    alert("Meč dodat!");
-  } else {
-    update(window.dbRef("matches/" + editId), obj);
-    alert("Meč izmenjen!");
-    editId = null;
-    document.getElementById("saveBtn").innerText = "Sačuvaj";
-  }
-
-  round.value = "";
-  date.value = "";
-  time.value = "";
-  red.value = "";
-  blue.value = "";
-};
-
-/* --- POPUNI FORMU ZA EDIT --- */
-window.editMatch = function(id) {
-  editId = id;
-
-  window.onValue(window.dbRef("matches/" + id), snap => {
-    const m = snap.val();
-    round.value = m.round;
-    date.value = m.date;
-    time.value = m.time;
-    red.value = m.red;
-    blue.value = m.blue;
-  });
-
-  document.getElementById("saveBtn").innerText = "Izmeni";
-};
-
-/* --- DELETE MEČA --- */
-window.deleteMatch = function(id) {
-  if (!confirm("Da li si siguran da želiš da obrišeš ovaj meč?")) return;
-  remove(window.dbRef("matches/" + id));
-  alert("Meč obrisan!");
-};
-
-</script>
-
-<script>
-function logout() {
-  localStorage.removeItem("admin");
-  window.location.href = "index.html";
-}
-</script>
-
-</body>
-</html>
