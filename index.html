@@ -168,51 +168,6 @@
       text-align: right;
       font-weight: bold;
     }
-
-    /* ---- TEAM SECTION ---- */
-    #teamSection {
-      margin-top: 50px;
-    }
-
-    .team-section {
-      margin-top: 40px;
-      padding-top: 30px;
-      border-top: 1px solid #ddd;
-    }
-
-    .team-header {
-      text-align: center;
-      font-size: 22px;
-      font-weight: bold;
-      margin-bottom: 20px;
-    }
-
-    .team-photo {
-      display: block;
-      margin: 0 auto 20px auto;
-      max-width: 320px;
-      border-radius: 8px;
-    }
-
-    .player-table {
-      width: 100%;
-      max-width: 500px;
-      margin: 0 auto;
-      border-collapse: collapse;
-      margin-top: 15px;
-    }
-
-    .player-table th {
-      background: #ececec;
-      padding: 8px;
-      border-bottom: 2px solid #ccc;
-    }
-
-    .player-table td {
-      padding: 8px;
-      border-bottom: 1px solid #ddd;
-      text-align: center;
-    }
   </style>
 </head>
 <body>
@@ -258,72 +213,11 @@
   </div>
 </div>
 
-<!-- TEAM VIEWER -->
-<div id="teamSection"></div>
 
 <script type="module">
 import { onValue } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
 const ref = window.dbRef("matches");
-
-/* ----- Igrači (dok ne pređemo na Firebase) ----- */
-const players = {
-  crveni: [
-    { name: "Marko", games: 5, goals: 3, assists: 2 },
-    { name: "Luka", games: 4, goals: 1, assists: 1 },
-    { name: "Dejan", games: 5, goals: 6, assists: 0 }
-  ],
-  plavi: [
-    { name: "Nikola", games: 5, goals: 4, assists: 1 },
-    { name: "Ivan", games: 4, goals: 0, assists: 3 },
-    { name: "Stefan", games: 3, goals: 2, assists: 1 }
-  ]
-};
-
-/* ----- PRIKAZ EKIPE ----- */
-window.showTeamSection = function(team) {
-  const el = document.getElementById("teamSection");
-
-  const photo = team === "crveni" ? "crveni-ekipa.jpg" : "plavi-ekipa.jpg";
-  const title = team === "crveni" ? "Ekipa Crvenih" : "Ekipa Plavih";
-
-  let html = `
-    <div class="team-section">
-      <div class="team-header">${title}</div>
-
-      <img src="${photo}" class="team-photo">
-
-      <table class="player-table">
-        <thead>
-          <tr>
-            <th>Igrač</th>
-            <th>Utakmice</th>
-            <th>Golovi</th>
-            <th>Asistencije</th>
-          </tr>
-        </thead>
-        <tbody>
-  `;
-
-  players[team].forEach(p => {
-    html += `
-      <tr>
-        <td>${p.name}</td>
-        <td>${p.games}</td>
-        <td>${p.goals}</td>
-        <td>${p.assists}</td>
-      </tr>`;
-  });
-
-  html += `
-        </tbody>
-      </table>
-    </div>
-  `;
-
-  el.innerHTML = html;
-  el.scrollIntoView({ behavior: "smooth" });
-};
 
 /* ----- PRIKAZ MEČEVA ----- */
 onValue(ref, snap => {
@@ -349,16 +243,16 @@ onValue(ref, snap => {
 
           <div class="team">
             <img src="crveni.png">
-            <div class="team-name red" onclick="showTeamSection('crveni')">Crveni</div>
-            <div class="see-squad" onclick="showTeamSection('crveni')">Vidi ekipu</div>
+            <div class="team-name red" onclick="window.location.href='crveni.html'">Crveni</div>
+            <div class="see-squad" onclick="window.location.href='crveni.html'">Vidi ekipu</div>
           </div>
 
           <div class="score ${scoreClass}">${m.red} - ${m.blue}</div>
 
           <div class="team">
             <img src="plavi.png">
-            <div class="team-name blue" onclick="showTeamSection('plavi')">Plavi</div>
-            <div class="see-squad" onclick="showTeamSection('plavi')">Vidi ekipu</div>
+            <div class="team-name blue" onclick="window.location.href='plavi.html'">Plavi</div>
+            <div class="see-squad" onclick="window.location.href='plavi.html'">Vidi ekipu</div>
           </div>
 
         </div>
