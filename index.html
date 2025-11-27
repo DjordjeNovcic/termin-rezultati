@@ -13,6 +13,21 @@
       padding: 0 15px;
     }
 
+    /* --- Admin button --- */
+    #adminBtn {
+      position: fixed;
+      top: 15px;
+      right: 15px;
+      padding: 8px 14px;
+      font-size: 14px;
+      border-radius: 6px;
+      border: none;
+      background: #0044cc;
+      color: white;
+      cursor: pointer;
+      z-index: 99;
+    }
+
     h1 {
       text-align: center;
       margin-bottom: 30px;
@@ -80,13 +95,8 @@
       font-weight: bold;
     }
 
-    .red {
-      color: #c00000;
-    }
-
-    .blue {
-      color: #0044cc;
-    }
+    .red { color: #c00000; }
+    .blue { color: #0044cc; }
 
     .score {
       font-size: 28px;
@@ -122,6 +132,9 @@
       font-size: 15px;
       border-bottom: 2px solid #aaa;
       text-align: center;
+      position: sticky;
+      top: 0;
+      z-index: 2;
     }
 
     table td {
@@ -135,19 +148,12 @@
       background: #fafafa;
     }
 
-    /* sticky header */
-    table thead th {
-      position: sticky;
-      top: 0;
-      z-index: 2;
-    }
-
     .leader-row td {
       background: #fff7d6 !important;
       font-weight: bold;
     }
 
-    /* ----- FORMA POSLEDNJIH 5 MEČEVA ----- */
+    /* ----- FORMA ----- */
 
     #formSection {
       margin-top: 30px;
@@ -177,75 +183,18 @@
       margin: 0 2px;
     }
 
-    /* ----- MOBILNA OPTIMIZACIJA ----- */
-    @media (max-width: 600px) {
-
-      body {
-        padding: 0 10px;
-      }
-
-      h1 {
-        font-size: 22px;
-        margin-bottom: 20px;
-      }
-
-      .match {
-        padding: 16px 8px;
-        margin-bottom: 12px;
-      }
-
-      .meta {
-        font-size: 13px;
-        margin-bottom: 10px;
-      }
-
-      .score-wrapper {
-        gap: 14px;
-      }
-
-      .team {
-        width: 90px;
-      }
-
-      .team img {
-        width: 55px;
-        height: 55px;
-      }
-
-      .team-name {
-        font-size: 14px;
-      }
-
-      .score {
-        font-size: 24px;
-        min-width: 60px;
-      }
-
-      table th {
-        font-size: 13px;
-        padding: 6px;
-      }
-
-      table td {
-        font-size: 12px;
-        padding: 5px;
-      }
-
-      .form-icons span {
-        font-size: 18px;
-      }
-    }
   </style>
 </head>
 <body>
+
+<button id="adminBtn">Admin</button>
 
 <h1>Rezultati svih odigranih utakmica</h1>
 
 <div id="list"></div>
 
-<!-- TABELA LIGE -->
+<!-- TABELA -->
 <h2 style="text-align:center; margin-top:40px;">Tabela</h2>
-
 <table id="league">
   <thead>
     <tr>
@@ -263,7 +212,7 @@
   <tbody id="leagueBody"></tbody>
 </table>
 
-<!-- FORMA POSLEDNJIH 5 MEČEVA -->
+<!-- FORMA -->
 <div id="formSection">
   <h2>Forma poslednjih 5 mečeva</h2>
   <div class="form-row">
@@ -288,27 +237,18 @@ onValue(ref, snap => {
 
   const matches = Object.values(data).sort((a, b) => b.timestamp - a.timestamp);
 
-  /* ----- PRIKAZ UTAKMICA + HIGHLIGHT POBEDNIKA ----- */
+  /* RENDER MEČEVA SA HIGHLIGHTOM */
   matches.forEach(m => {
+
     const isRedWin = m.red > m.blue;
     const isBlueWin = m.blue > m.red;
     const isDraw = m.red === m.blue;
 
-    const matchClass = isDraw
-      ? "draw"
-      : isRedWin
-        ? "winner-red"
-        : "winner-blue";
-
-    const scoreClass = isDraw
-      ? "draw"
-      : isRedWin
-        ? "winner-red"
-        : "winner-blue";
+    const cardClass = isDraw ? "draw" : isRedWin ? "winner-red" : "winner-blue";
+    const scoreClass = isDraw ? "draw" : isRedWin ? "winner-red" : "winner-blue";
 
     list.innerHTML += `
-      <div class="match ${matchClass}">
-
+      <div class="match ${cardClass}">
         <div class="meta">
           Kolo <b>${m.round}</b> – ${m.date} u ${m.time}
         </div>
@@ -316,10 +256,8 @@ onValue(ref, snap => {
         <div class="score-wrapper">
 
           <div class="team">
-            <img src="crveni.png" alt="Crveni">
-            <div class="team-name red">
-              <a href="crveni.html" class="red">Crveni</a>
-            </div>
+            <img src="crveni.png">
+            <div class="team-name red"><a href="crveni.html">Crveni</a></div>
           </div>
 
           <div class="score ${scoreClass}">
@@ -327,54 +265,32 @@ onValue(ref, snap => {
           </div>
 
           <div class="team">
-            <img src="plavi.png" alt="Plavi">
-            <div class="team-name blue">
-              <a href="plavi.html" class="blue">Plavi</a>
-            </div>
+            <img src="plavi.png">
+            <div class="team-name blue"><a href="plavi.html">Plavi</a></div>
           </div>
 
         </div>
-
-      </div>
-    `;
+      </div>`;
   });
 
-  /* ----- TABELA LIGE ----- */
+  /* --- TABELA --- */
   function calculateTable(matches) {
+
     const table = {
       Crveni: { U:0, P:0, N:0, I:0, GD:0, GP:0, GR:0, B:0 },
       Plavi:  { U:0, P:0, N:0, I:0, GD:0, GP:0, GR:0, B:0 }
     };
 
     matches.forEach(m => {
-      const r = m.red;
-      const b = m.blue;
+      const r = m.red, b = m.blue;
 
-      table.Crveni.U++;
-      table.Plavi.U++;
+      table.Crveni.U++; table.Plavi.U++;
+      table.Crveni.GD+=r; table.Crveni.GP+=b;
+      table.Plavi.GD+=b; table.Plavi.GP+=r;
 
-      table.Crveni.GD += r;
-      table.Crveni.GP += b;
-
-      table.Plavi.GD += b;
-      table.Plavi.GP += r;
-
-      if (r > b) {
-        table.Crveni.P++;
-        table.Plavi.I++;
-        table.Crveni.B += 3;
-      } 
-      else if (b > r) {
-        table.Plavi.P++;
-        table.Crveni.I++;
-        table.Plavi.B += 3;
-      } 
-      else {
-        table.Crveni.N++;
-        table.Plavi.N++;
-        table.Crveni.B += 1;
-        table.Plavi.B += 1;
-      }
+      if (r>b){ table.Crveni.P++; table.Plavi.I++; table.Crveni.B+=3; }
+      else if(b>r){ table.Plavi.P++; table.Crveni.I++; table.Plavi.B+=3; }
+      else{ table.Crveni.N++; table.Plavi.N++; table.Crveni.B++; table.Plavi.B++; }
     });
 
     table.Crveni.GR = table.Crveni.GD - table.Crveni.GP;
@@ -383,80 +299,72 @@ onValue(ref, snap => {
     return table;
   }
 
-  function renderTable(table, leaderTeam) {
+  function renderTable(table){
+
     const body = document.getElementById("leagueBody");
     body.innerHTML = "";
 
-    const teams = ["Crveni", "Plavi"];
+    let leader = table.Crveni.B > table.Plavi.B ? "Crveni" : "Plavi";
 
-    teams.forEach(team => {
+    ["Crveni","Plavi"].forEach(team => {
       const t = table[team];
-      const isLeader = team === leaderTeam;
 
       body.innerHTML += `
-        <tr class="${isLeader ? "leader-row" : ""}">
+        <tr class="${team===leader?'leader-row':''}">
           <td><b>${team}</b></td>
-          <td>${t.U}</td>
-          <td>${t.P}</td>
-          <td>${t.N}</td>
-          <td>${t.I}</td>
-          <td>${t.GD}</td>
-          <td>${t.GP}</td>
-          <td>${t.GR}</td>
-          <td>${t.B}</td>
+          <td>${t.U}</td><td>${t.P}</td><td>${t.N}</td><td>${t.I}</td>
+          <td>${t.GD}</td><td>${t.GP}</td><td>${t.GR}</td><td>${t.B}</td>
         </tr>`;
     });
   }
 
-  /* ----- FORMA POSLEDNJIH 5 MEČEVA ----- */
+  const table = calculateTable(matches);
+  renderTable(table);
 
-  function calculateForm(matches) {
-    const formCrveni = [];
-    const formPlavi = [];
-
-    matches.forEach(m => {
-      if (m.red > m.blue) {
-        formCrveni.push("W");
-        formPlavi.push("L");
-      } else if (m.red < m.blue) {
-        formCrveni.push("L");
-        formPlavi.push("W");
-      } else {
-        formCrveni.push("D");
-        formPlavi.push("D");
-      }
+  /* --- FORMA --- */
+  function calculateForm(matches){
+    const c=[], p=[];
+    matches.forEach(m=>{
+      if(m.red>m.blue){ c.push("W"); p.push("L"); }
+      else if(m.red<m.blue){ c.push("L"); p.push("W"); }
+      else{ c.push("D"); p.push("D"); }
     });
-
     return {
-      Crveni: formCrveni.slice(0, 5),
-      Plavi: formPlavi.slice(0, 5)
+      Crveni:c.slice(0,5),
+      Plavi:p.slice(0,5)
     };
   }
 
-  function renderForm(form) {
-    const map = { W: "🟢", D: "🟡", L: "🔴" };
-    const c = document.getElementById("formCrveni");
-    const p = document.getElementById("formPlavi");
+  function renderForm(form){
+    const map={W:"🟢",D:"🟡",L:"🔴"};
+    document.getElementById("formCrveni").innerHTML =
+      form.Crveni.map(x=>`<span>${map[x]}</span>`).join("");
 
-    c.innerHTML = form.Crveni.map(x => `<span>${map[x]}</span>`).join("");
-    p.innerHTML = form.Plavi.map(x => `<span>${map[x]}</span>`).join("");
+    document.getElementById("formPlavi").innerHTML =
+      form.Plavi.map(x=>`<span>${map[x]}</span>`).join("");
   }
 
-  const table = calculateTable(matches);
-
-  let leaderTeam = null;
-  if (table.Crveni.B > table.Plavi.B) {
-    leaderTeam = "Crveni";
-  } else if (table.Plavi.B > table.Crveni.B) {
-    leaderTeam = "Plavi";
-  }
-
-  renderTable(table, leaderTeam);
-
-  const form = calculateForm(matches);
-  renderForm(form);
+  renderForm(calculateForm(matches));
 
 });
+</script>
+
+<!-- LOGIN/ADMIN BUTTON LOGIKA -->
+<script>
+  const btn = document.getElementById("adminBtn");
+
+  function refreshBtn() {
+    const isAdmin = localStorage.getItem("admin") === "1";
+    if (isAdmin) {
+      btn.innerText = "Admin panel";
+      btn.onclick = () => window.location.href = "admin.html";
+    } else {
+      btn.innerText = "Login";
+      btn.onclick = () => window.location.href = "login.html";
+    }
+  }
+
+  refreshBtn();
 </script>
 
 </body>
