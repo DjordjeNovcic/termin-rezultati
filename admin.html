@@ -316,7 +316,7 @@ saveBtn.onclick = async () =>{
 updateBtn.onclick = async () => {
   if(!validate()) return;
 
-  const oldSnap = await get(window.dbRef(⁠ matches/${editingId} ⁠));
+  const oldSnap = await get(window.dbRef(`matches/${editingId}`));
   const oldMatch = oldSnap.val();
 
   await applyStats(oldMatch, -1);
