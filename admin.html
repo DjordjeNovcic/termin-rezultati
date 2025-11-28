@@ -69,8 +69,16 @@
       margin-top: 10px;
     }
 
-    .save-btn:hover {
-      background: #006600;
+    .update-btn {
+      background: #d48a00;
+      color: white;
+      padding: 12px;
+      width: 100%;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 10px;
+      display: none;
     }
 
     /* TABLE */
@@ -149,6 +157,7 @@
 </div>
 
 <button class="save-btn" id="saveBtn">Sačuvaj meč</button>
+<button class="update-btn" id="updateBtn">Izmeni meč</button>
 
 <!-- LISTA MEČEVA -->
 <table>
@@ -169,7 +178,38 @@ import { onValue, push, update, remove } from "https://www.gstatic.com/firebasej
 
 const ref = window.dbRef("matches");
 
-/* Load matches */
+let editingId = null;
+
+/* AUTO-POPUNJAVANJE DATUMA I VREMENA */
+function getNextThursday() {
+  const now = new Date();
+  let diff = (4 - now.getDay() + 7) % 7; // 4 = Thursday
+  if (diff === 0) diff = 7;
+  const d = new Date(now);
+  d.setDate(now.getDate() + diff);
+  return d;
+}
+
+function autoFill() {
+  const d = getNextThursday();
+  const day = d.toISOString().split("T")[0];
+  round.value = "";
+  date.value = day;
+  time.value = "18:00";
+  red.value = "";
+  blue.value = "";
+}
+autoFill();
+
+/* AUTO KOLO */
+onValue(ref, snap => {
+  const data = snap.val() || {};
+  const matches = Object.values(data);
+
+  round.value = matches.length + 1;
+});
+
+/* LOAD MEČEVE */
 onValue(ref, snap => {
   const data = snap.val() || {};
   const tbody = document.getElementById("matchList");
@@ -193,7 +233,7 @@ onValue(ref, snap => {
     });
 });
 
-/* Save match */
+/* CREATE */
 document.getElementById("saveBtn").onclick = () => {
   const obj = {
     round: round.value,
@@ -205,26 +245,45 @@ document.getElementById("saveBtn").onclick = () => {
   };
 
   push(ref, obj);
-
-  round.value = "";
-  date.value = "";
-  time.value = "";
-  red.value = "";
-  blue.value = "";
+  autoFill();
 };
 
-/* Edit match */
+/* EDIT - POPUNI FORMU */
 window.editMatch = id => {
-  const r = window.prompt("Golovi Crvenih?");
-  const b = window.prompt("Golovi Plavih?");
+  editingId = id;
 
-  update(window.dbRef(`matches/${id}`), {
-    red: Number(r),
-    blue: Number(b)
+  document.getElementById("saveBtn").style.display = "none";
+  document.getElementById("updateBtn").style.display = "block";
+
+  window.dbRef(`matches/${id}`).once("value").then(snap => {
+    const m = snap.val();
+    round.value = m.round;
+    date.value = m.date;
+    time.value = m.time;
+    red.value = m.red;
+    blue.value = m.blue;
   });
 };
 
-/* Delete match */
+/* UPDATE */
+document.getElementById("updateBtn").onclick = () => {
+  if (!editingId) return;
+
+  update(window.dbRef(`matches/${editingId}`), {
+    round: round.value,
+    date: date.value,
+    time: time.value,
+    red: Number(red.value),
+    blue: Number(blue.value),
+  });
+
+  editingId = null;
+  document.getElementById("saveBtn").style.display = "block";
+  document.getElementById("updateBtn").style.display = "none";
+  autoFill();
+};
+
+/* DELETE */
 window.deleteMatch = id => {
   if (!confirm("Obrisati meč?")) return;
   remove(window.dbRef(`matches/${id}`));
