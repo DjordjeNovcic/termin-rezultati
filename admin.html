@@ -405,7 +405,7 @@ onValue(window.dbRef("matches"), snap=>{
 window.editMatch = async id => {
   editingId = id;
 
-  const snap = await get(window.dbRef(⁠ matches/${id} ⁠));
+  const snap = await get(window.dbRef(`matches/${id}`));
   const m = snap.val();
 
   round.value=m.round;
