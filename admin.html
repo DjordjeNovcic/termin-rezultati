@@ -20,73 +20,79 @@
       justify-content:center; border:1px solid #ddd;
     }
     #adminNav button {
-      padding:8px 12px; border:none; border-radius:6px;
-      background:#0044cc; color:white; cursor:pointer;
+      padding:8px 12px; border-radius:6px; border:none;
+      background:#0044cc; color:white; cursor:pointer; font-size:14px;
     }
 
     .row { display:flex; gap:10px; margin-bottom:12px; }
-    input, textarea {
-      padding:10px; border-radius:6px; border:1px solid #aaa;
-      font-size:15px;
+
+    input {
+      flex:1; padding:10px; border-radius:6px;
+      border:1px solid #aaa; font-size:15px;
     }
-    textarea { width:100%; min-height:140px; resize:vertical; }
+    textarea {
+      width:100%; padding:12px; border-radius:6px;
+      border:1px solid #aaa; font-size:15px;
+      resize:vertical; min-height:140px;
+    }
 
     .player-btn {
-      padding:6px 12px; margin:4px; display:inline-block;
-      border-radius:6px; background:#eee; border:1px solid #bbb;
-      cursor:pointer; user-select:none;
+      padding:6px 12px; border-radius:6px; background:#eee;
+      border:1px solid #bbb; cursor:pointer; margin:4px;
+      display:inline-block; user-select:none;
     }
-    .player-btn.active { background:#008000; color:white; border-color:#006600; }
+    .player-btn.active {
+      background:#008000; color:white; border-color:#006600;
+    }
 
     .tag {
-      display:inline-flex; align-items:center;
       background:#ddd; padding:6px 10px; border-radius:6px;
-      margin:4px;
+      margin:4px; display:inline-flex; align-items:center; gap:6px;
     }
     .tag button {
-      margin-left:6px; padding:0 6px;
-      background:#c00000; color:white; border:none; border-radius:4px;
-      cursor:pointer;
+      border:none; background:#c00000; color:white;
+      border-radius:4px; cursor:pointer; padding:0 6px;
     }
 
-    .save-btn,.update-btn,.cancel-btn{
-      width:100%; padding:12px; border:none; border-radius:6px;
-      font-size:16px; margin-top:10px; cursor:pointer;
+    .save-btn, .update-btn, .cancel-btn {
+      width:100%; padding:12px; border-radius:6px;
+      font-size:16px; cursor:pointer; margin-top:10px; border:none;
     }
-    .save-btn{background:#008000;color:white;}
-    .update-btn{background:#d48a00;color:white;display:none;}
-    .cancel-btn{background:#555;color:white;display:none;}
+    .save-btn { background:#008000; color:white; }
+    .update-btn { background:#d48a00; color:white; display:none; }
+    .cancel-btn { background:#555; color:white; display:none; }
 
-    table{width:100%; border-collapse:collapse; margin-top:25px;}
-    th{background:#ececec; padding:10px; border-bottom:2px solid #bbb;}
-    td{padding:10px; border-bottom:1px solid #ddd;}
-
-    .edit-btn, .del-btn{
-      padding:6px 10px; border:none; color:white; border-radius:4px;
-      cursor:pointer;
+    table { width:100%; border-collapse:collapse; margin-top:25px; }
+    th {
+      background:#ececec; padding:10px; border-bottom:2px solid #bbb; text-align:left;
     }
-    .edit-btn{background:#0044cc;}
-    .del-btn{background:#c00000;}
+    td {
+      padding:10px; border-bottom:1px solid #ddd;
+    }
+    .edit-btn, .del-btn {
+      padding:6px 10px; border-radius:4px; font-size:13px;
+      cursor:pointer; border:none; color:white;
+    }
+    .edit-btn { background:#0044cc; }
+    .del-btn  { background:#c00000; }
+
   </style>
 </head>
-
 <body>
 
-<!-- NAV -->
 <div id="adminNav">
-  <button onclick="window.location.href='admin.html'">Mečevi</button>
-  <button onclick="window.location.href='admin-igraci.html'">Igrači</button>
+  <button onclick="window.location='admin.html'">Mečevi</button>
+  <button onclick="window.location='admin-igraci.html'">Igrači</button>
   <button onclick="logout()">Logout</button>
 </div>
 
 <script>
-  if (localStorage.getItem("admin") !== "1") window.location.href = "login.html";
-  function logout(){ localStorage.removeItem("admin"); window.location.href = "index.html"; }
+  if (localStorage.getItem("admin") !== "1") location.href = "login.html";
+  function logout(){ localStorage.removeItem("admin"); location.href="index.html"; }
 </script>
 
 <h1>Upravljanje mečevima</h1>
 
-<!-- INPUT POLJA -->
 <div class="row">
   <input id="round" placeholder="Kolo">
   <input id="date" type="date">
@@ -102,7 +108,6 @@
   <textarea id="info" placeholder="Info o meču..."></textarea>
 </div>
 
-<!-- IGRALI -->
 <h3>Igrali</h3>
 <b>CRVENI</b>
 <div id="playedRed"></div>
@@ -110,14 +115,12 @@
 <b style="margin-top:12px; display:block;">PLAVI</b>
 <div id="playedBlue"></div>
 
-<!-- STRELCI -->
 <h3 style="margin-top:20px;">Strelci</h3>
-
 <b>CRVENI</b>
 <div id="scorersRedPlayers"></div>
 <div id="scorersRedTags"></div>
 
-<b style="margin-top:12px;">PLAVI</b>
+<b style="margin-top:12px; display:block;">PLAVI</b>
 <div id="scorersBluePlayers"></div>
 <div id="scorersBlueTags"></div>
 
@@ -125,66 +128,67 @@
 <button class="update-btn" id="updateBtn">Sačuvaj izmene</button>
 <button class="cancel-btn" id="cancelBtn">Otkaži izmenu</button>
 
-<!-- LISTA -->
 <table>
-<thead>
-  <tr><th>Kolo</th><th>Rezultat</th><th>Datum</th><th>Akcije</th></tr>
-</thead>
-<tbody id="matchList"></tbody>
+  <thead>
+    <tr>
+      <th>Kolo</th>
+      <th>Rezultat</th>
+      <th>Datum</th>
+      <th>Akcije</th>
+    </tr>
+  </thead>
+  <tbody id="matchList"></tbody>
 </table>
 
 <script type="module">
-import { onValue, push, update, remove, get } 
+import { onValue, push, update, remove, get }
   from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
 const ref = window.dbRef("matches");
 
+let players = { crveni:{}, plavi:{} };
 let editingId = null;
 let scorers = [];
-let players = { crveni:{}, plavi:{} };
 
-/* ---------------------------- LOAD PLAYERS -------------------------------- */
+/* --------------------- UČITAJ IGRAČE --------------------- */
 onValue(window.dbRef("players"), snap => {
   players = snap.val() || { crveni:{}, plavi:{} };
   renderPlayers();
 });
 
-/* ------------------------- RENDER PLAYERS + SCORERS ------------------------ */
+/* --------------------- PRIKAZ IGRAČA --------------------- */
 function renderPlayers(){
-  const PR  = document.getElementById("playedRed");
-  const PB  = document.getElementById("playedBlue");
-  const SRP = document.getElementById("scorersRedPlayers");
-  const SBP = document.getElementById("scorersBluePlayers");
+  const PR = document.getElementById("playedRed");
+  const PB = document.getElementById("playedBlue");
+  const SR = document.getElementById("scorersRedPlayers");
+  const SB = document.getElementById("scorersBluePlayers");
 
-  PR.innerHTML = PB.innerHTML = SRP.innerHTML = SBP.innerHTML = "";
+  PR.innerHTML = PB.innerHTML = SR.innerHTML = SB.innerHTML = "";
 
-  for (const [id,p] of Object.entries(players.crveni)){
-    PR.innerHTML  += `<div class="player-btn" data-id="${id}">${p.name}</div>`;
-    SRP.innerHTML += `<div class="player-btn" data-team="crveni" data-id="${id}">${p.name}</div>`;
-  }
+  Object.entries(players.crveni).forEach(([id,p])=>{
+    PR.innerHTML += `<div class='player-btn' data-id='${id}'>${p.name}</div>`;
+    SR.innerHTML += `<div class='player-btn' data-team='crveni' data-id='${id}'>${p.name}</div>`;
+  });
 
-  for (const [id,p] of Object.entries(players.plavi)){
-    PB.innerHTML  += `<div class="player-btn" data-id="${id}">${p.name}</div>`;
-    SBP.innerHTML += `<div class="player-btn" data-team="plavi" data-id="${id}">${p.name}</div>`;
-  }
+  Object.entries(players.plavi).forEach(([id,p])=>{
+    PB.innerHTML += `<div class='player-btn' data-id='${id}'>${p.name}</div>`;
+    SB.innerHTML += `<div class='player-btn' data-team='plavi' data-id='${id}'>${p.name}</div>`;
+  });
 
-  // toggle igrali
   document.querySelectorAll("#playedRed .player-btn,#playedBlue .player-btn")
     .forEach(btn => btn.onclick = () => btn.classList.toggle("active"));
 
-  // add scorers
   document.querySelectorAll("#scorersRedPlayers .player-btn,#scorersBluePlayers .player-btn")
     .forEach(btn => btn.onclick = () => {
       const id = btn.dataset.id;
       const team = btn.dataset.team;
       const name = players[team][id].name;
-
-      scorers.push({ id, team, name });
+      scorers.push({id,team,name});
       refreshTags();
     });
 }
 
-/* -------------------------- RENDER TAGOVI STRELACA ------------------------- */
+/* --------------------- TAGOVI STRELACA --------------------- */
 function refreshTags(){
   const RT = document.getElementById("scorersRedTags");
   const BT = document.getElementById("scorersBlueTags");
@@ -192,52 +196,48 @@ function refreshTags(){
   RT.innerHTML = BT.innerHTML = "";
 
   scorers.forEach((s,i)=>{
-    const html = `
-      <div class="tag">
+    const t = `
+      <div class='tag'>
         ${s.name}
-        <button onclick="removeGoal(${i})">x</button>
+        <button onclick='removeGoal(${i})'>x</button>
       </div>`;
-    if (s.team === "crveni") RT.innerHTML += html;
-    else BT.innerHTML += html;
+    if (s.team==="crveni") RT.innerHTML += t;
+    else BT.innerHTML += t;
   });
 }
 
-window.removeGoal = i => {
-  scorers.splice(i,1);
-  refreshTags();
-};
+window.removeGoal = i => { scorers.splice(i,1); refreshTags(); };
 
-/* -------------------------- PLAYED SELECTION ------------------------------- */
+/* --------------------- IGRALI --------------------- */
 function getPlayed(){
   const played={};
   document.querySelectorAll("#playedRed .active,#playedBlue .active")
-    .forEach(btn => played[btn.dataset.id] = true);
+    .forEach(b => played[b.dataset.id] = true);
   return played;
 }
 
-/* ---------------------------- VALIDACIJA ---------------------------------- */
+/* --------------------- VALIDACIJA --------------------- */
 function validate(){
   const e=[];
   if(!round.value.trim()) e.push("Kolo?");
   if(!date.value.trim()) e.push("Datum?");
   if(!time.value.trim()) e.push("Vreme?");
-  if(!red.value.trim())  e.push("Golovi Crveni?");
+  if(!red.value.trim()) e.push("Golovi Crveni?");
   if(!blue.value.trim()) e.push("Golovi Plavi?");
   if(!info.value.trim()) e.push("Info?");
-  if(Object.keys(getPlayed()).length===0) e.push("Nema igrali.");
-  if(scorers.length===0) e.push("Nema strelaca.");
+  if(Object.keys(getPlayed()).length===0) e.push("Igrali?");
+  if(scorers.length===0) e.push("Strelci?");
 
   if(e.length){ alert("Greške:\n\n"+e.join("\n")); return false; }
   return true;
 }
 
-/* ---------------------------- STATISTIKA ---------------------------------- */
-async function updateStat(team,id,field,delta){
+/* --------------------- STATISTIKA --------------------- */
+async function updateStat(team,id,field,dir){
   const p = players[team][id];
   if(!p) return;
-  update(window.dbRef(`players/${team}/${id}`), {
-    [field]: (p[field]||0) + delta
-  });
+  const val = (p[field]||0) + dir;
+  update(window.dbRef(`players/${team}/${id}`), {[field]:val});
 }
 
 async function applyStats(match,dir){
@@ -251,102 +251,107 @@ async function applyStats(match,dir){
   });
 }
 
-/* ----------------------------- SAVE NEW ----------------------------------- */
-saveBtn.onclick = async ()=>{
+/* --------------------- SAVE --------------------- */
+saveBtn.onclick = async () =>{
   if(!validate()) return;
 
   const match={
-    round:round.value, date:date.value, time:time.value,
-    red:+red.value,   blue:+blue.value,
+    round:round.value,
+    date:date.value,
+    time:time.value,
+    red:+red.value,
+    blue:+blue.value,
     info:info.value.trim(),
     played:getPlayed(),
-    scorers:[...scorers],
+    scorers,
     timestamp:Date.now()
   };
 
-  await push(ref,match);
-  await applyStats(match,+1);
-
+  await push(ref, match);
+  await applyStats(match, +1);
   clearForm();
 };
 
-/* ----------------------------- UPDATE EXISTING ----------------------------- */
-updateBtn.onclick = async ()=>{
+/* --------------------- UPDATE --------------------- */
+updateBtn.onclick = async () =>{
   if(!validate()) return;
 
   const old = (await get(window.dbRef(`matches/${editingId}`))).val();
   await applyStats(old,-1);
 
   const match={
-    round:round.value, date:date.value, time:time.value,
-    red:+red.value, blue:+blue.value,
+    round:round.value,
+    date:date.value,
+    time:time.value,
+    red:+red.value,
+    blue:+blue.value,
     info:info.value.trim(),
     played:getPlayed(),
-    scorers:[...scorers]
+    scorers
   };
 
-  await update(window.dbRef(`matches/${editingId}`),match);
+  await update(window.dbRef(`matches/${editingId}`), match);
   await applyStats(match,+1);
 
   clearForm();
 };
 
-/* ----------------------------- DELETE MATCH ------------------------------- */
+/* --------------------- DELETE --------------------- */
 window.deleteMatch = async id =>{
   if(!confirm("Obrisati meč?")) return;
   const m = (await get(window.dbRef(`matches/${id}`))).val();
   await applyStats(m,-1);
-  remove(window.dbRef(`matches/${id}`));
+  await remove(window.dbRef(`matches/${id}`));
 };
 
-/* ----------------------------- CLEAR FORM -------------------------------- */
+/* --------------------- CLEAR FORM --------------------- */
 function clearForm(){
   editingId = null;
+
   round.value = "";
   date.value  = "";
   time.value  = "";
   red.value   = "";
   blue.value  = "";
   info.value  = "";
-  scorers     = [];
 
-  // reset aktivnih dugmića
+  scorers = [];
+
   document.querySelectorAll(".player-btn.active").forEach(b=>b.classList.remove("active"));
 
   refreshTags();
   renderPlayers();
+  autoFill();
 
   saveBtn.style.display="block";
   updateBtn.style.display="none";
   cancelBtn.style.display="none";
-
-  autoFill();
 }
 
 cancelBtn.onclick = clearForm;
 
-/* ----------------------------- LISTA MEČEVA ------------------------------- */
+/* --------------------- LISTA MEČEVA --------------------- */
 onValue(ref,snap=>{
   const tbody=document.getElementById("matchList");
   tbody.innerHTML="";
 
   Object.entries(snap.val()||{})
-    .sort((a,b)=>b[1].timestamp - a[1].timestamp)
+    .sort((a,b)=>b[1].timestamp-a[1].timestamp)
     .forEach(([id,m])=>{
-      tbody.innerHTML += `
-      <tr>
-        <td>${m.round}</td>
-        <td>Crveni ${m.red} - ${m.blue} Plavi</td>
-        <td>${m.date} ${m.time}</td>
-        <td>
-          <button class="edit-btn" onclick="editMatch('${id}')">Izmeni</button>
-          <button class="del-btn" onclick="deleteMatch('${id}')">Obriši</button>
-        </td>
-      </tr>`;
+      tbody.innerHTML+=`
+        <tr>
+          <td>${m.round}</td>
+          <td>Crveni ${m.red} - ${m.blue} Plavi</td>
+          <td>${m.date} ${m.time}</td>
+          <td>
+            <button class='edit-btn' onclick='editMatch("${id}")'>Izmeni</button>
+            <button class='del-btn' onclick='deleteMatch("${id}")'>Obriši</button>
+          </td>
+        </tr>`;
     });
 });
 
-/* ----------------------------- EDIT MATCH --------------------------------- */
+/* --------------------- EDIT MATCH --------------------- */
 window.editMatch = async id =>{
   editingId = id;
 
@@ -359,13 +364,15 @@ window.editMatch = async id =>{
   blue.value  = m.blue;
   info.value  = m.info;
 
-  scorers = [...m.scorers];
-  refreshTags();
+  scorers = [...(m.scorers||[])];
+
   renderPlayers();
+  refreshTags();
 
   document.querySelectorAll(".player-btn").forEach(b=>b.classList.remove("active"));
+
   Object.keys(m.played||{}).forEach(pid=>{
-    const el=document.querySelector(`.player-btn[data-id="${pid}"]`);
+    const el = document.querySelector(`.player-btn[data-id="${pid}"]`);
     if(el) el.classList.add("active");
   });
 
@@ -374,16 +381,17 @@ window.editMatch = async id =>{
   cancelBtn.style.display="block";
 };
 
-/* ---------------------- AUTO KOLO + AUTO ČETVRTAK ------------------------- */
+/* --------------------- AUTO Kolo + Četvrtak 18h --------------------- */
 function autoFill(){
+  onValue(ref,snap=>{
+    const list = Object.values(snap.val()||{});
+    round.value = list.length + 1;
+  }, {onlyOnce:true});
+
   const d = getNextThursday();
   date.value = d.toISOString().split("T")[0];
   time.value = "18:00";
 }
-
-onValue(ref,snap=>{
-  round.value = Object.values(snap.val()||{}).length + 1;
-});
 
 function getNextThursday(){
   const now=new Date();
