@@ -47,68 +47,26 @@
       margin-bottom: 12px;
     }
 
-    input, textarea, select {
+    .full-row {
+      display: block;
+      width: 100%;
+    }
+
+    input, textarea {
       flex: 1;
       padding: 10px;
       border-radius: 6px;
       border: 1px solid #aaa;
       font-size: 15px;
+      box-sizing: border-box;
     }
 
     textarea {
-      min-height: 120px;
+      min-height: 140px;
       resize: vertical;
+      width: 100%;
     }
 
-    .section-title {
-      margin-top: 25px;
-      margin-bottom: 10px;
-      font-weight: bold;
-      font-size: 17px;
-    }
-
-    .player-list {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: 15px;
-    }
-
-    .player-item {
-      padding: 6px 12px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      cursor: pointer;
-      user-select: none;
-    }
-
-    .player-item.active {
-      background: #d9ffd9;
-      border-color: #28a745;
-    }
-
-    /* STRELci */
-    .goal-list {
-      margin-top: 10px;
-      margin-bottom: 15px;
-    }
-
-    .goal-entry {
-      background: #f3f3f3;
-      padding: 6px 10px;
-      border-radius: 6px;
-      display: inline-block;
-      margin: 4px;
-    }
-
-    .goal-entry span {
-      margin-left: 8px;
-      color: red;
-      cursor: pointer;
-      font-weight: bold;
-    }
-
-    /* BUTTONS */
     .save-btn, .update-btn, .cancel-btn {
       width: 100%;
       padding: 12px;
@@ -117,28 +75,60 @@
       cursor: pointer;
       margin-top: 10px;
       border: none;
+      color: white;
     }
 
-    .save-btn { background: #008000; color:white; }
-    .update-btn { background: #d48a00; color:white; display:none; }
-    .cancel-btn { background:#555; color:white; display:none; }
+    .save-btn { background: #008000; }
+    .update-btn { background: #d48a00; display:none; }
+    .cancel-btn { background:#555; display:none; }
+
+    /* PLAYERS CHECKBOXES */
+    .section-title {
+      font-weight: bold;
+      margin-top: 20px;
+      margin-bottom: 8px;
+    }
+
+    .players-box {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .player-tag {
+      padding: 6px 12px;
+      border: 1px solid #888;
+      border-radius: 6px;
+      cursor: pointer;
+      background: #f7f7f7;
+      user-select: none;
+    }
+
+    .player-tag.selected {
+      background: #cce5ff;
+      border-color: #007bff;
+      font-weight: bold;
+    }
 
     /* TABLE */
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 35px;
+      margin-top: 25px;
     }
 
     th {
       background: #ececec;
       padding: 10px;
       border-bottom: 2px solid #bbb;
+      text-align: center;
     }
 
     td {
       padding: 10px;
       border-bottom: 1px solid #ddd;
+      text-align: center;
     }
 
     .edit-btn, .del-btn {
@@ -156,6 +146,7 @@
 </head>
 <body>
 
+<!-- NAV -->
 <div id="adminNav">
   <button onclick="window.location.href='admin.html'">Mečevi</button>
   <button onclick="window.location.href='admin-igraci.html'">Igrači</button>
@@ -166,6 +157,7 @@
   if (localStorage.getItem("admin") !== "1") {
       window.location.href = "login.html";
   }
+
   function logout() {
       localStorage.removeItem("admin");
       window.location.href = "index.html";
@@ -174,43 +166,47 @@
 
 <h1>Upravljanje mečevima</h1>
 
-<!-- OSNOVNI PODACI -->
+<!-- FORM -->
+
+<!-- RED 1 -->
 <div class="row">
   <input id="round" placeholder="Kolo">
   <input id="date" type="date">
   <input id="time" type="time">
 </div>
 
+<!-- RED 2 -->
 <div class="row">
   <input id="red" type="number" placeholder="Golovi Crveni" min="0" max="20">
   <input id="blue" type="number" placeholder="Golovi Plavi" min="0" max="20">
 </div>
 
 <!-- INFO -->
-<textarea id="info" placeholder="Info o meču (opciono)..."></textarea>
+<div class="row full-row">
+  <textarea id="info" placeholder="Info o meču (opciono) – slobodno piši detaljan opis, golove, komentare..."></textarea>
+</div>
 
-<!-- KO JE IGRAO -->
-<div class="section-title" style="color:#c00000;">Igrali (Crveni)</div>
-<div id="playedCrveni" class="player-list"></div>
+<!-- IGRALI (CRVENI) -->
+<div class="section-title">Igrali (Crveni)</div>
+<div class="players-box" id="playedRed"></div>
 
-<div class="section-title" style="color:#0044cc;">Igrali (Plavi)</div>
-<div id="playedPlavi" class="player-list"></div>
+<!-- IGRALI (PLAVI) -->
+<div class="section-title">Igrali (Plavi)</div>
+<div class="players-box" id="playedBlue"></div>
 
-<!-- STRELCI -->
-<div class="section-title" style="color:#c00000;">Strelci – Crveni</div>
-<div id="scorersCrveni" class="player-list"></div>
-<div id="goalsCrveni" class="goal-list"></div>
+<!-- STRELCI (CRVENI) -->
+<div class="section-title">Strelci – Crveni</div>
+<div class="players-box" id="goalsRed"></div>
 
-<div class="section-title" style="color:#0044cc;">Strelci – Plavi</div>
-<div id="scorersPlavi" class="player-list"></div>
-<div id="goalsPlavi" class="goal-list"></div>
+<!-- STRELCI (PLAVI) -->
+<div class="section-title">Strelci – Plavi</div>
+<div class="players-box" id="goalsBlue"></div>
 
-<!-- BUTTONS -->
 <button class="save-btn" id="saveBtn">Sačuvaj meč</button>
 <button class="update-btn" id="updateBtn">Izmeni meč</button>
 <button class="cancel-btn" id="cancelBtn">Otkaži</button>
 
-<!-- LISTA MEČEVA -->
+<!-- TABLE -->
 <table>
   <thead>
     <tr>
@@ -226,98 +222,47 @@
 <script type="module">
 import { onValue, push, update, remove, get } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
-const matchesRef = window.dbRef("matches");
-const playersRef = window.dbRef("players");
-
-let editingId = null;
-
-// LOCAL STATE
-let playersCrveni = [];
-let playersPlavi = [];
-
-let playedC = new Set();
-let playedP = new Set();
-
-let goalsC = [];
-let goalsP = [];
-
 /* LOAD PLAYERS */
-onValue(playersRef, snap => {
-  const data = snap.val() || {};
-  playersCrveni = Object.entries(data.crveni || {}).map(([id, p]) => ({id, ...p}));
-  playersPlavi  = Object.entries(data.plavi  || {}).map(([id, p]) => ({id, ...p}));
+function loadPlayers() {
+  const redBox = document.getElementById("playedRed");
+  const blueBox = document.getElementById("playedBlue");
+  const goalsRed = document.getElementById("goalsRed");
+  const goalsBlue = document.getElementById("goalsBlue");
 
-  renderPlayers();
+  onValue(window.dbRef("players/crveni"), snap => {
+    const data = snap.val() || {};
+    redBox.innerHTML = "";
+    goalsRed.innerHTML = "";
+
+    Object.entries(data).forEach(([id, p]) => {
+      redBox.innerHTML += `<div class="player-tag" data-id="${id}" data-team="crveni">${p.name}</div>`;
+      goalsRed.innerHTML += `<div class="player-tag" data-id="${id}" data-team="crveni">${p.name}</div>`;
+    });
+  });
+
+  onValue(window.dbRef("players/plavi"), snap => {
+    const data = snap.val() || {};
+    blueBox.innerHTML = "";
+    goalsBlue.innerHTML = "";
+
+    Object.entries(data).forEach(([id, p]) => {
+      blueBox.innerHTML += `<div class="player-tag" data-id="${id}" data-team="plavi">${p.name}</div>`;
+      goalsBlue.innerHTML += `<div class="player-tag" data-id="${id}" data-team="plavi">${p.name}</div>`;
+    });
+  });
+}
+
+loadPlayers();
+
+/* SELECT TOGGLE */
+document.addEventListener("click", e => {
+  if (e.target.classList.contains("player-tag")) {
+    e.target.classList.toggle("selected");
+  }
 });
 
-function renderPlayers() {
-  // CRVENI – ko je igrao
-  playedCrveni.innerHTML = "";
-  playersCrveni.forEach(p=>{
-    const div = document.createElement("div");
-    div.className = "player-item" + (playedC.has(p.id) ? " active" : "");
-    div.innerText = p.name;
-    div.onclick = () => {
-      playedC.has(p.id) ? playedC.delete(p.id) : playedC.add(p.id);
-      renderPlayers();
-    };
-    playedCrveni.appendChild(div);
-  });
-
-  // PLAVI – ko je igrao
-  playedPlavi.innerHTML = "";
-  playersPlavi.forEach(p=>{
-    const div = document.createElement("div");
-    div.className = "player-item" + (playedP.has(p.id) ? " active" : "");
-    div.innerText = p.name;
-    div.onclick = () => {
-      playedP.has(p.id) ? playedP.delete(p.id) : playedP.add(p.id);
-      renderPlayers();
-    };
-    playedPlavi.appendChild(div);
-  });
-
-  // STRELCI CRVENI
-  scorersCrveni.innerHTML = "";
-  playersCrveni.forEach(p=>{
-    const div = document.createElement("div");
-    div.className = "player-item";
-    div.innerText = p.name;
-    div.onclick = () => { goalsC.push(p.id); renderGoals(); };
-    scorersCrveni.appendChild(div);
-  });
-
-  // STRELCI PLAVI
-  scorersPlavi.innerHTML = "";
-  playersPlavi.forEach(p=>{
-    const div = document.createElement("div");
-    div.className = "player-item";
-    div.innerText = p.name;
-    div.onclick = () => { goalsP.push(p.id); renderGoals(); };
-    scorersPlavi.appendChild(div);
-  });
-}
-
-function renderGoals() {
-  goalsCrveni.innerHTML = "";
-  goalsC.forEach((id, i)=>{
-    const p = playersCrveni.find(x=>x.id===id);
-    goalsCrveni.innerHTML += `<div class="goal-entry">${p.name} <span onclick="removeGoalC(${i})">×</span></div>`;
-  });
-
-  goalsPlavi.innerHTML = "";
-  goalsP.forEach((id, i)=>{
-    const p = playersPlavi.find(x=>x.id===id);
-    goalsPlavi.innerHTML += `<div class="goal-entry">${p.name} <span onclick="removeGoalP(${i})">×</span></div>`;
-  });
-}
-
-window.removeGoalC = i => { goalsC.splice(i,1); renderGoals(); }
-window.removeGoalP = i => { goalsP.splice(i,1); renderGoals(); }
-
-
-/* AUTO POPUNJAVANJE */
-function getNextThu() {
+/* AUTO POPUNI DATUM/VREME */
+function getNextThursday() {
   const now = new Date();
   let diff = (4 - now.getDay() + 7) % 7;
   if (diff === 0) diff = 7;
@@ -327,27 +272,25 @@ function getNextThu() {
 }
 
 function autoFill() {
-  const d = getNextThu();
+  const d = getNextThursday();
   date.value = d.toISOString().split("T")[0];
   time.value = "18:00";
 }
 autoFill();
 
-/* AUTO KOLO */
-onValue(matchesRef, snap => {
-  const arr = Object.values(snap.val() || {});
-  round.value = arr.length + 1;
-});
+/* LOAD MATCH LIST */
+const ref = window.dbRef("matches");
+let editingId = null;
 
-/* LOAD LISTA MEČEVA */
-onValue(matchesRef, snap => {
+onValue(ref, snap => {
   const data = snap.val() || {};
-  matchList.innerHTML = "";
+  const tbody = document.getElementById("matchList");
+  tbody.innerHTML = "";
 
   Object.entries(data)
     .sort((a,b)=>b[1].timestamp - a[1].timestamp)
-    .forEach(([id, m])=>{
-      matchList.innerHTML += `
+    .forEach(([id, m]) => {
+      tbody.innerHTML += `
         <tr>
           <td>${m.round}</td>
           <td>Crveni ${m.red} - ${m.blue} Plavi</td>
@@ -361,58 +304,31 @@ onValue(matchesRef, snap => {
     });
 });
 
-/* SAVE MATCH */
-saveBtn.onclick = async () => {
-  const obj = {
+/* SAVE */
+saveBtn.onclick = () => {
+  const played_r = [...document.querySelectorAll("#playedRed .selected")].map(x=>x.dataset.id);
+  const played_b = [...document.querySelectorAll("#playedBlue .selected")].map(x=>x.dataset.id);
+  const goals_r = [...document.querySelectorAll("#goalsRed .selected")].map(x=>x.dataset.id);
+  const goals_b = [...document.querySelectorAll("#goalsBlue .selected")].map(x=>x.dataset.id);
+
+  push(ref, {
     round: round.value,
     date: date.value,
     time: time.value,
     red: Number(red.value),
     blue: Number(blue.value),
     info: info.value.trim(),
-    playedCrveni: [...playedC],
-    playedPlavi: [...playedP],
-    goalsCrveni: goalsC,
-    goalsPlavi: goalsP,
+    played_red: played_r,
+    played_blue: played_b,
+    scorers_red: goals_r,
+    scorers_blue: goals_b,
     timestamp: Date.now()
-  };
-
-  const newRef = await push(matchesRef, obj);
-
-  await applyStats(obj);
+  });
 
   clearForm();
 };
 
-/* APPLY STATISTICS */
-async function applyStats(m) {
-  // igre
-  m.playedCrveni.forEach(id => {
-    update(window.dbRef(`players/crveni/${id}`), { games: playersCrveni.find(x=>x.id===id).games + 1 });
-  });
-  m.playedPlavi.forEach(id => {
-    update(window.dbRef(`players/plavi/${id}`), { games: playersPlavi.find(x=>x.id===id).games + 1 });
-  });
-
-  // golovi
-  m.goalsCrveni.forEach(id => {
-    const p = playersCrveni.find(x=>x.id===id);
-    update(window.dbRef(`players/crveni/${id}`), { goals: p.goals + 1 });
-  });
-
-  m.goalsPlavi.forEach(id => {
-    const p = playersPlavi.find(x=>x.id===id);
-    update(window.dbRef(`players/plavi/${id}`), { goals: p.goals + 1 });
-  });
-}
-
-/* DELETE */
-window.deleteMatch = id => {
-  if (!confirm("Obrisati meč?")) return;
-  remove(window.dbRef(`matches/${id}`));
-};
-
-/* EDIT MODE */
+/* EDIT */
 window.editMatch = async id => {
   editingId = id;
 
@@ -426,21 +342,28 @@ window.editMatch = async id => {
   blue.value = m.blue;
   info.value = m.info || "";
 
-  playedC = new Set(m.playedCrveni || []);
-  playedP = new Set(m.playedPlavi || []);
-  goalsC = [...(m.goalsCrveni || [])];
-  goalsP = [...(m.goalsPlavi || [])];
+  document.querySelectorAll(".player-tag").forEach(tag => {
+    const id = tag.dataset.id;
+    tag.classList.remove("selected");
 
-  renderPlayers();
-  renderGoals();
+    if (m.played_red?.includes(id) || m.played_blue?.includes(id) ||
+        m.scorers_red?.includes(id) || m.scorers_blue?.includes(id)) {
+      tag.classList.add("selected");
+    }
+  });
 
   saveBtn.style.display = "none";
   updateBtn.style.display = "block";
   cancelBtn.style.display = "block";
 };
 
-/* UPDATE MATCH */
+/* UPDATE */
 updateBtn.onclick = () => {
+  const played_r = [...document.querySelectorAll("#playedRed .selected")].map(x=>x.dataset.id);
+  const played_b = [...document.querySelectorAll("#playedBlue .selected")].map(x=>x.dataset.id);
+  const goals_r = [...document.querySelectorAll("#goalsRed .selected")].map(x=>x.dataset.id);
+  const goals_b = [...document.querySelectorAll("#goalsBlue .selected")].map(x=>x.dataset.id);
+
   update(window.dbRef(`matches/${editingId}`), {
     round: round.value,
     date: date.value,
@@ -448,13 +371,19 @@ updateBtn.onclick = () => {
     red: Number(red.value),
     blue: Number(blue.value),
     info: info.value.trim(),
-    playedCrveni: [...playedC],
-    playedPlavi: [...playedP],
-    goalsCrveni: goalsC,
-    goalsPlavi: goalsP
+    played_red: played_r,
+    played_blue: played_b,
+    scorers_red: goals_r,
+    scorers_blue: goals_b
   });
 
   clearForm();
+};
+
+/* DELETE */
+window.deleteMatch = id => {
+  if (!confirm("Obrisati meč?")) return;
+  remove(window.dbRef(`matches/${id}`));
 };
 
 /* CANCEL */
@@ -468,19 +397,11 @@ function clearForm() {
   blue.value = "";
   info.value = "";
 
-  playedC = new Set();
-  playedP = new Set();
-  goalsC = [];
-  goalsP = [];
-
-  renderPlayers();
-  renderGoals();
-
-  autoFill();
-
   saveBtn.style.display = "block";
   updateBtn.style.display = "none";
   cancelBtn.style.display = "none";
+
+  document.querySelectorAll(".player-tag").forEach(t => t.classList.remove("selected"));
 }
 </script>
 
