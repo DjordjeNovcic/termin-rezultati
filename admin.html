@@ -174,12 +174,12 @@ function renderPlayers(){
   SBP.innerHTML = "";
 
   Object.keys(players.crveni).forEach(name=>{
-    PR.innerHTML  += `<div class='player-btn' data-name='${name}'>${name}</div>`;
+    PR.innerHTML  += `<div class='player-btn' data-name='${name}' data-team='crveni'>${name}</div>`;
     SRP.innerHTML += `<div class='player-btn' data-team='crveni' data-name='${name}'>${name}</div>`;
   });
 
   Object.keys(players.plavi).forEach(name=>{
-    PB.innerHTML  += `<div class='player-btn' data-name='${name}'>${name}</div>`;
+    PB.innerHTML  += `<div class='player-btn' data-name='${name}' data-team='plavi'>${name}</div>`;
     SBP.innerHTML += `<div class='player-btn' data-team='plavi' data-name='${name}'>${name}</div>`;
   });
 
@@ -196,7 +196,7 @@ function renderPlayers(){
     });
 }
 
-/* TAGOVI (strelci) */
+/* TAGOVI STRELACA */
 function refreshTags(){
   const RT = document.getElementById("scorersRedTags");
   const BT = document.getElementById("scorersBlueTags");
@@ -217,7 +217,7 @@ window.removeGoal = i => {
 function getPlayed(){
   const played={};
   document.querySelectorAll("#playedRed .active,#playedBlue .active")
-    .forEach(btn => played[btn.dataset.name] = true);
+    .forEach(btn => played[btn.dataset.name] = btn.dataset.team);
   return played;
 }
 
@@ -248,9 +248,8 @@ async function updateOne(team,name,field,delta){
 }
 
 async function applyStats(match,dir){
-  Object.keys(match.played||{}).forEach(name=>{
-    if(players.crveni[name]) updateOne("crveni",name,"matches",dir);
-    if(players.plavi[name])  updateOne("plavi",name,"matches",dir);
+  Object.entries(match.played || {}).forEach(([name,team])=>{
+    updateOne(team,name,"matches",dir);
   });
 
   (match.scorers||[]).forEach(s=>{
@@ -258,13 +257,16 @@ async function applyStats(match,dir){
   });
 }
 
-/* SAVE */
+/* SAVE NEW MATCH */
 saveBtn.onclick = async () =>{
   if(!validate()) return;
 
   const match={
-    round:round.value, date:date.value, time:time.value,
-    red:+red.value, blue:+blue.value,
+    round:round.value,
+    date:date.value,
+    time:time.value,
+    red:+red.value,
+    blue:+blue.value,
     info:info.value.trim(),
     played:getPlayed(),
     scorers:[...scorers],
@@ -273,10 +275,11 @@ saveBtn.onclick = async () =>{
 
   await push(ref,match);
   await applyStats(match,+1);
+
   clearForm();
 };
 
-/* UPDATE */
+/* UPDATE EXISTING MATCH */
 updateBtn.onclick = async () =>{
   if(!validate()) return;
 
@@ -286,8 +289,11 @@ updateBtn.onclick = async () =>{
   await applyStats(oldMatch,-1);
 
   const newMatch = {
-    round:round.value, date:date.value, time:time.value,
-    red:+red.value, blue:+blue.value,
+    round:round.value,
+    date:date.value,
+    time:time.value,
+    red:+red.value,
+    blue:+blue.value,
     info:info.value.trim(),
     played:getPlayed(),
     scorers:[...scorers]
@@ -299,7 +305,7 @@ updateBtn.onclick = async () =>{
   clearForm();
 };
 
-/* DELETE */
+/* DELETE MEČ */
 window.deleteMatch = async id =>{
   if(!confirm("Obrisati meč?")) return;
   const snap = await get(window.dbRef(`matches/${id}`));
@@ -307,7 +313,7 @@ window.deleteMatch = async id =>{
   remove(window.dbRef(`matches/${id}`));
 };
 
-/* CLEAR */
+/* CLEAR FORM */
 function clearForm(){
   editingId=null;
   round.value=date.value=time.value=red.value=blue.value=info.value="";
@@ -319,7 +325,7 @@ function clearForm(){
   cancelBtn.style.display="none";
 }
 
-/* LISTA */
+/* LISTA MEČEVA */
 onValue(ref,snap=>{
   const tbody=document.getElementById("matchList");
   tbody.innerHTML="";
@@ -339,7 +345,7 @@ onValue(ref,snap=>{
     });
 });
 
-/* EDIT */
+/* EDIT MEČA */
 window.editMatch = async id =>{
   editingId=id;
 
@@ -369,11 +375,11 @@ window.editMatch = async id =>{
 
 /* AUTO KOLO */
 onValue(ref,snap=>{
-  const list=Object.values(snap.val()||{});
+  const list=Object.values(snap.val()||[]);
   round.value=list.length+1;
 });
 
-/* AUTO ČETVRTAK */
+/* AUTO POPUNJAVANJE – sledeći četvrtak */
 function getNextThursday(){
   const now=new Date();
   let diff=(4-now.getDay()+7)%7;
@@ -381,6 +387,7 @@ function getNextThursday(){
   const d=new Date(); d.setDate(now.getDate()+diff);
   return d;
 }
+
 (function(){
   const d=getNextThursday();
   date.value=d.toISOString().split("T")[0];
