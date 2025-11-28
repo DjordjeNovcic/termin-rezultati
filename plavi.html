@@ -67,11 +67,18 @@ import { onValue } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-data
 /* UČITAJ IGRAČE PLAVIH */
 onValue(window.dbRef("players/plavi"), snap => {
   const data = snap.val() || {};
-  const tbody = document.getElementById("teamTable");
+  const tbody = document.getElementById("teamTableBlue");
   tbody.innerHTML = "";
 
-  // Sortiraj po imenu
-  const list = Object.values(data).sort((a,b)=>a.name.localeCompare(b.name));
+  // Sort:
+  // 1) goals DESC
+  // 2) name ASC
+  const list = Object.values(data).sort((a, b) => {
+    if ((b.goals || 0) !== (a.goals || 0)) {
+      return (b.goals || 0) - (a.goals || 0);
+    }
+    return a.name.localeCompare(b.name);
+  });
 
   list.forEach(p => {
     tbody.innerHTML += `
@@ -84,6 +91,7 @@ onValue(window.dbRef("players/plavi"), snap => {
   });
 });
 </script>
+
 
 </body>
 </html>
