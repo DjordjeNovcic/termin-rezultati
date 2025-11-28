@@ -420,8 +420,8 @@ window.editMatch = async id => {
 
   document.querySelectorAll(".player-btn").forEach(b => b.classList.remove("active"));
 
-  Object.entries(m.played||{}).forEach(([id,team])=>{
-    document.querySelector(`.player-btn[data-id="${id}"][data-team="${team}"]`)
+  Object.entries(m.played || {}).forEach(([id, team]) => {
+    const btn = document.querySelector(`.player-btn[data-id="${id}"][data-team="${team}"]`);
     if (btn) btn.classList.add("active");
   });
 
