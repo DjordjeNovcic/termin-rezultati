@@ -70,7 +70,7 @@ onValue(window.dbRef("players/plavi"), snap => {
   const tbody = document.getElementById("teamTable");
   tbody.innerHTML = "";
 
-  // Sort:
+  // Sortiraj:
   // 1) goals DESC
   // 2) name ASC
   const list = Object.values(data).sort((a, b) => {
