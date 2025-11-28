@@ -9,32 +9,58 @@
   <style>
     body {
       font-family: Arial;
-      max-width: 700px;
+      max-width: 750px;
       margin: 20px auto;
       padding: 0 20px;
     }
 
     h1 {
       text-align: center;
-      margin-bottom: 25px;
+      margin-bottom: 20px;
     }
 
     h2 {
-      margin-top: 35px;
-      margin-bottom: 10px;
+      margin-top: 30px;
+      margin-bottom: 12px;
+    }
+
+    /* ADMIN NAV */
+    #adminNav {
+      display: flex;
+      gap: 10px;
+      background: #f0f0f0;
+      padding: 12px;
+      margin-bottom: 25px;
+      border-radius: 8px;
+      justify-content: center;
+      border: 1px solid #ddd;
+    }
+
+    #adminNav button {
+      padding: 8px 12px;
+      border-radius: 6px;
+      border: none;
+      background: #0044cc;
+      color: white;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    #adminNav button:hover {
+      background: #003399;
     }
 
     .player-box {
-      background: #f8f8f8;
+      background: #f7f7f7;
       padding: 15px;
       border-radius: 8px;
       margin-bottom: 25px;
     }
 
     .row {
-      margin-bottom: 12px;
       display: flex;
       gap: 10px;
+      margin-bottom: 12px;
     }
 
     input {
@@ -46,8 +72,8 @@
 
     button {
       padding: 10px 14px;
-      border: none;
       border-radius: 6px;
+      border: none;
       cursor: pointer;
     }
 
@@ -75,7 +101,6 @@
     td {
       padding: 10px;
       border-bottom: 1px solid #ddd;
-      text-align: left;
     }
 
     .btn-del {
@@ -83,31 +108,34 @@
       color: white;
       padding: 6px 10px;
       border-radius: 4px;
-      cursor: pointer;
       font-size: 13px;
-    }
-
-    #back {
-      display: block;
-      margin: 35px auto;
-      text-align: center;
-      color: #0044cc;
       cursor: pointer;
-      text-decoration: underline;
     }
   </style>
 </head>
 <body>
 
+<!-- NAV -->
+<div id="adminNav">
+  <button onclick="window.location.href='admin.html'">Mečevi</button>
+  <button onclick="window.location.href='admin-igraci.html'">Igrači</button>
+  <button onclick="logout()">Logout</button>
+</div>
+
 <script>
   if (localStorage.getItem("admin") !== "1") {
     window.location.href = "login.html";
+  }
+
+  function logout() {
+    localStorage.removeItem("admin");
+    window.location.href = "index.html";
   }
 </script>
 
 <h1>Upravljanje igračima</h1>
 
-<!------------------ CRVENI -------------------->
+<!-- CRVENI -->
 <h2 style="color:#c00000;">Crveni</h2>
 
 <div class="player-box">
@@ -127,8 +155,7 @@
   </table>
 </div>
 
-
-<!------------------ PLAVI -------------------->
+<!-- PLAVI -->
 <h2 style="color:#0044cc;">Plavi</h2>
 
 <div class="player-box">
@@ -148,41 +175,27 @@
   </table>
 </div>
 
-
-<div id="back" onclick="window.location.href='index.html'">← Nazad na rezultate</div>
-
 <script type="module">
 import { onValue, push, remove } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
-const base = window.dbRef("players");
-
-/* ---------------- ADD PLAYER ---------------- */
-window.addPlayer = function(team) {
+/* Add */
+window.addPlayer = team => {
   const input = document.getElementById(team === "crveni" ? "crveniName" : "plaviName");
   const name = input.value.trim();
-
   if (!name) return alert("Unesi ime!");
 
-  // default stats
-  const data = {
-    name,
-    games: 0,
-    goals: 0,
-    assists: 0
-  };
-
+  const data = { name, games: 0, goals: 0, assists: 0 };
   push(window.dbRef(`players/${team}`), data);
   input.value = "";
 };
 
-
-/* ---------------- LIST PLAYERS ---------------- */
+/* Load lists */
 function loadPlayers(team) {
   const tbody = document.getElementById(team + "List");
 
   onValue(window.dbRef(`players/${team}`), snap => {
-    const data = snap.val() || {};
     tbody.innerHTML = "";
+    const data = snap.val() || {};
 
     Object.entries(data).forEach(([id, p]) => {
       tbody.innerHTML += `
@@ -200,9 +213,8 @@ function loadPlayers(team) {
 loadPlayers("crveni");
 loadPlayers("plavi");
 
-
-/* ---------------- DELETE PLAYER ---------------- */
-window.deletePlayer = function(team, id) {
+/* Delete */
+window.deletePlayer = (team, id) => {
   if (!confirm("Obrisati igrača?")) return;
   remove(window.dbRef(`players/${team}/${id}`));
 };
