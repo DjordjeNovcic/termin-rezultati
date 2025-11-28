@@ -332,9 +332,8 @@ updateBtn.onclick = async () => {
     scorers:[...scorers]
   };
 
-  await update(window.dbRef(`matches/${editingId}`)⁠), newMatch);
+  await update(window.dbRef(`matches/${editingId}`), newMatch);
   await applyStats(newMatch, +1);
-
   clearForm();
 };
 
