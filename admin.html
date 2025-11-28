@@ -90,10 +90,8 @@
 
     .list-box {
       margin-top: 8px;
-      padding-left: 5px;
     }
 
-    /* TABLE */
     table {
       width: 100%;
       border-collapse: collapse;
@@ -177,7 +175,7 @@
   <textarea id="info" placeholder="Info o meču…"></textarea>
 </div>
 
-<!-- STRELCI I ASISTENTI -->
+<!-- STRELCI -->
 <div class="section-title">⚽ Strelci Crveni</div>
 <div class="row">
   <select id="scorerRedSelect"></select>
@@ -191,20 +189,6 @@
   <button class="add-btn" onclick="addScorer('blue')">+ Dodaj</button>
 </div>
 <div id="scorerBlueList" class="list-box"></div>
-
-<div class="section-title">🎯 Asistencije Crveni</div>
-<div class="row">
-  <select id="assistRedSelect"></select>
-  <button class="add-btn" onclick="addAssist('red')">+ Dodaj</button>
-</div>
-<div id="assistRedList" class="list-box"></div>
-
-<div class="section-title">🎯 Asistencije Plavi</div>
-<div class="row">
-  <select id="assistBlueSelect"></select>
-  <button class="add-btn" onclick="addAssist('blue')">+ Dodaj</button>
-</div>
-<div id="assistBlueList" class="list-box"></div>
 
 <button class="save-btn" id="saveBtn">Sačuvaj meč</button>
 <button class="update-btn" id="updateBtn">Izmeni meč</button>
@@ -222,7 +206,6 @@
   <tbody id="matchList"></tbody>
 </table>
 
-<!-- FIREBASE LOGIC -->
 <script type="module">
 
 import { onValue, push, update, remove, get } 
@@ -231,25 +214,22 @@ import { onValue, push, update, remove, get }
 const ref = window.dbRef("matches");
 let editingId = null;
 
+/* DATA HOLDERS */
 let redPlayers = [];
 let bluePlayers = [];
 
 let scorerRed = [];
 let scorerBlue = [];
-let assistRed = [];
-let assistBlue = [];
 
 /* LOAD PLAYERS */
 onValue(window.dbRef("players/crveni"), snap => {
   redPlayers = Object.values(snap.val() || {}).map(p => p.name);
   fillDropdown("scorerRedSelect", redPlayers);
-  fillDropdown("assistRedSelect", redPlayers);
 });
 
 onValue(window.dbRef("players/plavi"), snap => {
   bluePlayers = Object.values(snap.val() || {}).map(p => p.name);
   fillDropdown("scorerBlueSelect", bluePlayers);
-  fillDropdown("assistBlueSelect", bluePlayers);
 });
 
 function fillDropdown(id, list) {
@@ -257,19 +237,12 @@ function fillDropdown(id, list) {
   sel.innerHTML = list.map(x => `<option>${x}</option>`).join("");
 }
 
-/* DISPLAY LISTS */
 function refreshLists() {
   document.getElementById("scorerRedList").innerHTML =
     scorerRed.map((n,i)=>`${n} <span class='small-del' onclick="delScorer('red',${i})">x</span>`).join("<br>");
 
   document.getElementById("scorerBlueList").innerHTML =
     scorerBlue.map((n,i)=>`${n} <span class='small-del' onclick="delScorer('blue',${i})">x</span>`).join("<br>");
-
-  document.getElementById("assistRedList").innerHTML =
-    assistRed.map((n,i)=>`${n} <span class='small-del' onclick="delAssist('red',${i})">x</span>`).join("<br>");
-
-  document.getElementById("assistBlueList").innerHTML =
-    assistBlue.map((n,i)=>`${n} <span class='small-del' onclick="delAssist('blue',${i})">x</span>`).join("<br>");
 }
 
 /* ADD / DELETE */
@@ -285,22 +258,11 @@ window.delScorer = (team, idx) => {
   refreshLists();
 };
 
-window.addAssist = team => {
-  const sel = document.getElementById(team === "red" ? "assistRedSelect" : "assistBlueSelect");
-  if (!sel.value) return;
-  team === "red" ? assistRed.push(sel.value) : assistBlue.push(sel.value);
-  refreshLists();
-};
-
-window.delAssist = (team, idx) => {
-  team === "red" ? assistRed.splice(idx,1) : assistBlue.splice(idx,1);
-  refreshLists();
-};
-
-/* LOAD MATCHES */
+/* LOAD MATCHES TABLE */
 onValue(ref, snap => {
   const tbody = document.getElementById("matchList");
   tbody.innerHTML = "";
+
   const data = snap.val() || {};
 
   Object.entries(data)
@@ -331,8 +293,6 @@ saveBtn.onclick = () => {
     info: info.value.trim(),
     scorersRed: scorerRed,
     scorersBlue: scorerBlue,
-    assistsRed: assistRed,
-    assistsBlue: assistBlue,
     timestamp: Date.now()
   });
 
@@ -342,6 +302,7 @@ saveBtn.onclick = () => {
 /* EDIT */
 window.editMatch = async id => {
   editingId = id;
+
   const snap = await get(window.dbRef(`matches/${id}`));
   const m = snap.val();
 
@@ -354,8 +315,6 @@ window.editMatch = async id => {
 
   scorerRed  = m.scorersRed  || [];
   scorerBlue = m.scorersBlue || [];
-  assistRed  = m.assistsRed  || [];
-  assistBlue = m.assistsBlue || [];
 
   refreshLists();
 
@@ -374,9 +333,7 @@ updateBtn.onclick = () => {
     blue: Number(blue.value),
     info: info.value.trim(),
     scorersRed: scorerRed,
-    scorersBlue: scorerBlue,
-    assistsRed: assistRed,
-    assistsBlue: assistBlue
+    scorersBlue: scorerBlue
   });
 
   clearForm();
@@ -403,8 +360,6 @@ function clearForm() {
 
   scorerRed = [];
   scorerBlue = [];
-  assistRed = [];
-  assistBlue = [];
 
   refreshLists();
 
@@ -414,5 +369,6 @@ function clearForm() {
 }
 
 </script>
+
 </body>
 </html>
