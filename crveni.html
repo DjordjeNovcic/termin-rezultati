@@ -33,6 +33,13 @@
     th {
       background: #ececec;
       border-bottom: 2px solid #bbb;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    td:nth-child(2),
+    td:nth-child(3) {
+      text-align: center;
     }
 
     a {
@@ -51,9 +58,9 @@
 <table>
   <thead>
     <tr>
-      <th>Igrač</th>
-      <th>Utakmice</th>
-      <th>Golovi</th>
+      <th data-sort="name">Igrač</th>
+      <th data-sort="matches">Utakmice</th>
+      <th data-sort="goals">Golovi ⬍</th>
     </tr>
   </thead>
   <tbody id="teamTable"></tbody>
@@ -64,22 +71,32 @@
 <script type="module">
 import { onValue } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
-/* UČITAJ IGRAČE CRVENIH */
-onValue(window.dbRef("players/crveni"), snap => {
-  const data = snap.val() || {};
+/* ---------------- SORT STATE ---------------- */
+let currentSort = {
+  field: "goals",
+  dir: "desc"   // default: po golovima opadajuće
+};
+
+let playersData = {};
+
+/* ---------------- RENDER FUNKCIJA ---------------- */
+function renderTable(data) {
   const tbody = document.getElementById("teamTable");
   tbody.innerHTML = "";
 
-  // Sortiraj:
-  // 1) goals DESC
-  // 2) name ASC
-  const list = Object.values(data).sort((a, b) => {
-    if ((b.goals || 0) !== (a.goals || 0)) {
-      return (b.goals || 0) - (a.goals || 0);
-    }
-    return a.name.localeCompare(b.name);
+  let list = Object.values(data);
+
+  // sortiranje
+  list.sort((a, b) => {
+    const field = currentSort.field;
+    const av = a[field] || 0;
+    const bv = b[field] || 0;
+
+    if (av === bv) return a.name.localeCompare(b.name);
+    return currentSort.dir === "asc" ? av - bv : bv - av;
   });
 
+  // upis u tabelu
   list.forEach(p => {
     tbody.innerHTML += `
       <tr>
@@ -89,6 +106,32 @@ onValue(window.dbRef("players/crveni"), snap => {
       </tr>
     `;
   });
+}
+
+/* ---------------- UCITAVANJE ---------------- */
+onValue(window.dbRef("players/crveni"), snap => {
+  playersData = snap.val() || {};
+  renderTable(playersData);
+});
+
+/* ---------------- SORTIRANJE NA KLIK ---------------- */
+document.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll("th[data-sort]").forEach(th => {
+    th.onclick = () => {
+      const field = th.dataset.sort;
+
+      if (currentSort.field === field) {
+        currentSort.dir = currentSort.dir === "asc" ? "desc" : "asc";
+      } else {
+        currentSort.field = field;
+        currentSort.dir = "desc"; // prvi klik ide DESC
+      }
+
+      renderTable(playersData);
+    };
+  });
 });
 </script>
 
+</body>
+</html>
