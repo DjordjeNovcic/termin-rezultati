@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+  <meta charset="UTF-8">
+  <title>Migrate Matches</title>
+  <script type="module" src="firebase.mjs"></script>
+</head>
+<body style="font-family:Arial; max-width:700px; margin:40px auto;">
+
+<h2>Migrate Matches → Novi Format</h2>
+<button id="startBtn" style="padding:10px 20px; font-size:16px;">Pokreni migraciju</button>
+
+<pre id="log" style="margin-top:20px; background:#eee; padding:15px; border-radius:8px; white-space:pre-wrap;"></pre>
+
+<script type="module">
+import { get, set } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+
+const log = msg => document.getElementById("log").textContent += msg + "\n";
+
+document.getElementById("startBtn").onclick = async () => {
+
+  log("Čitam players…");
+
+  const playersSnap = await get(window.dbRef("players"));
+  const players = playersSnap.val() || {};
+
+  // index po ID-u, da lako pronađemo ime
+  const idToPlayer = {};
+
+  ["crveni", "plavi"].forEach(team => {
+    Object.entries(players[team]).forEach(([pid, p]) => {
+      idToPlayer[pid] = { name: p.name, team };
+    });
+  });
+
+  log("Čitam matches…");
+
+  const matchesSnap = await get(window.dbRef("matches"));
+  const matches = matchesSnap.val() || {};
+
+  const newMatches = {};
+
+  Object.entries(matches).forEach(([mid, m]) => {
+
+    const newPlayed = {};
+    const newScorers = [];
+
+    // migrate PLAYED
+    Object.keys(m.played || {}).forEach(oldId => {
+      if (idToPlayer[oldId]) {
+        newPlayed[idToPlayer[oldId].name] = true;
+      }
+    });
+
+    // migrate SCORERS
+    (m.scorers || []).forEach(s => {
+      if (idToPlayer[s.id]) {
+        newScorers.push({
+          name: idToPlayer[s.id].name,
+          team: idToPlayer[s.id].team
+        });
+      }
+    });
+
+    newMatches[mid] = {
+      ...m,
+      played: newPlayed,
+      scorers: newScorers
+    };
+  });
+
+  log("Upisujem /matches2…");
+
+  await set(window.dbRef("matches2"), newMatches);
+
+  log("Migracija završena!");
+  log("Novi čvor: /matches2");
+  log("Pregledaj, pa ako je sve ok, obriši /matches i rename-uj /matches2 → /matches.");
+};
+</script>
+
+</body>
+</html>
