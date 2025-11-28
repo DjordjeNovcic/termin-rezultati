@@ -8,7 +8,7 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      max-width: 850px;
+      max-width: 750px;
       margin: 20px auto;
       padding: 0 20px;
     }
@@ -18,7 +18,7 @@
       margin-bottom: 25px;
     }
 
-    /* ADMIN MENU */
+    /* ADMIN NAV */
     #adminNav {
       display: flex;
       gap: 10px;
@@ -29,17 +29,15 @@
       justify-content: center;
       border: 1px solid #ddd;
     }
+
     #adminNav button {
-      padding: 8px 14px;
+      padding: 8px 12px;
       border-radius: 6px;
       border: none;
       background: #0044cc;
       color: white;
       cursor: pointer;
       font-size: 14px;
-    }
-    #adminNav button:hover {
-      background: #003399;
     }
 
     /* FORM */
@@ -48,78 +46,91 @@
       gap: 10px;
       margin-bottom: 12px;
     }
-    input {
+
+    input, textarea {
       flex: 1;
       padding: 10px;
       border-radius: 6px;
       border: 1px solid #aaa;
-      font-size: 15px;
     }
 
-    .save-btn, .update-btn, .cancel-btn {
-      width: 100%;
+    .save-btn {
+      background: #008000;
+      color: white;
       padding: 12px;
+      width: 100%;
       border-radius: 6px;
       font-size: 16px;
       cursor: pointer;
       margin-top: 10px;
-      border: none;
     }
-    .save-btn { background: #008000; color:white; }
-    .update-btn { background: #d48a00; color:white; display:none; }
-    .cancel-btn { background:#666; color:white; display:none; }
-    .cancel-btn:hover { background:#444; }
 
+    .update-btn {
+      background: #d48a00;
+      color: white;
+      padding: 12px;
+      width: 100%;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 10px;
+      display: none;
+    }
+
+    .cancel-btn {
+      background: #555;
+      color: white;
+      padding: 10px;
+      margin-top: 10px;
+      width: 100%;
+      border-radius: 6px;
+      cursor: pointer;
+      display: none;
+    }
+
+    /* TABLE */
     table {
       width: 100%;
       border-collapse: collapse;
       margin-top: 25px;
     }
+
     th {
       background: #ececec;
       padding: 10px;
       border-bottom: 2px solid #bbb;
       text-align: left;
+      white-space: nowrap;
     }
+
     td {
       padding: 10px;
       border-bottom: 1px solid #ddd;
+      white-space: nowrap;
     }
 
-    .edit-btn, .del-btn {
+    .edit-btn {
+      background: #0044cc;
+      color: white;
       padding: 6px 10px;
       border-radius: 4px;
       font-size: 13px;
       cursor: pointer;
-      border:none;
-      color:white;
     }
-    .edit-btn { background:#0044cc; }
-    .del-btn { background:#c00000; }
 
-    /* POSLEDNJI MEČEVI */
-    .match-card {
-      margin-top: 30px;
-      padding: 15px;
-      border-radius: 8px;
-      background: #fafafa;
-      border: 1px solid #ddd;
+    .del-btn {
+      background: #c00000;
+      color: white;
+      padding: 6px 10px;
+      border-radius: 4px;
+      font-size: 13px;
+      cursor: pointer;
     }
-    .match-item {
-      display:flex;
-      justify-content:center;
-      gap:20px;
-      font-size:18px;
-      margin:6px 0;
-    }
-    .red { color:#bb0000;font-weight:bold; }
-    .blue { color:#0033cc;font-weight:bold; }
-
   </style>
 </head>
 <body>
 
-<!-- ADMIN NAV -->
+<!-- ADMIN MENU -->
 <div id="adminNav">
   <button onclick="window.location.href='admin.html'">Mečevi</button>
   <button onclick="window.location.href='admin-igraci.html'">Igrači</button>
@@ -130,6 +141,7 @@
   if (localStorage.getItem("admin") !== "1") {
       window.location.href = "login.html";
   }
+
   function logout() {
       localStorage.removeItem("admin");
       window.location.href = "index.html";
@@ -140,19 +152,21 @@
 
 <!-- FORM -->
 <div class="row">
-  <input id="round" placeholder="Kolo" type="number">
+  <input id="round" placeholder="Kolo">
   <input id="date" type="date">
   <input id="time" type="time">
 </div>
 
 <div class="row">
-  <input id="red" placeholder="Golovi Crveni" type="number" min="0" max="20">
-  <input id="blue" placeholder="Golovi Plavi" type="number" min="0" max="20">
+  <input id="red" placeholder="Golovi Crveni" type="number">
+  <input id="blue" placeholder="Golovi Plavi" type="number">
 </div>
+
+<textarea id="info" placeholder="Info o meču – strelci, asistencije, komentari..." style="height:90px;"></textarea>
 
 <button class="save-btn" id="saveBtn">Sačuvaj meč</button>
 <button class="update-btn" id="updateBtn">Izmeni meč</button>
-<button class="cancel-btn" id="cancelBtn">Otkaži</button>
+<button class="cancel-btn" id="cancelBtn">Otkaži izmenu</button>
 
 <!-- LISTA MEČEVA -->
 <table>
@@ -167,119 +181,106 @@
   <tbody id="matchList"></tbody>
 </table>
 
-<!-- POSLEDNJI MEČEVI -->
-<div class="match-card">
-  <h3 style="text-align:center;margin-bottom:10px;">Poslednji mečevi</h3>
-  <div id="recentMatches"></div>
-</div>
-
 <script type="module">
 import { onValue, push, update, remove, get } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
 const ref = window.dbRef("matches");
-
 let editingId = null;
 
-/* AUTO THURSDAY */
-function nextThursday() {
-  const d = new Date();
-  let diff = (4 - d.getDay() + 7) % 7;
+/* --- AUTO NEXT THURSDAY --- */
+function getNextThursday() {
+  const now = new Date();
+  let diff = (4 - now.getDay() + 7) % 7;
   if (diff === 0) diff = 7;
-  d.setDate(d.getDate() + diff);
-  return d.toISOString().split("T")[0];
+  const d = new Date(now);
+  d.setDate(now.getDate() + diff);
+  return d;
 }
 
 function autoFill() {
+  const d = getNextThursday();
   round.value = "";
-  date.value = nextThursday();
+  date.value = d.toISOString().substring(0, 10);
   time.value = "18:00";
   red.value = "";
   blue.value = "";
+  info.value = "";
 }
 autoFill();
 
-/* AUTO KOLO */
+/* --- AUTO KOLO --- */
 onValue(ref, snap => {
   const data = snap.val() || {};
   const matches = Object.values(data);
   round.value = matches.length + 1;
 });
 
-/* LOAD MATCHES */
+/* --- LOAD MEČEVE --- */
 onValue(ref, snap => {
   const data = snap.val() || {};
-  const list = Object.entries(data)
-        .sort((a,b)=>b[1].timestamp - a[1].timestamp);
+  const tbody = document.getElementById("matchList");
+  tbody.innerHTML = "";
 
-  matchList.innerHTML = "";
-  recentMatches.innerHTML = "";
-
-  list.forEach(([id, m]) => {
-
-    /* tabela */
-    matchList.innerHTML += `
-      <tr>
-        <td>${m.round}</td>
-        <td><span class="red">Crveni ${m.red}</span> – <span class="blue">${m.blue} Plavi</span></td>
-        <td>${m.date} ${m.time}</td>
-        <td>
-          <button class="edit-btn" onclick="editMatch('${id}')">Izmeni</button>
-          <button class="del-btn" onclick="deleteMatch('${id}')">Obriši</button>
-        </td>
-      </tr>
-    `;
-
-    /* poslednji mečevi */
-    recentMatches.innerHTML += `
-      <div class="match-item">
-        <span class="red">Crveni ${m.red}</span>
-        <span>–</span>
-        <span class="blue">${m.blue} Plavi</span>
-      </div>
-    `;
-  });
+  Object.entries(data)
+    .sort((a,b)=>b[1].timestamp - a[1].timestamp)
+    .forEach(([id, m]) => {
+      tbody.innerHTML += `
+        <tr>
+          <td>${m.round}</td>
+          <td>${m.red} - ${m.blue}</td>
+          <td>${m.date} ${m.time}</td>
+          <td>
+            <button class="edit-btn" onclick="editMatch('${id}')">Izmeni</button>
+            <button class="del-btn" onclick="deleteMatch('${id}')">Obriši</button>
+          </td>
+        </tr>
+      `;
+    });
 });
 
-/* CREATE */
+/* --- CREATE --- */
 saveBtn.onclick = () => {
-  const obj = {
-    round: Number(round.value),
+  push(ref, {
+    round: round.value,
     date: date.value,
     time: time.value,
     red: Number(red.value),
     blue: Number(blue.value),
+    info: info.value.trim(),
     timestamp: Date.now()
-  };
-  push(ref, obj);
+  });
+
   autoFill();
 };
 
-/* EDIT */
-window.editMatch = id => {
+/* --- EDIT --- */
+window.editMatch = async id => {
   editingId = id;
 
   saveBtn.style.display = "none";
   updateBtn.style.display = "block";
   cancelBtn.style.display = "block";
 
-  get(window.dbRef(`matches/${id}`)).then(snap => {
-    const m = snap.val();
-    round.value = m.round;
-    date.value = m.date;
-    time.value = m.time;
-    red.value = m.red;
-    blue.value = m.blue;
-  });
+  const snap = await get(window.dbRef(`matches/${id}`));
+  const m = snap.val();
+
+  round.value = m.round;
+  date.value = m.date;
+  time.value = m.time;
+  red.value = m.red;
+  blue.value = m.blue;
+  info.value = m.info || "";
 };
 
-/* UPDATE */
+/* --- UPDATE --- */
 updateBtn.onclick = () => {
   update(window.dbRef(`matches/${editingId}`), {
-    round: Number(round.value),
+    round: round.value,
     date: date.value,
     time: time.value,
     red: Number(red.value),
     blue: Number(blue.value),
+    info: info.value.trim()
   });
 
   editingId = null;
@@ -289,7 +290,7 @@ updateBtn.onclick = () => {
   autoFill();
 };
 
-/* CANCEL */
+/* --- CANCEL --- */
 cancelBtn.onclick = () => {
   editingId = null;
   saveBtn.style.display = "block";
@@ -298,12 +299,11 @@ cancelBtn.onclick = () => {
   autoFill();
 };
 
-/* DELETE */
+/* --- DELETE --- */
 window.deleteMatch = id => {
   if (!confirm("Obrisati meč?")) return;
   remove(window.dbRef(`matches/${id}`));
 };
-
 </script>
 
 </body>
