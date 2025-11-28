@@ -344,6 +344,7 @@ window.clearForm = function(){
   red.value = "";
   blue.value = "";
   info.value = "";
+  autoFillRound();
 
   document.querySelectorAll(".player-btn.active")
     .forEach(b=>b.classList.remove("active"));
@@ -429,7 +430,22 @@ function getNextThursday() {
   const d = getNextThursday();
   date.value = d.toISOString().split("T")[0];
   time.value = "18:00";
+  autoFillRound();
 })();
+
+/* -------------------------
+       AUTO ROUND (KOLO)
+--------------------------*/
+function autoFillRound() {
+  onValue(window.dbRef("matches"), snap => {
+    const data = snap.val() || {};
+    const rounds = Object.values(data).map(m => Number(m.round) || 0);
+    const nextRound = (rounds.length ? Math.max(...rounds) + 1 : 1);
+    round.value = nextRound;
+  }, { onlyOnce: true });
+}
+
+  
 </script>
 
 </body>
