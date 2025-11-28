@@ -343,7 +343,7 @@ updateBtn.onclick = async () => {
 window.deleteMatch = async id => {
   if (!confirm("Obrisati meč?")) return;
 
-  const snap = await get(window.dbRef(⁠ matches/${id} ⁠));
+  const snap = await get(window.dbRef(`matches/${id}`));
   await applyStats(snap.val(), -1);
 
   await remove(window.dbRef(⁠ matches/${id} ⁠));
