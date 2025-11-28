@@ -18,6 +18,24 @@
       margin-bottom: 25px;
     }
 
+    /* LOGIN HOLDER */
+    #loginHolder {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    #loginBtn {
+      padding: 8px 16px;
+      background: #0044cc;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+      border: none;
+      font-size: 15px;
+    }
+
     /* KARTICA MEČA */
     .match-box {
       padding: 25px;
@@ -43,7 +61,6 @@
       margin: 10px 0;
     }
 
-    /* LINK INFO */
     .info-link {
       color: #0044cc;
       cursor: pointer;
@@ -73,7 +90,7 @@
       background: #fff7d1;
     }
 
-    /* FORMA 5 MEČEVA */
+    /* FORMA 5 mečeva */
     .form-box {
       margin-top: 30px;
     }
@@ -89,18 +106,6 @@
     .win { background: green; }
     .loss { background: red; }
     .draw { background: orange; }
-
-    /* LOGIN BUTTON */
-    #loginBtn {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      padding: 8px 12px;
-      background: #0044cc;
-      color: white;
-      border-radius: 5px;
-      cursor: pointer;
-    }
 
     /* MODAL */
     #modalOverlay {
@@ -146,7 +151,10 @@
 </head>
 <body>
 
-<button id="loginBtn" onclick="window.location='login.html'">Login</button>
+<!-- LOGIN U CENTRU -->
+<div id="loginHolder">
+  <button id="loginBtn" onclick="window.location='login.html'">Login</button>
+</div>
 
 <h1>Rezultati svih odigranih utakmica</h1>
 
@@ -188,7 +196,7 @@
 <script type="module">
 import { onValue } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
-/* LOAD MATCHES */
+/* UČITAVANJE */
 onValue(window.dbRef("matches"), snap => {
   const data = snap.val() || {};
   const list = Object.values(data).sort((a,b)=>b.timestamp - a.timestamp);
@@ -198,14 +206,14 @@ onValue(window.dbRef("matches"), snap => {
   renderForm(list);
 });
 
-/* --- RENDER MATCH BOX --- */
+/* -------- PRIKAZ POSLEDNJEG MEČA -------- */
 function renderMatches(matches) {
   const box = document.getElementById("matches");
   box.innerHTML = "";
 
   if (!matches.length) return;
 
-  const m = matches[0]; // poslednji meč
+  const m = matches[0];
 
   box.innerHTML = `
     <div class="match-box">
@@ -233,7 +241,7 @@ function renderMatches(matches) {
   `;
 }
 
-/* --- TABELA --- */
+/* -------- TABELA -------- */
 function renderTable(matches) {
   const table = {
     Crveni: { U:0,P:0,N:0,I:0,GD:0,GP:0,GR:0,B:0 },
@@ -262,8 +270,7 @@ function renderTable(matches) {
   table.Crveni.GR = table.Crveni.GD - table.Crveni.GP;
   table.Plavi.GR  = table.Plavi.GD - table.Plavi.GP;
 
-  const body = document.getElementById("leagueBody");
-  body.innerHTML = `
+  document.getElementById("leagueBody").innerHTML = `
     <tr class="highlight">
       <td>Crveni</td>
       <td>${table.Crveni.U}</td>
@@ -290,12 +297,11 @@ function renderTable(matches) {
   `;
 }
 
-/* --- FORMA POSLEDNJIH 5 --- */
+/* -------- FORMA -------- */
 function renderForm(matches) {
   const last5 = matches.slice(0,5);
 
-  let cr = "";
-  let pl = "";
+  let cr = "", pl = "";
 
   last5.forEach(m=>{
     cr += (m.red > m.blue) ? `<span class="dot win"></span>` :
@@ -313,7 +319,7 @@ function renderForm(matches) {
   `;
 }
 
-/* --- MODAL FUNKCIJE --- */
+/* -------- MODAL -------- */
 window.openInfo = info => {
   document.getElementById("modalContent").innerText = info;
   document.getElementById("modalOverlay").style.display = "flex";
