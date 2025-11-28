@@ -215,18 +215,21 @@ function renderPlayers() {
 /* -------------------------
          TAGOVI STRELACA
 --------------------------*/
-function refreshTags(){
-  document.getElementById("scorersRedTags").innerHTML = "";
-  document.getElementById("scorersBlueTags").innerHTML = "";
+ffunction refreshTags(){
+  let redHTML = "";
+  let blueHTML = "";
 
   scorers.forEach((s,i)=>{
     const name = players[s.team][s.id]?.name || "(obrisan)";
-    const tag = `<div class="tag">${name}<button onclick="removeGoal(${i})">x</button></div>`;
-    if (s.team==="crveni")
-      document.getElementById("scorersRedTags").innerHTML += tag;
-    else
-      document.getElementById("scorersBlueTags").innerHTML += tag;
+    const tag =
+      `<div class="tag">${name}<button onclick="removeGoal(${i})">x</button></div>`;
+
+    if (s.team === "crveni") redHTML += tag;
+    else blueHTML += tag;
   });
+
+  document.getElementById("scorersRedTags").innerHTML = redHTML;
+  document.getElementById("scorersBlueTags").innerHTML = blueHTML;
 }
 
 window.removeGoal = i => { scorers.splice(i,1); refreshTags(); };
@@ -272,6 +275,9 @@ async function updateOne(team,id,field,delta){
 
   const p = snap.val();
   const next = Math.max(0, (p[field]||0) + delta);
+
+  if (next < 0) next = 0;        // <-- dodat hard limit
+  if (isNaN(next)) next = 0;     // <-- dodat edge-case limit
 
   await update(ref, { [field]: next });
 }
@@ -416,6 +422,8 @@ window.editMatch = async id => {
   blue.value=m.blue;
   info.value=m.info;
 
+  // FIX: reset scorers da ne ostanu stari iz prethodnog meča
+  scorers = [];
   scorers = [...m.scorers];
   refreshTags();
 
