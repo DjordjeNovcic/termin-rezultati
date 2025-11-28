@@ -238,14 +238,18 @@ function validate(){
 }
 
 /* STATISTIKA */
-async function updateOne(team,name,field,delta){
+async function updateOne(team, name, field, delta) {
   const p = players[team][name];
-  if(!p) return;
+  if (!p) return;
+
+  const current = p[field] || 0;
+  const next = Math.max(0, current + delta);   // 🛡 sprečava negativne vrednosti
 
   update(window.dbRef(`players/${team}/${name}`), {
-    [field]: (p[field]||0) + delta
+    [field]: next
   });
 }
+
 
 async function applyStats(match,dir){
   Object.entries(match.played || {}).forEach(([name,team])=>{
