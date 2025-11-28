@@ -8,7 +8,7 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      max-width: 750px;
+      max-width: 800px;
       margin: 20px auto;
       padding: 0 20px;
     }
@@ -18,7 +18,6 @@
       margin-bottom: 25px;
     }
 
-    /* NAV */
     #adminNav {
       display: flex;
       gap: 10px;
@@ -40,14 +39,13 @@
       font-size: 14px;
     }
 
-    /* FORM */
     .row {
       display: flex;
       gap: 10px;
       margin-bottom: 12px;
     }
 
-    input {
+    input, select {
       flex: 1;
       padding: 10px;
       border-radius: 6px;
@@ -61,10 +59,69 @@
       border-radius: 6px;
       border: 1px solid #aaa;
       font-size: 15px;
-      resize: vertical; /* možeš širiti po visini */
-      min-height: 120px; /* lepo veliko */
-      max-height: 400px; /* da ne pretera */
+      resize: vertical;
+      min-height: 120px;
     }
+
+    .section-title {
+      font-weight: bold;
+      margin-top: 20px;
+      margin-bottom: 5px;
+    }
+
+    .add-btn {
+      background: #0066ff;
+      color: white;
+      border: none;
+      padding: 7px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    .small-del {
+      padding: 4px 8px;
+      font-size: 12px;
+      background: #b30000;
+      color: white;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-left: 10px;
+    }
+
+    .list-box {
+      margin-top: 8px;
+      padding-left: 5px;
+    }
+
+    /* TABLE */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 25px;
+    }
+
+    th {
+      background: #ececec;
+      padding: 10px;
+      border-bottom: 2px solid #bbb;
+    }
+
+    td {
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .edit-btn, .del-btn {
+      padding: 6px 10px;
+      border-radius: 4px;
+      font-size: 13px;
+      cursor: pointer;
+      border:none;
+      color:white;
+    }
+
+    .edit-btn { background:#0044cc; }
+    .del-btn  { background:#c00000; }
 
     .save-btn, .update-btn, .cancel-btn {
       width: 100%;
@@ -80,35 +137,6 @@
     .update-btn { background: #d48a00; color:white; display:none; }
     .cancel-btn { background:#555; color:white; display:none; }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 25px;
-    }
-
-    th {
-      background: #ececec;
-      padding: 10px 0 10px 15px; 
-      border-bottom: 2px solid #bbb;
-      text-align: left;
-    }
-
-    td {
-      padding: 10px 0 10px 15px;
-      border-bottom: 1px solid #ddd;
-    }
-
-    .edit-btn, .del-btn {
-      padding: 6px 10px;
-      border-radius: 4px;
-      font-size: 13px;
-      cursor: pointer;
-      border:none;
-      color:white;
-    }
-
-    .edit-btn { background:#0044cc; }
-    .del-btn { background:#c00000; }
   </style>
 </head>
 <body>
@@ -132,6 +160,7 @@
 
 <h1>Upravljanje mečevima</h1>
 
+<!-- BASIC FIELDS -->
 <div class="row">
   <input id="round" placeholder="Kolo">
   <input id="date" type="date">
@@ -143,10 +172,39 @@
   <input id="blue" type="number" placeholder="Golovi Plavi" min="0" max="20">
 </div>
 
-<!-- INFO u istoj širini kao ostali inputi -->
+<!-- INFO -->
 <div class="row">
-  <textarea id="info" placeholder="Info o meču (opciono) – slobodno piši 500+ karaktera, strelce, asistencije, anegdote, komentare..."></textarea>
+  <textarea id="info" placeholder="Info o meču…"></textarea>
 </div>
+
+<!-- STRELCI I ASISTENTI -->
+<div class="section-title">⚽ Strelci Crveni</div>
+<div class="row">
+  <select id="scorerRedSelect"></select>
+  <button class="add-btn" onclick="addScorer('red')">+ Dodaj</button>
+</div>
+<div id="scorerRedList" class="list-box"></div>
+
+<div class="section-title">⚽ Strelci Plavi</div>
+<div class="row">
+  <select id="scorerBlueSelect"></select>
+  <button class="add-btn" onclick="addScorer('blue')">+ Dodaj</button>
+</div>
+<div id="scorerBlueList" class="list-box"></div>
+
+<div class="section-title">🎯 Asistencije Crveni</div>
+<div class="row">
+  <select id="assistRedSelect"></select>
+  <button class="add-btn" onclick="addAssist('red')">+ Dodaj</button>
+</div>
+<div id="assistRedList" class="list-box"></div>
+
+<div class="section-title">🎯 Asistencije Plavi</div>
+<div class="row">
+  <select id="assistBlueSelect"></select>
+  <button class="add-btn" onclick="addAssist('blue')">+ Dodaj</button>
+</div>
+<div id="assistBlueList" class="list-box"></div>
 
 <button class="save-btn" id="saveBtn">Sačuvaj meč</button>
 <button class="update-btn" id="updateBtn">Izmeni meč</button>
@@ -164,40 +222,86 @@
   <tbody id="matchList"></tbody>
 </table>
 
+<!-- FIREBASE LOGIC -->
 <script type="module">
-import { onValue, push, update, remove, get } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+
+import { onValue, push, update, remove, get } 
+  from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
 const ref = window.dbRef("matches");
 let editingId = null;
 
-/* AUTO KOLO */
-onValue(ref, snap => {
-  const matches = Object.values(snap.val() || {});
-  round.value = matches.length + 1;
+let redPlayers = [];
+let bluePlayers = [];
+
+let scorerRed = [];
+let scorerBlue = [];
+let assistRed = [];
+let assistBlue = [];
+
+/* LOAD PLAYERS */
+onValue(window.dbRef("players/crveni"), snap => {
+  redPlayers = Object.values(snap.val() || {}).map(p => p.name);
+  fillDropdown("scorerRedSelect", redPlayers);
+  fillDropdown("assistRedSelect", redPlayers);
 });
 
- function getNextThursday() {
-  const now = new Date();
-  let day = now.getDay(); // 0 = Nedelja ... 4 = Četvrtak
-  let diff = (4 - day + 7) % 7;
-  if (diff === 0) diff = 7;
-  const d = new Date(now);
-  d.setDate(now.getDate() + diff);
-  return d;
+onValue(window.dbRef("players/plavi"), snap => {
+  bluePlayers = Object.values(snap.val() || {}).map(p => p.name);
+  fillDropdown("scorerBlueSelect", bluePlayers);
+  fillDropdown("assistBlueSelect", bluePlayers);
+});
+
+function fillDropdown(id, list) {
+  const sel = document.getElementById(id);
+  sel.innerHTML = list.map(x => `<option>${x}</option>`).join("");
 }
 
-function autoFill() {
-  const d = getNextThursday();
-  date.value = d.toISOString().split("T")[0];
-  time.value = "18:00";
+/* DISPLAY LISTS */
+function refreshLists() {
+  document.getElementById("scorerRedList").innerHTML =
+    scorerRed.map((n,i)=>`${n} <span class='small-del' onclick="delScorer('red',${i})">x</span>`).join("<br>");
+
+  document.getElementById("scorerBlueList").innerHTML =
+    scorerBlue.map((n,i)=>`${n} <span class='small-del' onclick="delScorer('blue',${i})">x</span>`).join("<br>");
+
+  document.getElementById("assistRedList").innerHTML =
+    assistRed.map((n,i)=>`${n} <span class='small-del' onclick="delAssist('red',${i})">x</span>`).join("<br>");
+
+  document.getElementById("assistBlueList").innerHTML =
+    assistBlue.map((n,i)=>`${n} <span class='small-del' onclick="delAssist('blue',${i})">x</span>`).join("<br>");
 }
-autoFill(); 
+
+/* ADD / DELETE */
+window.addScorer = team => {
+  const sel = document.getElementById(team === "red" ? "scorerRedSelect" : "scorerBlueSelect");
+  if (!sel.value) return;
+  team === "red" ? scorerRed.push(sel.value) : scorerBlue.push(sel.value);
+  refreshLists();
+};
+
+window.delScorer = (team, idx) => {
+  team === "red" ? scorerRed.splice(idx,1) : scorerBlue.splice(idx,1);
+  refreshLists();
+};
+
+window.addAssist = team => {
+  const sel = document.getElementById(team === "red" ? "assistRedSelect" : "assistBlueSelect");
+  if (!sel.value) return;
+  team === "red" ? assistRed.push(sel.value) : assistBlue.push(sel.value);
+  refreshLists();
+};
+
+window.delAssist = (team, idx) => {
+  team === "red" ? assistRed.splice(idx,1) : assistBlue.splice(idx,1);
+  refreshLists();
+};
 
 /* LOAD MATCHES */
 onValue(ref, snap => {
-  const data = snap.val() || {};
   const tbody = document.getElementById("matchList");
   tbody.innerHTML = "";
+  const data = snap.val() || {};
 
   Object.entries(data)
     .sort((a,b)=>b[1].timestamp - a[1].timestamp)
@@ -225,6 +329,10 @@ saveBtn.onclick = () => {
     red: Number(red.value),
     blue: Number(blue.value),
     info: info.value.trim(),
+    scorersRed: scorerRed,
+    scorersBlue: scorerBlue,
+    assistsRed: assistRed,
+    assistsBlue: assistBlue,
     timestamp: Date.now()
   });
 
@@ -234,7 +342,6 @@ saveBtn.onclick = () => {
 /* EDIT */
 window.editMatch = async id => {
   editingId = id;
-
   const snap = await get(window.dbRef(`matches/${id}`));
   const m = snap.val();
 
@@ -244,6 +351,13 @@ window.editMatch = async id => {
   red.value = m.red;
   blue.value = m.blue;
   info.value = m.info || "";
+
+  scorerRed  = m.scorersRed  || [];
+  scorerBlue = m.scorersBlue || [];
+  assistRed  = m.assistsRed  || [];
+  assistBlue = m.assistsBlue || [];
+
+  refreshLists();
 
   saveBtn.style.display = "none";
   updateBtn.style.display = "block";
@@ -258,7 +372,11 @@ updateBtn.onclick = () => {
     time: time.value,
     red: Number(red.value),
     blue: Number(blue.value),
-    info: info.value.trim()
+    info: info.value.trim(),
+    scorersRed: scorerRed,
+    scorersBlue: scorerBlue,
+    assistsRed: assistRed,
+    assistsBlue: assistBlue
   });
 
   clearForm();
@@ -277,15 +395,24 @@ function clearForm() {
   editingId = null;
 
   round.value = "";
+  date.value = "";
+  time.value = "18:00";
   red.value = "";
   blue.value = "";
   info.value = "";
+
+  scorerRed = [];
+  scorerBlue = [];
+  assistRed = [];
+  assistBlue = [];
+
+  refreshLists();
 
   saveBtn.style.display = "block";
   updateBtn.style.display = "none";
   cancelBtn.style.display = "none";
 }
-</script>
 
+</script>
 </body>
 </html>
