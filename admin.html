@@ -105,9 +105,7 @@
   <input id="blue" type="number" placeholder="Golovi Plavi">
 </div>
 
-<div class="row">
-  <textarea id="info" placeholder="Info o meču..."></textarea>
-</div>
+<textarea id="info" placeholder="Info o meču..."></textarea>
 
 <!-- IGRALI -->
 <h3>Igrali</h3>
@@ -130,7 +128,7 @@
 
 <button class="save-btn" id="saveBtn">Sačuvaj meč</button>
 <button class="update-btn" id="updateBtn">Sačuvaj izmene</button>
-<button class="cancel-btn" id="cancelBtn">Otkaži izmenu</button>
+<button class="cancel-btn" id="cancelBtn" onclick="clearForm()">Otkaži izmenu</button>
 
 <!-- LISTA MEČEVA -->
 <table>
@@ -152,7 +150,6 @@ import { onValue, push, update, remove, get }
 const ref = window.dbRef("matches");
 let editingId = null;
 let scorers = []; // {name, team}
-
 let players = { crveni:{}, plavi:{} };
 
 /* LOAD PLAYERS */
@@ -183,15 +180,14 @@ function renderPlayers(){
     SBP.innerHTML += `<div class='player-btn' data-team='plavi' data-name='${name}'>${name}</div>`;
   });
 
+  /* Selektovanje "igrali" */
   document.querySelectorAll("#playedRed .player-btn,#playedBlue .player-btn")
     .forEach(btn => btn.onclick = () => btn.classList.toggle("active"));
 
+  /* Selektovanje strelaca */
   document.querySelectorAll("#scorersRedPlayers .player-btn,#scorersBluePlayers .player-btn")
     .forEach(btn => btn.onclick = () => {
-      scorers.push({
-        name: btn.dataset.name,
-        team: btn.dataset.team
-      });
+      scorers.push({ name: btn.dataset.name, team: btn.dataset.team });
       refreshTags();
     });
 }
@@ -237,19 +233,19 @@ function validate(){
   return true;
 }
 
-/* STATISTIKA */
+/* FINAL UPDATEONE — 100% SIGURAN */
 async function updateOne(team, name, field, delta) {
-  const p = players[team][name];
+  const ref = window.dbRef(`players/${team}/${name}`);
+
+  const snap = await get(ref);
+  const p = snap.val();
   if (!p) return;
 
   const current = p[field] || 0;
-  const next = Math.max(0, current + delta);   // 🛡 sprečava negativne vrednosti
+  const next = Math.max(0, current + delta);
 
-  update(window.dbRef(`players/${team}/${name}`), {
-    [field]: next
-  });
+  update(ref, { [field]: next });
 }
-
 
 async function applyStats(match,dir){
   Object.entries(match.played || {}).forEach(([name,team])=>{
@@ -283,7 +279,7 @@ saveBtn.onclick = async () =>{
   clearForm();
 };
 
-/* UPDATE EXISTING MATCH */
+/* UPDATE */
 updateBtn.onclick = async () =>{
   if(!validate()) return;
 
@@ -309,7 +305,7 @@ updateBtn.onclick = async () =>{
   clearForm();
 };
 
-/* DELETE MEČ */
+/* DELETE */
 window.deleteMatch = async id =>{
   if(!confirm("Obrisati meč?")) return;
   const snap = await get(window.dbRef(`matches/${id}`));
@@ -317,13 +313,22 @@ window.deleteMatch = async id =>{
   remove(window.dbRef(`matches/${id}`));
 };
 
-/* CLEAR FORM */
+/* CLEAR */
 function clearForm(){
   editingId=null;
-  round.value=date.value=time.value=red.value=blue.value=info.value="";
+  round.value = "";
+  red.value = blue.value = "";
+  info.value="";
   scorers=[];
-  document.querySelectorAll(".player-btn.active").forEach(b=>b.classList.remove("active"));
+  document.querySelectorAll(".player-btn.active")
+    .forEach(b=>b.classList.remove("active"));
   refreshTags();
+
+  /* auto datum & vreme ponovo */
+  const d = getNextThursday();
+  date.value = d.toISOString().split("T")[0];
+  time.value = "18:00";
+
   saveBtn.style.display="block";
   updateBtn.style.display="none";
   cancelBtn.style.display="none";
@@ -349,7 +354,7 @@ onValue(ref,snap=>{
     });
 });
 
-/* EDIT MEČA */
+/* EDIT */
 window.editMatch = async id =>{
   editingId=id;
 
@@ -366,10 +371,11 @@ window.editMatch = async id =>{
   scorers = [...m.scorers];
   refreshTags();
 
+  /* Selektuj igraliće */
   document.querySelectorAll(".player-btn").forEach(b=>b.classList.remove("active"));
-  Object.keys(m.played||{}).forEach(name=>{
-    const b=document.querySelector(`.player-btn[data-name="${name}"]`);
-    if(b) b.classList.add("active");
+  Object.entries(m.played||{}).forEach(([name,team])=>{
+    const b=document.querySelector(`.player-btn[data-name="${name}"][data-team="${team}"]`);
+    if (b) b.classList.add("active");
   });
 
   saveBtn.style.display="none";
@@ -378,24 +384,25 @@ window.editMatch = async id =>{
 };
 
 /* AUTO KOLO */
-onValue(ref,snap=>{
-  const list=Object.values(snap.val()||[]);
-  round.value=list.length+1;
+onValue(window.dbRef("matches"), snap => {
+  const list = Object.values(snap.val() || {});
+  round.value = list.length + 1;
 });
 
-/* AUTO POPUNJAVANJE – sledeći četvrtak */
-function getNextThursday(){
-  const now=new Date();
-  let diff=(4-now.getDay()+7)%7;
-  if(diff===0) diff=7;
-  const d=new Date(); d.setDate(now.getDate()+diff);
+/* AUTO DATUM = sledeći četvrtak */
+function getNextThursday() {
+  const now = new Date();
+  let diff = (4 - now.getDay() + 7) % 7;
+  if (diff === 0) diff = 7;
+  const d = new Date();
+  d.setDate(now.getDate() + diff);
   return d;
 }
 
 (function(){
-  const d=getNextThursday();
-  date.value=d.toISOString().split("T")[0];
-  time.value="18:00";
+  const d = getNextThursday();
+  date.value = d.toISOString().split("T")[0];
+  time.value = "18:00";
 })();
 </script>
 </body>
