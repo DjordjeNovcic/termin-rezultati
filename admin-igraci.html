@@ -73,23 +73,15 @@
 
     /* MODAL */
     #modalOverlay {
-      display:none;
-      position:fixed;
-      top:0; left:0;
-      width:100%; height:100%;
+      display:none; position:fixed; inset:0;
       background:rgba(0,0,0,0.55);
-      justify-content:center;
-      align-items:center;
-      backdrop-filter:blur(2px);
-      z-index:999;
+      justify-content:center; align-items:center;
+      backdrop-filter:blur(2px); z-index:999;
     }
 
     #modalBox {
-      background:white;
-      padding:25px;
-      border-radius:10px;
-      width:90%;
-      max-width:420px;
+      background:white; padding:25px; border-radius:10px;
+      width:90%; max-width:420px;
       box-shadow:0 0 25px rgba(0,0,0,0.25);
       animation: fadeIn 0.2s ease-out;
     }
@@ -103,6 +95,7 @@
 
 <body>
 
+<!-- NAV -->
 <div id="adminNav">
   <button onclick="window.location.href='admin.html'">Mečevi</button>
   <button onclick="window.location.href='admin-igraci.html'">Igrači</button>
@@ -116,7 +109,7 @@
 
 <h1>Upravljanje igračima</h1>
 
-<!-- RESET -->
+<!-- RESET SVIH STATISTIKA -->
 <button id="resetStatsBtn"
   style="background:#b10000;color:white;padding:10px 20px;
          border:none;border-radius:6px;cursor:pointer;font-size:15px;
@@ -132,7 +125,7 @@
 </div>
 <table>
   <thead>
-    <tr><th>Igrač</th><th>Golovi</th><th>Utakmice</th><th>Akcija</th></tr>
+  <tr><th>Igrač</th><th>Golovi</th><th>Utakmice</th><th>Akcija</th></tr>
   </thead>
   <tbody id="redList"></tbody>
 </table>
@@ -145,7 +138,7 @@
 </div>
 <table>
   <thead>
-    <tr><th>Igrač</th><th>Golovi</th><th>Utakmice</th><th>Akcija</th></tr>
+  <tr><th>Igrač</th><th>Golovi</th><th>Utakmice</th><th>Akcija</th></tr>
   </thead>
   <tbody id="blueList"></tbody>
 </table>
@@ -155,27 +148,26 @@
   <div id="modalBox">
     <h3 style="margin-top:0;">Izmena imena igrača</h3>
 
-   <input id="renameInput"
+    <input id="renameInput"
        placeholder="Novo ime..."
        style="
-         width: 330px;
-         padding: 8px;
-         font-size: 15px;
-         margin: 15px auto 0;
-         display: block;
-         border-radius: 6px;
-         border: 1px solid #aaa;
+         width:330px;
+         padding:8px;
+         font-size:15px;
+         margin:15px auto 0;
+         display:block;
+         border-radius:6px;
+         border:1px solid #aaa;
        ">
-
 
     <div style="display:flex;gap:10px;margin-top:20px;justify-content:flex-end;">
       <button id="renameCancel"
-              style="padding:10px 16px;background:#777;border:none;color:white;border-radius:6px;cursor:pointer;">
+        style="padding:10px 16px;background:#777;border:none;color:white;border-radius:6px;cursor:pointer;">
         Otkaži
       </button>
 
       <button id="renameConfirm"
-              style="padding:10px 16px;background:#0044cc;border:none;color:white;border-radius:6px;cursor:pointer;">
+        style="padding:10px 16px;background:#0044cc;border:none;color:white;border-radius:6px;cursor:pointer;">
         Sačuvaj
       </button>
     </div>
@@ -186,145 +178,4 @@
 import { onValue, push, set, update, remove, get }
   from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
-/* ------------------ RENDER ------------------ */
-
-function rowTemplate(id, player, team) {
-  return `
-    <tr>
-      <td>${player.name}</td>
-      <td>${player.goals || 0}</td>
-      <td>${player.matches || 0}</td>
-      <td>
-        <button class="edit-btn" onclick="openRename('${team}','${id}','${player.name}')">Izmeni</button>
-        <button class="del-btn" onclick="deletePlayer('${team}','${id}','${player.name}')">Obriši</button>
-      </td>
-    </tr>
-  `;
-}
-
-/* MIGRACIJA STARIH PODATAKA */
-function migrate(team, id, val) {
-  if (typeof val === "string") {
-    const obj = { name: val, goals: 0, matches: 0 };
-    set(window.dbRef(`players/${team}/${id}`), obj);
-    return obj;
-  }
-  return val;
-}
-
-/* LOAD PLAYERS */
-function loadPlayers(team, elementId) {
-  onValue(window.dbRef("players/" + team), snap => {
-    const data = snap.val() || {};
-    const tbody = document.getElementById(elementId);
-    tbody.innerHTML = "";
-
-    Object.entries(data).forEach(([id,p]) => {
-      const pl = migrate(team, id, p);
-      tbody.innerHTML += rowTemplate(id, pl, team);
-    });
-  });
-}
-
-loadPlayers("crveni", "redList");
-loadPlayers("plavi", "blueList");
-
-/* ------------------ ADD PLAYER ------------------ */
-
-window.addPlayer = team => {
-  const input = document.getElementById(team === "crveni" ? "redInput" : "blueInput");
-  const name = input.value.trim();
-  if (!name) return;
-
-  push(window.dbRef("players/" + team), {
-    name, goals: 0, matches: 0
-  });
-
-  input.value = "";
-};
-
-/* ------------------ DELETE PLAYER (Opcija A) ------------------ */
-
-window.deletePlayer = async (team, id, name) => {
-  if (!confirm(`Obrisati igrača ${name} i ukloniti ga iz svih mečeva?`)) return;
-
-  const matchesSnap = await get(window.dbRef("matches"));
-  const matches = matchesSnap.val() || {};
-
-  for (const matchId of Object.keys(matches)) {
-    const m = matches[matchId];
-
-    // obrisati iz "played"
-    if (m.played && m.played[name]) {
-      delete m.played[name];
-    }
-
-    // obrisati iz "scorers"
-    if (m.scorers) {
-      m.scorers = m.scorers.filter(s => !(s.name === name && s.team === team));
-    }
-
-    await update(window.dbRef(`matches/${matchId}`), {
-      played: m.played || {},
-      scorers: m.scorers || []
-    });
-  }
-
-  await remove(window.dbRef(`players/${team}/${id}`));
-};
-
-/* ------------------ RENAME ------------------ */
-
-let renameTeam = null;
-let renameId   = null;
-
-window.openRename = (team, id, oldName) => {
-  renameTeam = team;
-  renameId = id;
-  document.getElementById("renameInput").value = oldName;
-  document.getElementById("modalOverlay").style.display = "flex";
-};
-
-document.getElementById("renameConfirm").onclick = async () => {
-  const newName = document.getElementById("renameInput").value.trim();
-  if (!newName) return;
-
-  await update(window.dbRef(`players/${renameTeam}/${renameId}`), { name: newName });
-  document.getElementById("modalOverlay").style.display = "none";
-};
-
-document.getElementById("renameCancel").onclick = () => {
-  document.getElementById("modalOverlay").style.display = "none";
-};
-
-/* ------------------ RESET ALL STATS ------------------ */
-
-document.getElementById("resetStatsBtn").onclick = async () => {
-  if (!confirm("Da li sigurno želiš da resetuješ SVE golove i utakmice?")) return;
-
-  const snap = await get(window.dbRef("players"));
-  const data = snap.val() || {};
-
-  for (const team of ["crveni","plavi"]) {
-    if (!data[team]) continue;
-    for (const id of Object.keys(data[team])) {
-      await update(window.dbRef(`players/${team}/${id}`), {
-        goals: 0, matches: 0
-      });
-    }
-  }
-
-  alert("Statistika resetovana!");
-};
-</script>
-
-<script>
-/* klik na pozadinu zatvara modal */
-document.getElementById("modalOverlay").onclick = e => {
-  if (e.target.id === "modalOverlay")
-    e.target.style.display = "none";
-};
-</script>
-
-</body>
-</html>
+/* ------------------ TEMPLATE ------------------ *
