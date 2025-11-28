@@ -149,7 +149,7 @@ import { onValue, push, update, remove, get }
 
 const ref = window.dbRef("matches");
 let editingId = null;
-let scorers = []; // {name, team}
+let scorers = [];
 let players = { crveni:{}, plavi:{} };
 
 /* LOAD PLAYERS */
@@ -180,11 +180,9 @@ function renderPlayers(){
     SBP.innerHTML += `<div class='player-btn' data-team='plavi' data-name='${name}'>${name}</div>`;
   });
 
-  /* Selektovanje "igrali" */
   document.querySelectorAll("#playedRed .player-btn,#playedBlue .player-btn")
     .forEach(btn => btn.onclick = () => btn.classList.toggle("active"));
 
-  /* Selektovanje strelaca */
   document.querySelectorAll("#scorersRedPlayers .player-btn,#scorersBluePlayers .player-btn")
     .forEach(btn => btn.onclick = () => {
       scorers.push({ name: btn.dataset.name, team: btn.dataset.team });
@@ -192,7 +190,7 @@ function renderPlayers(){
     });
 }
 
-/* TAGOVI STRELACA */
+/* TAGOVI */
 function refreshTags(){
   const RT = document.getElementById("scorersRedTags");
   const BT = document.getElementById("scorersBlueTags");
@@ -233,10 +231,9 @@ function validate(){
   return true;
 }
 
-/* FINAL UPDATEONE — 100% SIGURAN */
+/* updateOne */
 async function updateOne(team, name, field, delta) {
   const ref = window.dbRef(`players/${team}/${name}`);
-
   const snap = await get(ref);
   const p = snap.val();
   if (!p) return;
@@ -257,7 +254,7 @@ async function applyStats(match,dir){
   });
 }
 
-/* SAVE NEW MATCH */
+/* SAVE */
 saveBtn.onclick = async () =>{
   if(!validate()) return;
 
@@ -313,7 +310,7 @@ window.deleteMatch = async id =>{
   remove(window.dbRef(`matches/${id}`));
 };
 
-/* CLEAR */
+/* CLEAR — FIXED */
 function clearForm(){
   editingId=null;
   round.value = "";
@@ -324,7 +321,7 @@ function clearForm(){
     .forEach(b=>b.classList.remove("active"));
   refreshTags();
 
-  /* auto datum & vreme ponovo */
+  /* auto datum & vreme */
   const d = getNextThursday();
   date.value = d.toISOString().split("T")[0];
   time.value = "18:00";
@@ -334,7 +331,10 @@ function clearForm(){
   cancelBtn.style.display="none";
 }
 
-/* LISTA MEČEVA */
+/* 🔥 OVDE JE FIX 🔥 */
+window.clearForm = clearForm;
+/* ---------------- */
+
 onValue(ref,snap=>{
   const tbody=document.getElementById("matchList");
   tbody.innerHTML="";
@@ -371,7 +371,6 @@ window.editMatch = async id =>{
   scorers = [...m.scorers];
   refreshTags();
 
-  /* Selektuj igraliće */
   document.querySelectorAll(".player-btn").forEach(b=>b.classList.remove("active"));
   Object.entries(m.played||{}).forEach(([name,team])=>{
     const b=document.querySelector(`.player-btn[data-name="${name}"][data-team="${team}"]`);
@@ -389,7 +388,7 @@ onValue(window.dbRef("matches"), snap => {
   round.value = list.length + 1;
 });
 
-/* AUTO DATUM = sledeći četvrtak */
+/* NEXT THURSDAY */
 function getNextThursday() {
   const now = new Date();
   let diff = (4 - now.getDay() + 7) % 7;
