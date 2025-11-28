@@ -8,7 +8,7 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      max-width: 900px;
+      max-width: 750px;
       margin: 20px auto;
       padding: 0 20px;
     }
@@ -20,136 +20,114 @@
       display: flex;
       gap: 10px;
       background: #f0f0f0;
-      padding: 12px 10px;
+      padding: 12px;
       margin-bottom: 25px;
       border-radius: 8px;
       justify-content: center;
       border: 1px solid #ddd;
     }
     #adminNav button {
-      padding: 8px 14px;
+      padding: 8px 12px;
       border-radius: 6px;
-      border: none;
       background: #0044cc;
       color: white;
+      border: none;
       cursor: pointer;
-      font-size: 14px;
     }
 
-    /* FORM LAYOUT */
+    /* FORM ROWS */
     .row {
       display: flex;
       gap: 10px;
       margin-bottom: 12px;
     }
-    input, textarea {
+    input, textarea, select {
       flex: 1;
       padding: 10px;
       border-radius: 6px;
       border: 1px solid #aaa;
       font-size: 15px;
-      box-sizing: border-box;
     }
-
     textarea {
       min-height: 130px;
       resize: vertical;
     }
 
-    /* SAVE BUTTONS */
+    /* BUTTONS */
     .save-btn, .update-btn, .cancel-btn {
       width: 100%;
       padding: 12px;
       border-radius: 6px;
       font-size: 16px;
-      cursor: pointer;
-      border: none;
       margin-top: 10px;
-    }
-
-    .save-btn { background: #008000; color: white; }
-    .update-btn { background: #d48a00; color: white; display: none; }
-    .cancel-btn { background: #555; color: white; display: none; }
-
-    /* PLAYER TAGS */
-    h3 { margin-top: 25px; margin-bottom: 8px; }
-
-    .players-box {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-bottom: 6px;
-    }
-
-    .player-tag {
-      background: #ececec;
-      padding: 7px 12px;
-      border-radius: 6px;
-      font-size: 13px;
+      border: none;
       cursor: pointer;
-      border: 1px solid #ccc;
     }
-    .player-tag:hover { background: #dadada; }
-
-    .selected-list {
-      margin-bottom: 15px;
-      font-size: 14px;
-      color: #444;
-    }
+    .save-btn { background:#008000; color:white; }
+    .update-btn { background:#d48a00; color:white; display:none; }
+    .cancel-btn { background:#555; color:white; display:none; }
 
     /* TABLE */
     table {
       width: 100%;
-      margin-top: 25px;
       border-collapse: collapse;
+      margin-top: 25px;
     }
-
     th {
-      background: #ececec;
-      padding: 10px;
-      border-bottom: 2px solid #bbb;
-      text-align: left;
+      background:#ececec;
+      padding:10px;
+      border-bottom:2px solid #bbb;
     }
-
     td {
-      padding: 10px;
-      border-bottom: 1px solid #ddd;
+      padding:10px;
+      border-bottom:1px solid #ddd;
     }
 
-    .edit-btn, .del-btn {
-      padding: 6px 10px;
-      border-radius: 4px;
-      border: none;
-      cursor: pointer;
-      font-size: 13px;
-      color: white;
+    /* TAG LIST */
+    .tag {
+      display:inline-block;
+      padding:4px 10px;
+      background:#f0f0f0;
+      border-radius:6px;
+      margin:3px;
+      font-size:14px;
+      border:1px solid #ccc;
+    }
+    .tag span {
+      color:red;
+      cursor:pointer;
+      margin-left:6px;
+      font-weight:bold;
     }
 
-    .edit-btn { background: #0044cc; }
-    .del-btn { background: #c00000; }
+    /* SCORERS BUTTON */
+    .scorer-btn {
+      padding:6px 10px;
+      background:#eee;
+      border-radius:5px;
+      cursor:pointer;
+      margin:3px;
+      border:1px solid #ccc;
+      font-size:14px;
+    }
   </style>
 </head>
 <body>
 
 <div id="adminNav">
-  <button onclick="window.location.href='admin.html'">Mečevi</button>
-  <button onclick="window.location.href='admin-igraci.html'">Igrači</button>
+  <button onclick="location='admin.html'">Mečevi</button>
+  <button onclick="location='admin-igraci.html'">Igrači</button>
   <button onclick="logout()">Logout</button>
 </div>
 
 <script>
-  if (localStorage.getItem("admin") !== "1") {
-    window.location.href = "login.html";
-  }
-  function logout() {
-    localStorage.removeItem("admin");
-    window.location.href = "index.html";
-  }
+if (localStorage.getItem("admin") !== "1") location = "login.html";
+function logout(){ localStorage.removeItem("admin"); location="index.html"; }
 </script>
 
 <h1>Upravljanje mečevima</h1>
 
-<!-- INPUTI -->
+<!-- BASIC INFO -->
 <div class="row">
   <input id="round" placeholder="Kolo">
   <input id="date" type="date">
@@ -157,31 +135,20 @@
 </div>
 
 <div class="row">
-  <input id="red" type="number" min="0" max="20" placeholder="Golovi Crveni">
-  <input id="blue" type="number" min="0" max="20" placeholder="Golovi Plavi">
-</div>
-
-<div class="row">
-  <textarea id="info" placeholder="Info o meču (opciono)… strelci, komentari, anegdote…"></textarea>
+  <input id="red" type="number" placeholder="Golovi Crveni" min="0" max="20">
+  <input id="blue" type="number" placeholder="Golovi Plavi" min="0" max="20">
 </div>
 
 <!-- IGRALI -->
-<h3>Igrali (Crveni)</h3>
-<div id="playedRed" class="players-box"></div>
-<div id="playedRedList" class="selected-list"></div>
-
-<h3>Igrali (Plavi)</h3>
-<div id="playedBlue" class="players-box"></div>
-<div id="playedBlueList" class="selected-list"></div>
+<h3>Igrali</h3>
+<div id="playedBox" style="margin-bottom:15px; padding-left:4px;"></div>
 
 <!-- STRELCI -->
-<h3>Strelci – Crveni</h3>
-<div id="scorersRed" class="players-box"></div>
-<div id="scorersRedList" class="selected-list"></div>
+<h3>Strelci</h3>
+<div id="scorersSelect" style="margin-bottom:10px;"></div>
+<div id="scorersList" style="margin-bottom:20px;"></div>
 
-<h3>Strelci – Plavi</h3>
-<div id="scorersBlue" class="players-box"></div>
-<div id="scorersBlueList" class="selected-list"></div>
+<textarea id="info" placeholder="Info o meču (opciono)… 500+ karaktera..."></textarea>
 
 <button class="save-btn" id="saveBtn">Sačuvaj meč</button>
 <button class="update-btn" id="updateBtn">Izmeni meč</button>
@@ -190,10 +157,7 @@
 <table>
   <thead>
     <tr>
-      <th>Kolo</th>
-      <th>Rezultat</th>
-      <th>Datum</th>
-      <th>Akcije</th>
+      <th>Kolo</th><th>Rezultat</th><th>Datum</th><th>Akcije</th>
     </tr>
   </thead>
   <tbody id="matchList"></tbody>
@@ -202,204 +166,214 @@
 <script type="module">
 import { onValue, push, update, remove, get } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
-const ref = window.dbRef("matches");
+/* LOAD PLAYERS */
+let players = {};
+onValue(window.dbRef("players"), snap => {
+  players = snap.val() || {};
+  renderPlayedCheckboxes();
+  renderScorerButtons();
+});
 
-let editingId = null;
-let playedRedArr = [];
-let playedBlueArr = [];
-let scorersRedArr = [];
-let scorersBlueArr = [];
+/* RENDER PLAYED CHECKBOXES */
+function renderPlayedCheckboxes(selected = {}) {
+  const box = document.getElementById("playedBox");
+  box.innerHTML = "";
 
-/* AUTO NEXT THURSDAY */
-function getNextThursday() {
-  const now = new Date();
-  let diff = (4 - now.getDay() + 7) % 7;
-  if (diff === 0) diff = 7;
-  const d = new Date(now);
-  d.setDate(now.getDate() + diff);
-  return d;
+  ["crveni","plavi"].forEach(team=>{
+    if(!players[team]) return;
+
+    box.innerHTML += `<b style="display:block;margin-top:5px;">${team.toUpperCase()}</b>`;
+
+    Object.entries(players[team]).forEach(([id,p])=>{
+      box.innerHTML += `
+        <label style="margin-right:12px;">
+          <input type="checkbox" class="playedChk" data-id="${id}" ${selected[id]?'checked':''}>
+          ${p.name}
+        </label>
+      `;
+    });
+  });
 }
 
-function autoFill() {
+/* STRELCI */
+// internal array
+let scorers = [];
+
+function renderScorerButtons() {
+  const box = document.getElementById("scorersSelect");
+  box.innerHTML = "";
+
+  ["crveni","plavi"].forEach(team=>{
+    if(!players[team]) return;
+    box.innerHTML += `<div><b>${team.toUpperCase()}</b></div>`;
+    Object.entries(players[team]).forEach(([id,p])=>{
+      box.innerHTML += `
+        <button class="scorer-btn" onclick="addScorer('${id}','${p.name}')">${p.name}</button>
+      `;
+    });
+  });
+}
+
+window.addScorer = (id,name) => {
+  scorers.push({id,name});
+  renderScorersList();
+};
+
+function renderScorersList(){
+  const list = document.getElementById("scorersList");
+  list.innerHTML = "";
+
+  const grouped = {};
+  scorers.forEach(s=>{
+    if(!grouped[s.id]) grouped[s.id]={name:s.name,count:0};
+    grouped[s.id].count++;
+  });
+
+  Object.entries(grouped).forEach(([id,obj])=>{
+    list.innerHTML += `
+      <div class="tag">
+        ${obj.name} (${obj.count})
+        <span onclick="removeScorer('${id}')">×</span>
+      </div>
+    `;
+  });
+}
+
+window.removeScorer = id => {
+  scorers = scorers.filter(s=>s.id !== id);
+  renderScorersList();
+};
+
+/* AUTO NEXT THURSDAY */
+function getNextThursday(){
+  const now = new Date();
+  let diff = (4 - now.getDay() + 7) % 7;
+  if(diff===0) diff=7;
+  const d = new Date(now);
+  d.setDate(now.getDate()+diff);
+  return d;
+}
+(function autoFill(){
   const d = getNextThursday();
   date.value = d.toISOString().split("T")[0];
   time.value = "18:00";
-}
-autoFill();
+})();
 
-/* LOAD PLAYERS */
-let playersRed = {};
-let playersBlue = {};
+/* LOAD MATCHES */
+const ref = window.dbRef("matches");
+let editingId = null;
 
-onValue(window.dbRef("players/crveni"), snap => {
-  playersRed = snap.val() || {};
-  renderPlayers();
-});
-onValue(window.dbRef("players/plavi"), snap => {
-  playersBlue = snap.val() || {};
-  renderPlayers();
-});
-
-function renderPlayers() {
-
-  /* RESET */
-  playedRed.innerHTML = "";
-  playedBlue.innerHTML = "";
-  scorersRed.innerHTML = "";
-  scorersBlue.innerHTML = "";
-
-  /* IGRAČI – CRVENI */
-  Object.values(playersRed).forEach(p => {
-    let t = document.createElement("div");
-    t.className = "player-tag";
-    t.innerText = p.name;
-    t.onclick = () => { playedRedArr.push(p.name); renderLists(); };
-    playedRed.appendChild(t);
-
-    let s = document.createElement("div");
-    s.className = "player-tag";
-    s.innerText = p.name;
-    s.onclick = () => { scorersRedArr.push(p.name); renderLists(); };
-    scorersRed.appendChild(s);
-  });
-
-  /* IGRAČI – PLAVI */
-  Object.values(playersBlue).forEach(p => {
-    let t = document.createElement("div");
-    t.className = "player-tag";
-    t.innerText = p.name;
-    t.onclick = () => { playedBlueArr.push(p.name); renderLists(); };
-    playedBlue.appendChild(t);
-
-    let s = document.createElement("div");
-    s.className = "player-tag";
-    s.innerText = p.name;
-    s.onclick = () => { scorersBlueArr.push(p.name); renderLists(); };
-    scorersBlue.appendChild(s);
-  });
-}
-
-function renderLists() {
-  playedRedList.innerText = playedRedArr.length ? "Crveni igrali: " + playedRedArr.join(", ") : "";
-  playedBlueList.innerText = playedBlueArr.length ? "Plavi igrali: " + playedBlueArr.join(", ") : "";
-  scorersRedList.innerText = scorersRedArr.length ? "Strelci Crveni: " + scorersRedArr.join(", ") : "";
-  scorersBlueList.innerText = scorersBlueArr.length ? "Strelci Plavi: " + scorersBlueArr.join(", ") : "";
-}
-
-/* AUTO KOLO */
-onValue(ref, snap => {
-  const matches = Object.values(snap.val() || {});
-  round.value = matches.length + 1;
-});
-
-/* LOAD MATCHES TABLE */
 onValue(ref, snap => {
   const data = snap.val() || {};
-  matchList.innerHTML = "";
+  const tbody = document.getElementById("matchList");
+  tbody.innerHTML = "";
 
-  Object.entries(data).sort((a,b)=>b[1].timestamp - a[1].timestamp).forEach(([id, m]) => {
-    matchList.innerHTML += `
-      <tr>
-        <td>${m.round}</td>
-        <td>Crveni ${m.red} - ${m.blue} Plavi</td>
-        <td>${m.date} ${m.time}</td>
-        <td>
-          <button class="edit-btn" onclick="editMatch('${id}')">Izmeni</button>
-          <button class="del-btn" onclick="deleteMatch('${id}')">Obriši</button>
-        </td>
-      </tr>
-    `;
-  });
+  Object.entries(data)
+    .sort((a,b)=>b[1].timestamp - a[1].timestamp)
+    .forEach(([id,m])=>{
+      tbody.innerHTML += `
+        <tr>
+          <td>${m.round}</td>
+          <td>Crveni ${m.red} - ${m.blue} Plavi</td>
+          <td>${m.date} ${m.time}</td>
+          <td>
+            <button class="edit-btn" onclick="editMatch('${id}')">Izmeni</button>
+            <button class="del-btn" onclick="deleteMatch('${id}')">Obriši</button>
+          </td>
+        </tr>
+      `;
+    });
 });
 
 /* SAVE MATCH */
 saveBtn.onclick = () => {
+  const played = {};
+  document.querySelectorAll(".playedChk").forEach(ch=>{
+    if(ch.checked) played[ch.dataset.id] = true;
+  });
 
-  push(ref, {
+  push(ref,{
     round: round.value,
     date: date.value,
     time: time.value,
     red: Number(red.value),
     blue: Number(blue.value),
     info: info.value.trim(),
-    playedRed: playedRedArr,
-    playedBlue: playedBlueArr,
-    scorersRed: scorersRedArr,
-    scorersBlue: scorersBlueArr,
+    played,
+    scorers,
     timestamp: Date.now()
   });
 
   clearForm();
 };
 
-/* EDIT MATCH */
+/* EDIT */
 window.editMatch = async id => {
   editingId = id;
-
   const snap = await get(window.dbRef(`matches/${id}`));
   const m = snap.val();
 
   round.value = m.round;
-  date.value = m.date;
-  time.value = m.time;
-  red.value = m.red;
-  blue.value = m.blue;
-  info.value = m.info || "";
+  date.value  = m.date;
+  time.value  = m.time;
+  red.value   = m.red;
+  blue.value  = m.blue;
+  info.value  = m.info || "";
 
-  playedRedArr = m.playedRed || [];
-  playedBlueArr = m.playedBlue || [];
-  scorersRedArr = m.scorersRed || [];
-  scorersBlueArr = m.scorersBlue || [];
-  renderLists();
+  // played
+  renderPlayedCheckboxes(m.played || {});
 
-  saveBtn.style.display = "none";
-  updateBtn.style.display = "block";
-  cancelBtn.style.display = "block";
+  // scorers
+  scorers = m.scorers || [];
+  renderScorersList();
+
+  saveBtn.style.display="none";
+  updateBtn.style.display="block";
+  cancelBtn.style.display="block";
 };
 
-/* UPDATE MATCH */
+/* UPDATE */
 updateBtn.onclick = () => {
-  update(window.dbRef(`matches/${editingId}`), {
+  const played = {};
+  document.querySelectorAll(".playedChk").forEach(ch=>{
+    if(ch.checked) played[ch.dataset.id] = true;
+  });
+
+  update(window.dbRef(`matches/${editingId}`),{
     round: round.value,
     date: date.value,
     time: time.value,
     red: Number(red.value),
     blue: Number(blue.value),
     info: info.value.trim(),
-    playedRed: playedRedArr,
-    playedBlue: playedBlueArr,
-    scorersRed: scorersRedArr,
-    scorersBlue: scorersBlueArr
+    played,
+    scorers
   });
 
   clearForm();
 };
 
-/* DELETE MATCH */
+/* DELETE */
 window.deleteMatch = id => {
-  if (!confirm("Obrisati meč?")) return;
-  remove(window.dbRef(`matches/${id}`));
+  if(confirm("Obrisati meč?")) remove(window.dbRef(`matches/${id}`));
 };
 
 /* CANCEL */
 cancelBtn.onclick = clearForm;
 
-function clearForm() {
-  editingId = null;
+function clearForm(){
+  editingId=null;
+  round.value="";
+  red.value="";
+  blue.value="";
+  info.value="";
+  scorers=[];
+  renderScorersList();
+  renderPlayedCheckboxes();
 
-  round.value = "";
-  red.value = "";
-  blue.value = "";
-  info.value = "";
-  playedRedArr = [];
-  playedBlueArr = [];
-  scorersRedArr = [];
-  scorersBlueArr = [];
-  renderLists();
-
-  saveBtn.style.display = "block";
-  updateBtn.style.display = "none";
-  cancelBtn.style.display = "none";
+  saveBtn.style.display="block";
+  updateBtn.style.display="none";
+  cancelBtn.style.display="none";
 }
 </script>
 
