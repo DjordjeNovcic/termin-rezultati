@@ -3,60 +3,42 @@
 <head>
   <meta charset="UTF-8">
   <title>Ekipa Crvenih</title>
-
   <script type="module" src="firebase.mjs"></script>
 
   <style>
     body {
-      font-family: Arial;
+      font-family: Arial, sans-serif;
       max-width: 800px;
-      margin: 25px auto;
+      margin: 20px auto;
       padding: 0 20px;
+      text-align: center;
     }
 
     h1 {
-      text-align: center;
-      margin-bottom: 25px;
-      color: #c00000;
-    }
-
-    .team-photo {
-      display: block;
-      margin: 0 auto 25px auto;
-      max-width: 350px;
-      border-radius: 10px;
+      color: #b10000;
+      margin-bottom: 20px;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
-      margin-top: 20px;
+      margin-top: 25px;
+    }
+
+    th, td {
+      padding: 10px;
+      border-bottom: 1px solid #ddd;
     }
 
     th {
       background: #ececec;
-      padding: 10px;
-      border-bottom: 2px solid #aaa;
+      border-bottom: 2px solid #bbb;
     }
 
-    td {
-      padding: 10px;
-      text-align: center;
-      border-bottom: 1px solid #ddd;
-    }
-
-    tr:nth-child(even) td {
-      background: #fafafa;
-    }
-
-    .back {
-      margin-top: 30px;
-      display: block;
-      text-align: center;
-      font-size: 16px;
+    a {
+      display: inline-block;
+      margin-top: 20px;
       color: #0044cc;
-      cursor: pointer;
-      text-decoration: underline;
     }
   </style>
 </head>
@@ -64,7 +46,7 @@
 
 <h1>Ekipa Crvenih</h1>
 
-<img src="crveni-team.png" class="team-photo">
+<img src="crveni-tim.jpg" style="width:80%; max-width:500px; border-radius:8px;">
 
 <table>
   <thead>
@@ -74,26 +56,24 @@
       <th>Golovi</th>
     </tr>
   </thead>
-  <tbody id="players"></tbody>
+  <tbody id="teamTable"></tbody>
 </table>
 
-<div class="back" onclick="window.location.href='index.html'">← Nazad na rezultate</div>
+<a href="index.html">← Nazad na rezultate</a>
 
 <script type="module">
 import { onValue } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
+/* UČITAJ IGRAČE CRVENIH */
 onValue(window.dbRef("players/crveni"), snap => {
-  const tbody = document.getElementById("players");
+  const data = snap.val() || {};
+  const tbody = document.getElementById("teamTable");
   tbody.innerHTML = "";
 
-  const players = snap.val() || {};
+  // Sortiraj po imenu
+  const list = Object.values(data).sort((a,b)=>a.name.localeCompare(b.name));
 
-  Object.values(players).forEach(p => {
-    // ako je string, pretvaramo ga u objekat
-    if (typeof p === "string") {
-      p = { name: p, goals: 0, matches: 0 };
-    }
-
+  list.forEach(p => {
     tbody.innerHTML += `
       <tr>
         <td>${p.name}</td>
