@@ -36,6 +36,16 @@
       background:#008000; color:white; border-color:#006600;
     }
 
+    .player-red {
+      background: #ffdddd !important;
+      border-color: #cc6666 !important;
+    }
+
+    .player-blue {
+      background: #dde7ff !important;
+      border-color: #6688cc !important;
+    }
+
     /* Strelci tagovi */
     .tag {
       background:#ddd; padding:6px 10px; border-radius:6px;
@@ -169,14 +179,14 @@ function renderPlayers() {
 
   // CRVENI
   Object.entries(players.crveni).forEach(([id, p]) => {
-    PR.innerHTML  += `<div class="player-btn" data-id="${id}" data-team="crveni">${p.name}</div>`;
-    SRP.innerHTML += `<div class="player-btn" data-id="${id}" data-team="crveni">${p.name}</div>`;
+    PR.innerHTML  += `<div class="player-btn player-red" data-id="${id}" data-team="crveni">${p.name}</div>`;
+    SRP.innerHTML += `<div class="player-btn player-red" data-id="${id}" data-team="crveni">${p.name}</div>`;
   });
 
   // PLAVI
   Object.entries(players.plavi).forEach(([id, p]) => {
-    PB.innerHTML  += `<div class="player-btn" data-id="${id}" data-team="plavi">${p.name}</div>`;
-    SBP.innerHTML += `<div class="player-btn" data-id="${id}" data-team="plavi">${p.name}</div>`;
+    PB.innerHTML  += `<div class="player-btn player-blue" data-id="${id}" data-team="plavi">${p.name}</div>`;
+    SBP.innerHTML += `<div class="player-btn player-blue" data-id="${id}" data-team="plavi">${p.name}</div>`;
   });
 
   /* selektovanje igrali */
