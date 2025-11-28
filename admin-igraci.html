@@ -129,6 +129,14 @@
 
 <h1>Upravljanje igračima</h1>
 
+<!-- RESET STATISTIKE -->
+<button id="resetStatsBtn"
+        style="background:#b10000; color:white; padding:10px 20px;
+               border:none; border-radius:6px; cursor:pointer;
+               font-size:15px; margin-bottom:25px;">
+  Resetuj SVE golove i utakmice
+</button>
+
 <!-- CRVENI -->
 <div class="team-title">Crveni</div>
 
@@ -141,6 +149,8 @@
   <thead>
     <tr>
       <th>Igrač</th>
+      <th>Golovi</th>
+      <th>Utakmice</th>
       <th>Akcija</th>
     </tr>
   </thead>
@@ -159,6 +169,8 @@
   <thead>
     <tr>
       <th>Igrač</th>
+      <th>Golovi</th>
+      <th>Utakmice</th>
       <th>Akcija</th>
     </tr>
   </thead>
@@ -166,12 +178,15 @@
 </table>
 
 <script type="module">
-import { onValue, push, set, update, remove } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+import { onValue, push, set, update, remove, get }
+  from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
-function playerTemplate(id, player, team) {
+function rowTemplate(id, player, team) {
   return `
     <tr>
       <td>${player.name}</td>
+      <td>${player.goals || 0}</td>
+      <td>${player.matches || 0}</td>
       <td>
         <button class="edit-btn" onclick="editPlayer('${team}','${id}','${player.name}')">Izmeni</button>
         <button class="del-btn" onclick="deletePlayer('${team}','${id}')">Obriši</button>
@@ -180,31 +195,26 @@ function playerTemplate(id, player, team) {
   `;
 }
 
-/* MIGRACIJA: Ako je string → pretvori u objekat */
-function migrateIfNeeded(team, id, value) {
-  if (typeof value === "string") {
-    const obj = {
-      name: value,
-      goals: 0,
-      assists: 0,
-      matches: 0
-    };
+/* MIGRACIJA KO JE STRING → U OBJEKAT */
+function migrate(team, id, val) {
+  if (typeof val === "string") {
+    const obj = { name: val, goals: 0, matches: 0 };
     set(window.dbRef(`players/${team}/${id}`), obj);
     return obj;
   }
-  return value;
+  return val;
 }
 
-/* PRIKAZ */
+/* UČITAVANJE LISTE */
 function loadPlayers(team, elementId) {
   onValue(window.dbRef("players/" + team), snap => {
     const data = snap.val() || {};
-    const list = document.getElementById(elementId);
-    list.innerHTML = "";
+    const tbody = document.getElementById(elementId);
+    tbody.innerHTML = "";
 
     Object.entries(data).forEach(([id, p]) => {
-      const player = migrateIfNeeded(team, id, p);
-      list.innerHTML += playerTemplate(id, player, team);
+      const pl = migrate(team, id, p);
+      tbody.innerHTML += rowTemplate(id, pl, team);
     });
   });
 }
@@ -212,7 +222,7 @@ function loadPlayers(team, elementId) {
 loadPlayers("crveni", "redList");
 loadPlayers("plavi", "blueList");
 
-/* DODAJ */
+/* DODAVANJE */
 window.addPlayer = team => {
   const input = document.getElementById(team === "crveni" ? "redInput" : "blueInput");
   const name = input.value.trim();
@@ -221,14 +231,13 @@ window.addPlayer = team => {
   push(window.dbRef("players/" + team), {
     name,
     goals: 0,
-    assists: 0,
     matches: 0
   });
 
   input.value = "";
 };
 
-/* OBRIŠI */
+/* BRISANJE */
 window.deletePlayer = (team, id) => {
   if (!confirm("Obrisati igrača?")) return;
   remove(window.dbRef(`players/${team}/${id}`));
@@ -238,8 +247,27 @@ window.deletePlayer = (team, id) => {
 window.editPlayer = (team, id, oldName) => {
   const newName = prompt("Novo ime:", oldName);
   if (!newName) return;
-
   update(window.dbRef(`players/${team}/${id}`), { name: newName });
+};
+
+/* RESET SVIH GOLOVA + UTAKMICA */
+document.getElementById("resetStatsBtn").onclick = async () => {
+  if (!confirm("Da li sigurno želiš da resetuješ SVE golove i utakmice?")) return;
+
+  const snap = await get(window.dbRef("players"));
+  const data = snap.val() || {};
+
+  for (const team of ["crveni", "plavi"]) {
+    if (!data[team]) continue;
+    for (const id of Object.keys(data[team])) {
+      await update(window.dbRef(`players/${team}/${id}`), {
+        goals: 0,
+        matches: 0
+      });
+    }
+  }
+
+  alert("Statistika svih igrača je resetovana!");
 };
 </script>
 
