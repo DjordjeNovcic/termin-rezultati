@@ -33,17 +33,20 @@
       display:inline-block;
     }
     .player-btn.active {
-      background:#008000; color:white; border-color:#006600;
+      font-weight: bold;
+      color: white;
+      border-color: #00000022;
+      box-shadow: 0 0 4px #00000033;
     }
 
-    .player-red {
-      background: #ffdddd !important;
-      border-color: #cc6666 !important;
+    #playedRed .player-btn.active,
+      #scorersRedPlayers .player-btn.active {
+      background: #b10000 !important;
     }
 
-    .player-blue {
-      background: #dde7ff !important;
-      border-color: #6688cc !important;
+    #playedBlue .player-btn.active,
+      #scorersBluePlayers .player-btn.active {
+      background: #0044cc !important;
     }
 
     /* Strelci tagovi */
