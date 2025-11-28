@@ -42,14 +42,6 @@
       margin-bottom: 25px;
     }
 
-    .small-match {
-      padding: 15px;
-      border-radius: 10px;
-      background: #f9f9f9;
-      border: 1px solid #ddd;
-      margin-bottom: 15px;
-    }
-
     .team-logo { width: 90px; height: 90px; }
     .team-name { font-weight: bold; margin-top: 5px; }
 
@@ -58,6 +50,7 @@
       font-weight: bold;
       margin: 10px 0;
     }
+
     .score-small {
       font-size: 26px;
       font-weight: bold;
@@ -105,7 +98,7 @@
     /* Dugme */
     .more-btn {
       padding: 10px 20px;
-      margin-top: 10px;
+      margin-top: 15px;
       cursor: pointer;
       border: none;
       background: #0044cc;
@@ -133,7 +126,6 @@
       border-radius: 12px;
       text-align: left;
       box-shadow: 0 0 20px rgba(0,0,0,0.25);
-      animation: fadeIn 0.2s ease-out;
     }
     #closeModal {
       float: right;
@@ -153,9 +145,10 @@
 
 <h1>Rezultati svih odigranih utakmica</h1>
 
-<!-- GLAVNI MEČ + POSLEDNJA 3 -->
-<div id="matches"></div>
+<!-- GLAVNI MEČ -->
+<div id="mainMatch"></div>
 
+<!-- TABELA -->
 <h2>Tabela</h2>
 <table>
   <thead>
@@ -174,10 +167,14 @@
   <tbody id="leagueBody"></tbody>
 </table>
 
+<!-- FORMA -->
 <div class="form-box">
   <h2>Forma poslednjih 5 mečeva</h2>
   <div id="formBox"></div>
 </div>
+
+<!-- MINI REZULTATI DOLE -->
+<div id="recentMatches"></div>
 
 <!-- MODAL -->
 <div id="modalOverlay">
@@ -201,76 +198,79 @@ onValue(window.dbRef("matches"), snap => {
   renderForm(list);
 });
 
-/* -------- NAJNOVIJI + POSLEDNJA 3 -------- */
+/* -------- MAIN MATCH + RECENT (DOLE) -------- */
 function renderMainAndRecent(matches) {
-  const box = document.getElementById("matches");
-  box.innerHTML = "";
+  const mainBox = document.getElementById("mainMatch");
+  const recentBox = document.getElementById("recentMatches");
+
+  mainBox.innerHTML = "";
+  recentBox.innerHTML = "";
 
   if (!matches.length) return;
 
   const latest = matches[0];
 
   /* ---- Najnoviji meč ---- */
-  box.innerHTML += `
-  <div class="match-box">
-    <div style="opacity:0.8; margin-bottom:10px;">
-      Kolo ${latest.round} — ${latest.date} u ${latest.time}
-      ${latest.info ? `<div class="info-link" onclick="openInfo(\`${latest.info.replace(/`/g,"\\`")}\`)">ℹ Info o meču</div>` : ""}
-    </div>
+  mainBox.innerHTML = `
+    <div class="match-box">
+      <div style="opacity:0.8; margin-bottom:10px;">
+        Kolo ${latest.round} — ${latest.date} u ${latest.time}
+        ${latest.info ? `<div class="info-link" onclick="openInfo(\`${latest.info.replace(/`/g,"\\`")}\`)">ℹ Info o meču</div>` : ""}
+      </div>
 
-    <div style="display:flex; justify-content:space-around; align-items:center;">
-      
-      <!-- CRVENI -->
+      <div style="display:flex; justify-content:space-around; align-items:center;">
+        
         <div style="text-align:center;">
           <img src="crveni.png" class="team-logo">
           <div class="team-name" style="color:#c00000;">Crveni</div>
           <a href="crveni.html" style="font-size:14px;">Vidi ekipu</a>
         </div>
 
-      <div class="score">${latest.red} - ${latest.blue}</div>
+        <div class="score">${latest.red} - ${latest.blue}</div>
 
-      <!-- PLAVI -->
         <div style="text-align:center;">
           <img src="plavi.png" class="team-logo">
           <div class="team-name" style="color:#0044cc;">Plavi</div>
           <a href="plavi.html" style="font-size:14px;">Vidi ekipu</a>
         </div>
+
       </div>
     </div>
   `;
-  /* ---- Poslednja 3 meča ---- */
-  const recent = matches.slice(1, 4);
+
+  /* ---- Poslednja 3 meča DOLE ---- */
+  const recent = matches.slice(1,4);
 
   if (recent.length) {
-    box.innerHTML += `<h3 style="margin-bottom:15px;">Još rezultata</h3>`;
+    recentBox.innerHTML += `<h3 style="margin-bottom:15px; margin-top:30px;">Još rezultata</h3>`;
 
     recent.forEach(m => {
-      box.innerHTML += `
+      recentBox.innerHTML += `
         <div class="match-box" style="background:#fcfcfc; border-color:#ddd; padding:18px;">
           <div style="opacity:0.7; margin-bottom:8px;">
             Kolo ${m.round} — ${m.date} u ${m.time}
           </div>
 
           <div style="display:flex; justify-content:space-around; align-items:center;">
-            <div>
+
+            <div style="text-align:center;">
               <img src="crveni.png" class="team-logo" style="width:60px; height:60px;">
               <div class="team-name" style="font-size:14px; color:#c00000;">Crveni</div>
             </div>
 
-            <div class="score-small" style="font-size:28px; font-weight:bold;">
-              ${m.red} - ${m.blue}
-            </div>
+            <div class="score-small">${m.red} - ${m.blue}</div>
 
-            <div>
+            <div style="text-align:center;">
               <img src="plavi.png" class="team-logo" style="width:60px; height:60px;">
               <div class="team-name" style="font-size:14px; color:#0044cc;">Plavi</div>
             </div>
+
           </div>
         </div>
       `;
     });
 
-    box.innerHTML += `
+    recentBox.innerHTML += `
       <button class="more-btn" onclick="window.location='istorija.html'">
         Vidi sve utakmice →
       </button>
