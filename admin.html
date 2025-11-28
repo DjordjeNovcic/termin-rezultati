@@ -186,14 +186,14 @@ function renderPlayers() {
 
   // CRVENI
   Object.entries(players.crveni).forEach(([id, p]) => {
-    PR.innerHTML  += `<div class="player-btn player-red" data-id="${id}" data-team="crveni">${p.name}</div>`;
-    SRP.innerHTML += `<div class="player-btn player-red" data-id="${id}" data-team="crveni">${p.name}</div>`;
+    PR.innerHTML  += ⁠ <div class="player-btn player-red" data-id="${id}" data-team="crveni">${p.name}</div> ⁠;
+    SRP.innerHTML += ⁠ <div class="player-btn player-red" data-id="${id}" data-team="crveni">${p.name}</div> ⁠;
   });
 
   // PLAVI
   Object.entries(players.plavi).forEach(([id, p]) => {
-    PB.innerHTML  += `<div class="player-btn player-blue" data-id="${id}" data-team="plavi">${p.name}</div>`;
-    SBP.innerHTML += `<div class="player-btn player-blue" data-id="${id}" data-team="plavi">${p.name}</div>`;
+    PB.innerHTML  += ⁠ <div class="player-btn player-blue" data-id="${id}" data-team="plavi">${p.name}</div> ⁠;
+    SBP.innerHTML += ⁠ <div class="player-btn player-blue" data-id="${id}" data-team="plavi">${p.name}</div> ⁠;
   });
 
   /* selektovanje igrali */
@@ -215,21 +215,18 @@ function renderPlayers() {
 /* -------------------------
          TAGOVI STRELACA
 --------------------------*/
-ffunction refreshTags(){
-  let redHTML = "";
-  let blueHTML = "";
+function refreshTags(){
+  document.getElementById("scorersRedTags").innerHTML = "";
+  document.getElementById("scorersBlueTags").innerHTML = "";
 
   scorers.forEach((s,i)=>{
     const name = players[s.team][s.id]?.name || "(obrisan)";
-    const tag =
-      `<div class="tag">${name}<button onclick="removeGoal(${i})">x</button></div>`;
-
-    if (s.team === "crveni") redHTML += tag;
-    else blueHTML += tag;
+    const tag = ⁠ <div class="tag">${name}<button onclick="removeGoal(${i})">x</button></div> ⁠;
+    if (s.team==="crveni")
+      document.getElementById("scorersRedTags").innerHTML += tag;
+    else
+      document.getElementById("scorersBlueTags").innerHTML += tag;
   });
-
-  document.getElementById("scorersRedTags").innerHTML = redHTML;
-  document.getElementById("scorersBlueTags").innerHTML = blueHTML;
 }
 
 window.removeGoal = i => { scorers.splice(i,1); refreshTags(); };
@@ -269,15 +266,12 @@ function validate(){
      UPDATE STATISTIKA
 --------------------------*/
 async function updateOne(team,id,field,delta){
-  const ref = window.dbRef(`players/${team}/${id}`);
+  const ref = window.dbRef(⁠ players/${team}/${id} ⁠);
   const snap = await get(ref);
   if (!snap.exists()) return;
 
   const p = snap.val();
   const next = Math.max(0, (p[field]||0) + delta);
-
-  if (next < 0) next = 0;        // <-- dodat hard limit
-  if (isNaN(next)) next = 0;     // <-- dodat edge-case limit
 
   await update(ref, { [field]: next });
 }
@@ -322,7 +316,7 @@ saveBtn.onclick = async () =>{
 updateBtn.onclick = async () => {
   if(!validate()) return;
 
-  const oldSnap = await get(window.dbRef(`matches/${editingId}`));
+  const oldSnap = await get(window.dbRef(⁠ matches/${editingId} ⁠));
   const oldMatch = oldSnap.val();
 
   await applyStats(oldMatch, -1);
@@ -338,7 +332,7 @@ updateBtn.onclick = async () => {
     scorers:[...scorers]
   };
 
-  await update(window.dbRef(`matches/${editingId}`), newMatch);
+  await update(window.dbRef(⁠ matches/${editingId} ⁠), newMatch);
   await applyStats(newMatch, +1);
 
   clearForm();
@@ -350,10 +344,10 @@ updateBtn.onclick = async () => {
 window.deleteMatch = async id => {
   if (!confirm("Obrisati meč?")) return;
 
-  const snap = await get(window.dbRef(`matches/${id}`));
+  const snap = await get(window.dbRef(⁠ matches/${id} ⁠));
   await applyStats(snap.val(), -1);
 
-  await remove(window.dbRef(`matches/${id}`));
+  await remove(window.dbRef(⁠ matches/${id} ⁠));
 };
 
 /* -------------------------
@@ -412,7 +406,7 @@ onValue(window.dbRef("matches"), snap=>{
 window.editMatch = async id => {
   editingId = id;
 
-  const snap = await get(window.dbRef(`matches/${id}`));
+  const snap = await get(window.dbRef(⁠ matches/${id} ⁠));
   const m = snap.val();
 
   round.value=m.round;
@@ -422,15 +416,13 @@ window.editMatch = async id => {
   blue.value=m.blue;
   info.value=m.info;
 
-  // FIX: reset scorers da ne ostanu stari iz prethodnog meča
-  scorers = [];
   scorers = [...m.scorers];
   refreshTags();
 
   document.querySelectorAll(".player-btn").forEach(b => b.classList.remove("active"));
 
   Object.entries(m.played||{}).forEach(([id,team])=>{
-    const btn = document.querySelector(`.player-btn[data-id="${id}"][data-team="${team}"]`);
+    const btn = document.querySelector(⁠ .player-btn[data-id="${id}"][data-team="${team}"] ⁠);
     if (btn) btn.classList.add("active");
   });
 
