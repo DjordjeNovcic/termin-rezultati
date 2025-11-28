@@ -338,10 +338,15 @@ function validate() {
 /* ============================================
    UPDATE PLAYER STATS
 ============================================ */
-async function updateStat(team,id,field,dir){
-  const p = players[team][id];
+async function updateStat(team, id, field, dir) {
+
+  const snap = await get(window.dbRef(`players/${team}/${id}`));
+  const p = snap.val();
   if (!p) return;
-  const newVal = (p[field] || 0) + dir;
+
+  const current = p[field] || 0;
+  const newVal = current + dir;
+
   await update(window.dbRef(`players/${team}/${id}`), { [field]: newVal });
 }
 
