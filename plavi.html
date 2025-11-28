@@ -67,7 +67,7 @@ import { onValue } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-data
 /* UČITAJ IGRAČE PLAVIH */
 onValue(window.dbRef("players/plavi"), snap => {
   const data = snap.val() || {};
-  const tbody = document.getElementById("teamTableBlue");
+  const tbody = document.getElementById("teamTable");
   tbody.innerHTML = "";
 
   // Sort:
@@ -91,7 +91,6 @@ onValue(window.dbRef("players/plavi"), snap => {
   });
 });
 </script>
-
 
 </body>
 </html>
