@@ -212,28 +212,32 @@ function renderMainAndRecent(matches) {
 
   /* ---- Najnoviji meč ---- */
   box.innerHTML += `
-    <div class="match-box">
-      <div style="opacity:0.8; margin-bottom:10px;">
-        Kolo ${latest.round} — ${latest.date} u ${latest.time}
-        ${latest.info ? `<div class="info-link" onclick="openInfo(\`${latest.info.replace(/`/g,"\\`")}\`)">ℹ Info o meču</div>` : ""}
-      </div>
+  <div class="match-box">
+    <div style="opacity:0.8; margin-bottom:10px;">
+      Kolo ${latest.round} — ${latest.date} u ${latest.time}
+      ${latest.info ? `<div class="info-link" onclick="openInfo(\`${latest.info.replace(/`/g,"\\`")}\`)">ℹ Info o meču</div>` : ""}
+    </div>
 
-      <div style="display:flex; justify-content:space-around; align-items:center;">
-        <div>
+    <div style="display:flex; justify-content:space-around; align-items:center;">
+      
+      <!-- CRVENI -->
+        <div style="text-align:center;">
           <img src="crveni.png" class="team-logo">
           <div class="team-name" style="color:#c00000;">Crveni</div>
+          <a href="crveni.html" style="font-size:14px;">Vidi ekipu</a>
         </div>
 
-        <div class="score">${latest.red} - ${latest.blue}</div>
+      <div class="score">${latest.red} - ${latest.blue}</div>
 
-        <div>
+      <!-- PLAVI -->
+        <div style="text-align:center;">
           <img src="plavi.png" class="team-logo">
           <div class="team-name" style="color:#0044cc;">Plavi</div>
+          <a href="plavi.html" style="font-size:14px;">Vidi ekipu</a>
         </div>
       </div>
     </div>
   `;
-
   /* ---- Poslednja 3 meča ---- */
   const recent = matches.slice(1, 4);
 
