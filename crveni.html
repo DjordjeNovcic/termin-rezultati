@@ -27,18 +27,6 @@
       border-radius: 10px;
     }
 
-    .sort-box {
-      text-align: center;
-      margin-bottom: 15px;
-    }
-
-    select {
-      padding: 8px 12px;
-      border-radius: 6px;
-      border: 1px solid #888;
-      font-size: 15px;
-    }
-
     table {
       width: 100%;
       border-collapse: collapse;
@@ -78,77 +66,43 @@
 
 <img src="crveni-team.png" class="team-photo">
 
-<div class="sort-box">
-  <label>Sortiraj po: </label>
-  <select id="sortSelect">
-    <option value="name">Imenu (A–Z)</option>
-    <option value="games">Utakmicama</option>
-    <option value="goals">Golovima</option>
-    <option value="assists">Asistencijama</option>
-  </select>
-</div>
-
 <table>
   <thead>
     <tr>
       <th>Igrač</th>
       <th>Utakmice</th>
       <th>Golovi</th>
-      <th>Asistencije</th>
     </tr>
   </thead>
   <tbody id="players"></tbody>
 </table>
 
-<div class="back" onclick="window.location.href='index.html'">
-  ← Nazad na rezultate
-</div>
+<div class="back" onclick="window.location.href='index.html'">← Nazad na rezultate</div>
 
 <script type="module">
 import { onValue } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
-let playersData = [];
-
-/* LOAD FROM FIREBASE */
 onValue(window.dbRef("players/crveni"), snap => {
-  const raw = snap.val() || {};
-  playersData = Object.values(raw);
-  renderTable();
+  const tbody = document.getElementById("players");
+  tbody.innerHTML = "";
+
+  const players = snap.val() || {};
+
+  Object.values(players).forEach(p => {
+    // ako je string, pretvaramo ga u objekat
+    if (typeof p === "string") {
+      p = { name: p, goals: 0, matches: 0 };
+    }
+
+    tbody.innerHTML += `
+      <tr>
+        <td>${p.name}</td>
+        <td>${p.matches || 0}</td>
+        <td>${p.goals || 0}</td>
+      </tr>
+    `;
+  });
 });
-
-/* RENDER WITH SORT */
-const tbody = document.getElementById("players");
-const sortSelect = document.getElementById("sortSelect");
-
-function renderTable() {
-  let sorted = [...playersData];
-
-  switch (sortSelect.value) {
-    case "name":
-      sorted.sort((a, b) => a.name.localeCompare(b.name));
-      break;
-    case "games":
-      sorted.sort((a, b) => b.games - a.games);
-      break;
-    case "goals":
-      sorted.sort((a, b) => b.goals - a.goals);
-      break;
-    case "assists":
-      sorted.sort((a, b) => b.assists - a.assists);
-      break;
-  }
-
-  tbody.innerHTML = sorted.map(p => `
-    <tr>
-      <td>${p.name}</td>
-      <td>${p.games || 0}</td>
-      <td>${p.goals || 0}</td>
-      <td>${p.assists || 0}</td>
-    </tr>
-  `).join("");
-}
-
-sortSelect.onchange = renderTable;
 </script>
 
 </body>
