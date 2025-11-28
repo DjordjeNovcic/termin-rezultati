@@ -70,8 +70,15 @@ onValue(window.dbRef("players/crveni"), snap => {
   const tbody = document.getElementById("teamTable");
   tbody.innerHTML = "";
 
-  // Sortiraj po imenu
-  const list = Object.values(data).sort((a,b)=>a.name.localeCompare(b.name));
+  // Sortiraj:
+  // 1) goals DESC
+  // 2) name ASC
+  const list = Object.values(data).sort((a, b) => {
+    if ((b.goals || 0) !== (a.goals || 0)) {
+      return (b.goals || 0) - (a.goals || 0);
+    }
+    return a.name.localeCompare(b.name);
+  });
 
   list.forEach(p => {
     tbody.innerHTML += `
@@ -85,5 +92,3 @@ onValue(window.dbRef("players/crveni"), snap => {
 });
 </script>
 
-</body>
-</html>
