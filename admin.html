@@ -56,14 +56,14 @@
     }
 
     textarea {
-      width: 100%;
+      flex: 1;
       padding: 12px;
       border-radius: 6px;
       border: 1px solid #aaa;
       font-size: 15px;
-      resize: vertical;
-      min-height: 120px;
-      max-height: 400px;
+      resize: vertical; /* možeš širiti po visini */
+      min-height: 120px; /* lepo veliko */
+      max-height: 400px; /* da ne pretera */
     }
 
     .save-btn, .update-btn, .cancel-btn {
@@ -82,9 +82,9 @@
 
     /* TABLE */
     table {
-      width: 100%;
+      width: 98%;
       border-collapse: collapse;
-      margin-top: 25px;
+      margin: 25px auto 0 auto; /* malo uvučeno i centrirano */
     }
 
     th {
@@ -143,7 +143,10 @@
   <input id="blue" type="number" placeholder="Golovi Plavi" min="0" max="20">
 </div>
 
-<textarea id="info" placeholder="Info o meču (opciono) – slobodno piši 500+ karaktera, strelce, asistencije, anegdote, komentare..."></textarea>
+<!-- INFO u istoj širini kao ostali inputi -->
+<div class="row">
+  <textarea id="info" placeholder="Info o meču (opciono) – slobodno piši 500+ karaktera, strelce, asistencije, anegdote, komentare..."></textarea>
+</div>
 
 <button class="save-btn" id="saveBtn">Sačuvaj meč</button>
 <button class="update-btn" id="updateBtn">Izmeni meč</button>
