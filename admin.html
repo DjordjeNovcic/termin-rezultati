@@ -186,14 +186,14 @@ function renderPlayers() {
 
   // CRVENI
   Object.entries(players.crveni).forEach(([id, p]) => {
-    PR.innerHTML  += ⁠ <div class="player-btn player-red" data-id="${id}" data-team="crveni">${p.name}</div> ⁠;
-    SRP.innerHTML += ⁠ <div class="player-btn player-red" data-id="${id}" data-team="crveni">${p.name}</div> ⁠;
+    PR.innerHTML  += `<div class="player-btn player-red" data-id="${id}" data-team="crveni">${p.name}</div>`;
+    SRP.innerHTML += `<div class="player-btn player-red" data-id="${id}" data-team="crveni">${p.name}</div>`;
   });
 
   // PLAVI
   Object.entries(players.plavi).forEach(([id, p]) => {
-    PB.innerHTML  += ⁠ <div class="player-btn player-blue" data-id="${id}" data-team="plavi">${p.name}</div> ⁠;
-    SBP.innerHTML += ⁠ <div class="player-btn player-blue" data-id="${id}" data-team="plavi">${p.name}</div> ⁠;
+    PB.innerHTML  += `<div class="player-btn player-blue" data-id="${id}" data-team="plavi">${p.name}</div>`;
+    SBP.innerHTML += `<div class="player-btn player-blue" data-id="${id}" data-team="plavi">${p.name}</div>`;
   });
 
   /* selektovanje igrali */
@@ -221,7 +221,7 @@ function refreshTags(){
 
   scorers.forEach((s,i)=>{
     const name = players[s.team][s.id]?.name || "(obrisan)";
-    const tag = ⁠ <div class="tag">${name}<button onclick="removeGoal(${i})">x</button></div> ⁠;
+    const tag = `<div class="tag">${name}<button onclick="removeGoal(${i})">x</button></div>`;
     if (s.team==="crveni")
       document.getElementById("scorersRedTags").innerHTML += tag;
     else
@@ -266,7 +266,7 @@ function validate(){
      UPDATE STATISTIKA
 --------------------------*/
 async function updateOne(team,id,field,delta){
-  const ref = window.dbRef(⁠ players/${team}/${id} ⁠);
+  const ref = window.dbRef(`players/${team}/${id}`);
   const snap = await get(ref);
   if (!snap.exists()) return;
 
@@ -332,7 +332,7 @@ updateBtn.onclick = async () => {
     scorers:[...scorers]
   };
 
-  await update(window.dbRef(⁠ matches/${editingId} ⁠), newMatch);
+  await update(window.dbRef(`matches/${editingId}`)⁠), newMatch);
   await applyStats(newMatch, +1);
 
   clearForm();
@@ -422,7 +422,7 @@ window.editMatch = async id => {
   document.querySelectorAll(".player-btn").forEach(b => b.classList.remove("active"));
 
   Object.entries(m.played||{}).forEach(([id,team])=>{
-    const btn = document.querySelector(⁠ .player-btn[data-id="${id}"][data-team="${team}"] ⁠);
+    document.querySelector(`.player-btn[data-id="${id}"][data-team="${team}"]`)
     if (btn) btn.classList.add("active");
   });
 
