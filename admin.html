@@ -13,25 +13,21 @@
       padding: 0 20px;
     }
 
-    h1 {
-      text-align: center;
-      margin-bottom: 25px;
-    }
+    h1 { text-align: center; margin-bottom: 25px; }
 
     /* NAV */
     #adminNav {
       display: flex;
       gap: 10px;
       background: #f0f0f0;
-      padding: 12px;
+      padding: 12px 10px;
       margin-bottom: 25px;
       border-radius: 8px;
       justify-content: center;
       border: 1px solid #ddd;
     }
-
     #adminNav button {
-      padding: 8px 12px;
+      padding: 8px 14px;
       border-radius: 6px;
       border: none;
       background: #0044cc;
@@ -40,18 +36,12 @@
       font-size: 14px;
     }
 
-    /* FORM */
+    /* FORM LAYOUT */
     .row {
       display: flex;
       gap: 10px;
       margin-bottom: 12px;
     }
-
-    .full-row {
-      display: block;
-      width: 100%;
-    }
-
     input, textarea {
       flex: 1;
       padding: 10px;
@@ -62,91 +52,85 @@
     }
 
     textarea {
-      min-height: 140px;
+      min-height: 130px;
       resize: vertical;
-      width: 100%;
     }
 
+    /* SAVE BUTTONS */
     .save-btn, .update-btn, .cancel-btn {
       width: 100%;
       padding: 12px;
       border-radius: 6px;
       font-size: 16px;
       cursor: pointer;
-      margin-top: 10px;
       border: none;
-      color: white;
+      margin-top: 10px;
     }
 
-    .save-btn { background: #008000; }
-    .update-btn { background: #d48a00; display:none; }
-    .cancel-btn { background:#555; display:none; }
+    .save-btn { background: #008000; color: white; }
+    .update-btn { background: #d48a00; color: white; display: none; }
+    .cancel-btn { background: #555; color: white; display: none; }
 
-    /* PLAYERS CHECKBOXES */
-    .section-title {
-      font-weight: bold;
-      margin-top: 20px;
-      margin-bottom: 8px;
-    }
+    /* PLAYER TAGS */
+    h3 { margin-top: 25px; margin-bottom: 8px; }
 
     .players-box {
       display: flex;
       flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: 10px;
+      gap: 8px;
+      margin-bottom: 6px;
     }
 
     .player-tag {
-      padding: 6px 12px;
-      border: 1px solid #888;
+      background: #ececec;
+      padding: 7px 12px;
       border-radius: 6px;
+      font-size: 13px;
       cursor: pointer;
-      background: #f7f7f7;
-      user-select: none;
+      border: 1px solid #ccc;
     }
+    .player-tag:hover { background: #dadada; }
 
-    .player-tag.selected {
-      background: #cce5ff;
-      border-color: #007bff;
-      font-weight: bold;
+    .selected-list {
+      margin-bottom: 15px;
+      font-size: 14px;
+      color: #444;
     }
 
     /* TABLE */
     table {
       width: 100%;
-      border-collapse: collapse;
       margin-top: 25px;
+      border-collapse: collapse;
     }
 
     th {
       background: #ececec;
       padding: 10px;
       border-bottom: 2px solid #bbb;
-      text-align: center;
+      text-align: left;
     }
 
     td {
       padding: 10px;
       border-bottom: 1px solid #ddd;
-      text-align: center;
     }
 
     .edit-btn, .del-btn {
       padding: 6px 10px;
       border-radius: 4px;
-      font-size: 13px;
+      border: none;
       cursor: pointer;
-      border:none;
-      color:white;
+      font-size: 13px;
+      color: white;
     }
 
-    .edit-btn { background:#0044cc; }
-    .del-btn { background:#c00000; }
+    .edit-btn { background: #0044cc; }
+    .del-btn { background: #c00000; }
   </style>
 </head>
 <body>
 
-<!-- NAV -->
 <div id="adminNav">
   <button onclick="window.location.href='admin.html'">Mečevi</button>
   <button onclick="window.location.href='admin-igraci.html'">Igrači</button>
@@ -155,58 +139,54 @@
 
 <script>
   if (localStorage.getItem("admin") !== "1") {
-      window.location.href = "login.html";
+    window.location.href = "login.html";
   }
-
   function logout() {
-      localStorage.removeItem("admin");
-      window.location.href = "index.html";
+    localStorage.removeItem("admin");
+    window.location.href = "index.html";
   }
 </script>
 
 <h1>Upravljanje mečevima</h1>
 
-<!-- FORM -->
-
-<!-- RED 1 -->
+<!-- INPUTI -->
 <div class="row">
   <input id="round" placeholder="Kolo">
   <input id="date" type="date">
   <input id="time" type="time">
 </div>
 
-<!-- RED 2 -->
 <div class="row">
-  <input id="red" type="number" placeholder="Golovi Crveni" min="0" max="20">
-  <input id="blue" type="number" placeholder="Golovi Plavi" min="0" max="20">
+  <input id="red" type="number" min="0" max="20" placeholder="Golovi Crveni">
+  <input id="blue" type="number" min="0" max="20" placeholder="Golovi Plavi">
 </div>
 
-<!-- INFO -->
-<div class="row full-row">
-  <textarea id="info" placeholder="Info o meču (opciono) – slobodno piši detaljan opis, golove, komentare..."></textarea>
+<div class="row">
+  <textarea id="info" placeholder="Info o meču (opciono)… strelci, komentari, anegdote…"></textarea>
 </div>
 
-<!-- IGRALI (CRVENI) -->
-<div class="section-title">Igrali (Crveni)</div>
-<div class="players-box" id="playedRed"></div>
+<!-- IGRALI -->
+<h3>Igrali (Crveni)</h3>
+<div id="playedRed" class="players-box"></div>
+<div id="playedRedList" class="selected-list"></div>
 
-<!-- IGRALI (PLAVI) -->
-<div class="section-title">Igrali (Plavi)</div>
-<div class="players-box" id="playedBlue"></div>
+<h3>Igrali (Plavi)</h3>
+<div id="playedBlue" class="players-box"></div>
+<div id="playedBlueList" class="selected-list"></div>
 
-<!-- STRELCI (CRVENI) -->
-<div class="section-title">Strelci – Crveni</div>
-<div class="players-box" id="goalsRed"></div>
+<!-- STRELCI -->
+<h3>Strelci – Crveni</h3>
+<div id="scorersRed" class="players-box"></div>
+<div id="scorersRedList" class="selected-list"></div>
 
-<!-- STRELCI (PLAVI) -->
-<div class="section-title">Strelci – Plavi</div>
-<div class="players-box" id="goalsBlue"></div>
+<h3>Strelci – Plavi</h3>
+<div id="scorersBlue" class="players-box"></div>
+<div id="scorersBlueList" class="selected-list"></div>
 
 <button class="save-btn" id="saveBtn">Sačuvaj meč</button>
 <button class="update-btn" id="updateBtn">Izmeni meč</button>
 <button class="cancel-btn" id="cancelBtn">Otkaži</button>
 
-<!-- TABLE -->
 <table>
   <thead>
     <tr>
@@ -222,46 +202,15 @@
 <script type="module">
 import { onValue, push, update, remove, get } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
-/* LOAD PLAYERS */
-function loadPlayers() {
-  const redBox = document.getElementById("playedRed");
-  const blueBox = document.getElementById("playedBlue");
-  const goalsRed = document.getElementById("goalsRed");
-  const goalsBlue = document.getElementById("goalsBlue");
+const ref = window.dbRef("matches");
 
-  onValue(window.dbRef("players/crveni"), snap => {
-    const data = snap.val() || {};
-    redBox.innerHTML = "";
-    goalsRed.innerHTML = "";
+let editingId = null;
+let playedRedArr = [];
+let playedBlueArr = [];
+let scorersRedArr = [];
+let scorersBlueArr = [];
 
-    Object.entries(data).forEach(([id, p]) => {
-      redBox.innerHTML += `<div class="player-tag" data-id="${id}" data-team="crveni">${p.name}</div>`;
-      goalsRed.innerHTML += `<div class="player-tag" data-id="${id}" data-team="crveni">${p.name}</div>`;
-    });
-  });
-
-  onValue(window.dbRef("players/plavi"), snap => {
-    const data = snap.val() || {};
-    blueBox.innerHTML = "";
-    goalsBlue.innerHTML = "";
-
-    Object.entries(data).forEach(([id, p]) => {
-      blueBox.innerHTML += `<div class="player-tag" data-id="${id}" data-team="plavi">${p.name}</div>`;
-      goalsBlue.innerHTML += `<div class="player-tag" data-id="${id}" data-team="plavi">${p.name}</div>`;
-    });
-  });
-}
-
-loadPlayers();
-
-/* SELECT TOGGLE */
-document.addEventListener("click", e => {
-  if (e.target.classList.contains("player-tag")) {
-    e.target.classList.toggle("selected");
-  }
-});
-
-/* AUTO POPUNI DATUM/VREME */
+/* AUTO NEXT THURSDAY */
 function getNextThursday() {
   const now = new Date();
   let diff = (4 - now.getDay() + 7) % 7;
@@ -278,38 +227,93 @@ function autoFill() {
 }
 autoFill();
 
-/* LOAD MATCH LIST */
-const ref = window.dbRef("matches");
-let editingId = null;
+/* LOAD PLAYERS */
+let playersRed = {};
+let playersBlue = {};
 
-onValue(ref, snap => {
-  const data = snap.val() || {};
-  const tbody = document.getElementById("matchList");
-  tbody.innerHTML = "";
-
-  Object.entries(data)
-    .sort((a,b)=>b[1].timestamp - a[1].timestamp)
-    .forEach(([id, m]) => {
-      tbody.innerHTML += `
-        <tr>
-          <td>${m.round}</td>
-          <td>Crveni ${m.red} - ${m.blue} Plavi</td>
-          <td>${m.date} ${m.time}</td>
-          <td>
-            <button class="edit-btn" onclick="editMatch('${id}')">Izmeni</button>
-            <button class="del-btn" onclick="deleteMatch('${id}')">Obriši</button>
-          </td>
-        </tr>
-      `;
-    });
+onValue(window.dbRef("players/crveni"), snap => {
+  playersRed = snap.val() || {};
+  renderPlayers();
+});
+onValue(window.dbRef("players/plavi"), snap => {
+  playersBlue = snap.val() || {};
+  renderPlayers();
 });
 
-/* SAVE */
+function renderPlayers() {
+
+  /* RESET */
+  playedRed.innerHTML = "";
+  playedBlue.innerHTML = "";
+  scorersRed.innerHTML = "";
+  scorersBlue.innerHTML = "";
+
+  /* IGRAČI – CRVENI */
+  Object.values(playersRed).forEach(p => {
+    let t = document.createElement("div");
+    t.className = "player-tag";
+    t.innerText = p.name;
+    t.onclick = () => { playedRedArr.push(p.name); renderLists(); };
+    playedRed.appendChild(t);
+
+    let s = document.createElement("div");
+    s.className = "player-tag";
+    s.innerText = p.name;
+    s.onclick = () => { scorersRedArr.push(p.name); renderLists(); };
+    scorersRed.appendChild(s);
+  });
+
+  /* IGRAČI – PLAVI */
+  Object.values(playersBlue).forEach(p => {
+    let t = document.createElement("div");
+    t.className = "player-tag";
+    t.innerText = p.name;
+    t.onclick = () => { playedBlueArr.push(p.name); renderLists(); };
+    playedBlue.appendChild(t);
+
+    let s = document.createElement("div");
+    s.className = "player-tag";
+    s.innerText = p.name;
+    s.onclick = () => { scorersBlueArr.push(p.name); renderLists(); };
+    scorersBlue.appendChild(s);
+  });
+}
+
+function renderLists() {
+  playedRedList.innerText = playedRedArr.length ? "Crveni igrali: " + playedRedArr.join(", ") : "";
+  playedBlueList.innerText = playedBlueArr.length ? "Plavi igrali: " + playedBlueArr.join(", ") : "";
+  scorersRedList.innerText = scorersRedArr.length ? "Strelci Crveni: " + scorersRedArr.join(", ") : "";
+  scorersBlueList.innerText = scorersBlueArr.length ? "Strelci Plavi: " + scorersBlueArr.join(", ") : "";
+}
+
+/* AUTO KOLO */
+onValue(ref, snap => {
+  const matches = Object.values(snap.val() || {});
+  round.value = matches.length + 1;
+});
+
+/* LOAD MATCHES TABLE */
+onValue(ref, snap => {
+  const data = snap.val() || {};
+  matchList.innerHTML = "";
+
+  Object.entries(data).sort((a,b)=>b[1].timestamp - a[1].timestamp).forEach(([id, m]) => {
+    matchList.innerHTML += `
+      <tr>
+        <td>${m.round}</td>
+        <td>Crveni ${m.red} - ${m.blue} Plavi</td>
+        <td>${m.date} ${m.time}</td>
+        <td>
+          <button class="edit-btn" onclick="editMatch('${id}')">Izmeni</button>
+          <button class="del-btn" onclick="deleteMatch('${id}')">Obriši</button>
+        </td>
+      </tr>
+    `;
+  });
+});
+
+/* SAVE MATCH */
 saveBtn.onclick = () => {
-  const played_r = [...document.querySelectorAll("#playedRed .selected")].map(x=>x.dataset.id);
-  const played_b = [...document.querySelectorAll("#playedBlue .selected")].map(x=>x.dataset.id);
-  const goals_r = [...document.querySelectorAll("#goalsRed .selected")].map(x=>x.dataset.id);
-  const goals_b = [...document.querySelectorAll("#goalsBlue .selected")].map(x=>x.dataset.id);
 
   push(ref, {
     round: round.value,
@@ -318,17 +322,17 @@ saveBtn.onclick = () => {
     red: Number(red.value),
     blue: Number(blue.value),
     info: info.value.trim(),
-    played_red: played_r,
-    played_blue: played_b,
-    scorers_red: goals_r,
-    scorers_blue: goals_b,
+    playedRed: playedRedArr,
+    playedBlue: playedBlueArr,
+    scorersRed: scorersRedArr,
+    scorersBlue: scorersBlueArr,
     timestamp: Date.now()
   });
 
   clearForm();
 };
 
-/* EDIT */
+/* EDIT MATCH */
 window.editMatch = async id => {
   editingId = id;
 
@@ -342,28 +346,19 @@ window.editMatch = async id => {
   blue.value = m.blue;
   info.value = m.info || "";
 
-  document.querySelectorAll(".player-tag").forEach(tag => {
-    const id = tag.dataset.id;
-    tag.classList.remove("selected");
-
-    if (m.played_red?.includes(id) || m.played_blue?.includes(id) ||
-        m.scorers_red?.includes(id) || m.scorers_blue?.includes(id)) {
-      tag.classList.add("selected");
-    }
-  });
+  playedRedArr = m.playedRed || [];
+  playedBlueArr = m.playedBlue || [];
+  scorersRedArr = m.scorersRed || [];
+  scorersBlueArr = m.scorersBlue || [];
+  renderLists();
 
   saveBtn.style.display = "none";
   updateBtn.style.display = "block";
   cancelBtn.style.display = "block";
 };
 
-/* UPDATE */
+/* UPDATE MATCH */
 updateBtn.onclick = () => {
-  const played_r = [...document.querySelectorAll("#playedRed .selected")].map(x=>x.dataset.id);
-  const played_b = [...document.querySelectorAll("#playedBlue .selected")].map(x=>x.dataset.id);
-  const goals_r = [...document.querySelectorAll("#goalsRed .selected")].map(x=>x.dataset.id);
-  const goals_b = [...document.querySelectorAll("#goalsBlue .selected")].map(x=>x.dataset.id);
-
   update(window.dbRef(`matches/${editingId}`), {
     round: round.value,
     date: date.value,
@@ -371,16 +366,16 @@ updateBtn.onclick = () => {
     red: Number(red.value),
     blue: Number(blue.value),
     info: info.value.trim(),
-    played_red: played_r,
-    played_blue: played_b,
-    scorers_red: goals_r,
-    scorers_blue: goals_b
+    playedRed: playedRedArr,
+    playedBlue: playedBlueArr,
+    scorersRed: scorersRedArr,
+    scorersBlue: scorersBlueArr
   });
 
   clearForm();
 };
 
-/* DELETE */
+/* DELETE MATCH */
 window.deleteMatch = id => {
   if (!confirm("Obrisati meč?")) return;
   remove(window.dbRef(`matches/${id}`));
@@ -396,12 +391,15 @@ function clearForm() {
   red.value = "";
   blue.value = "";
   info.value = "";
+  playedRedArr = [];
+  playedBlueArr = [];
+  scorersRedArr = [];
+  scorersBlueArr = [];
+  renderLists();
 
   saveBtn.style.display = "block";
   updateBtn.style.display = "none";
   cancelBtn.style.display = "none";
-
-  document.querySelectorAll(".player-tag").forEach(t => t.classList.remove("selected"));
 }
 </script>
 
