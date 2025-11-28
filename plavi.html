@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <title>Ekipa Plavih</title>
 
+  <script type="module" src="firebase.mjs"></script>
+
   <style>
     body {
       font-family: Arial;
@@ -80,25 +82,26 @@
   ← Nazad na rezultate
 </div>
 
-<script>
-// privremeno — kasnije se kači na Firebase
-const players = [
-  { name: "Nikola", games: 5, goals: 4, assists: 1 },
-  { name: "Ivan", games: 4, goals: 0, assists: 3 },
-  { name: "Stefan", games: 3, goals: 2, assists: 1 }
-];
+<script type="module">
+import { onValue } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
-const tbody = document.getElementById("players");
+/* Učitavanje PRAVIH igrača */
+onValue(window.dbRef("players/plavi"), snap => {
+  const data = snap.val() || {};
+  const tbody = document.getElementById("players");
 
-players.forEach(p => {
-  tbody.innerHTML += `
-    <tr>
-      <td>${p.name}</td>
-      <td>${p.games}</td>
-      <td>${p.goals}</td>
-      <td>${p.assists}</td>
-    </tr>
-  `;
+  tbody.innerHTML = "";
+
+  Object.values(data).forEach(p => {
+    tbody.innerHTML += `
+      <tr>
+        <td>${p.name}</td>
+        <td>${p.games || 0}</td>
+        <td>${p.goals || 0}</td>
+        <td>${p.assists || 0}</td>
+      </tr>
+    `;
+  });
 });
 </script>
 
