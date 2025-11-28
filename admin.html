@@ -344,21 +344,12 @@ async function updateStat(team, id, field, dir) {
   const p = snap.val();
   if (!p) return;
 
+  // Ne dozvoli negativne vrednosti
   const current = p[field] || 0;
-  const newVal = current + dir;
+  let newVal = current + dir;
+  if (newVal < 0) newVal = 0;
 
   await update(window.dbRef(`players/${team}/${id}`), { [field]: newVal });
-}
-
-async function applyStats(match,dir){
-  Object.keys(match.played || {}).forEach(pid=>{
-    if(players.crveni[pid]) updateStat("crveni",pid,"matches",dir);
-    if(players.plavi[pid])  updateStat("plavi",pid,"matches",dir);
-  });
-
-  (match.scorers || []).forEach(s=>{
-    updateStat(s.team,s.id,"goals",dir);
-  });
 }
 
 /* ============================================
