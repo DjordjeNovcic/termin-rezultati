@@ -82,9 +82,11 @@
 
     /* TABLE */
     table {
-      width: 98%;
+      width: 100%;
       border-collapse: collapse;
-      margin: 25px auto 0 auto; /* malo uvučeno i centrirano */
+      margin: 25px;
+      padding-left: 20px;
+      box-sizing: border-box;
     }
 
     th {
@@ -175,6 +177,23 @@ onValue(ref, snap => {
   const matches = Object.values(snap.val() || {});
   round.value = matches.length + 1;
 });
+
+ function getNextThursday() {
+  const now = new Date();
+  let day = now.getDay(); // 0 = Nedelja ... 4 = Četvrtak
+  let diff = (4 - day + 7) % 7;
+  if (diff === 0) diff = 7;
+  const d = new Date(now);
+  d.setDate(now.getDate() + diff);
+  return d;
+}
+
+function autoFill() {
+  const d = getNextThursday();
+  date.value = d.toISOString().split("T")[0];
+  time.value = "18:00";
+}
+autoFill(); 
 
 /* LOAD MATCHES */
 onValue(ref, snap => {
