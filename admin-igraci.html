@@ -2,7 +2,7 @@
 <html lang="sr">
 <head>
   <meta charset="UTF-8">
-  <title>Admin – Igrači</title>
+  <title>Upravljanje igračima</title>
   <script type="module" src="firebase.mjs"></script>
 
   <style>
@@ -11,20 +11,13 @@
       max-width: 900px;
       margin: 20px auto;
       padding: 0 20px;
-      text-align: center;
     }
 
     h1 {
+      text-align: center;
       margin-bottom: 25px;
     }
 
-    h2 {
-      text-align: left;
-      margin-top: 40px;
-      color: #b30000;
-    }
-
-    /* NAV */
     #adminNav {
       display: flex;
       gap: 10px;
@@ -46,30 +39,14 @@
       font-size: 14px;
     }
 
-    /* TABLE */
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 15px;
-    }
-
-    th, td {
-      padding: 12px;
-      border-bottom: 1px solid #ddd;
-      text-align: center;
-    }
-
-    th {
-      background: #ececec;
+    .team-title {
+      font-size: 22px;
       font-weight: bold;
+      margin: 25px 0 10px;
+      color: #b10000;
     }
 
-    tr:hover {
-      background: #fafafa;
-    }
-
-    /* INPUT SECTION */
-    .add-box {
+    .input-row {
       display: flex;
       gap: 10px;
       margin-bottom: 15px;
@@ -84,98 +61,79 @@
     }
 
     .add-btn {
-      padding: 10px 15px;
-      background: #008000;
+      background: green;
       color: white;
-      border: none;
+      padding: 10px 16px;
       border-radius: 6px;
-      cursor: pointer;
-    }
-
-    .del-btn, .edit-btn {
-      padding: 6px 10px;
-      border-radius: 4px;
-      font-size: 13px;
       border: none;
-      color: white;
       cursor: pointer;
     }
 
-    .del-btn { background: #b30000; }
-    .edit-btn { background: #0044cc; }
-
-    /* MODAL */
-    #modalOverlay {
-      display: none;
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0,0,0,0.55);
-      justify-content: center;
-      align-items: center;
-    }
-
-    #modalBox {
-      background: white;
-      max-width: 400px;
-      width: 90%;
-      padding: 25px;
-      border-radius: 12px;
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 40px;
       text-align: center;
-      box-shadow: 0 0 20px rgba(0,0,0,0.25);
     }
 
-    #modalBox input {
-      width: 90%;
-      margin-top: 10px;
-    }
-
-    #modalClose {
-      float: right;
-      cursor: pointer;
-      padding: 4px 8px;
-      background: #ccc;
-      border-radius: 4px;
-    }
-
-    #modalSave {
-      margin-top: 15px;
-      width: 90%;
+    th {
+      background: #ececec;
       padding: 10px;
+      border-bottom: 2px solid #bbb;
+    }
+
+    td {
+      padding: 12px 10px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .edit-btn {
       background: #0044cc;
       color: white;
       border: none;
-      border-radius: 6px;
+      padding: 6px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-right: 5px;
+    }
+
+    .del-btn {
+      background: #c00000;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 4px;
       cursor: pointer;
     }
   </style>
+
 </head>
 <body>
 
 <div id="adminNav">
-  <button onclick="window.location='admin.html'">Mečevi</button>
-  <button onclick="window.location='admin-igraci.html'">Igrači</button>
+  <button onclick="window.location.href='admin.html'">Mečevi</button>
+  <button onclick="window.location.href='admin-igraci.html'">Igrači</button>
   <button onclick="logout()">Logout</button>
 </div>
 
 <script>
   if (localStorage.getItem("admin") !== "1") {
-    window.location.href = "login.html";
+      window.location.href = "login.html";
   }
 
   function logout() {
-    localStorage.removeItem("admin");
-    window.location.href = "index.html";
+      localStorage.removeItem("admin");
+      window.location.href = "index.html";
   }
 </script>
 
 <h1>Upravljanje igračima</h1>
 
-<!-- -------- CRVENI -------- -->
-<h2>Crveni</h2>
+<!-- CRVENI -->
+<div class="team-title">Crveni</div>
 
-<div class="add-box">
-  <input id="crveniInput" placeholder="Ime igrača">
+<div class="input-row">
+  <input id="redInput" placeholder="Ime igrača">
   <button class="add-btn" onclick="addPlayer('crveni')">Dodaj</button>
 </div>
 
@@ -186,14 +144,14 @@
       <th>Akcija</th>
     </tr>
   </thead>
-  <tbody id="crveniBody"></tbody>
+  <tbody id="redList"></tbody>
 </table>
 
-<!-- -------- PLAVI -------- -->
-<h2 style="color:#003399;">Plavi</h2>
+<!-- PLAVI -->
+<div class="team-title" style="color:#0033aa;">Plavi</div>
 
-<div class="add-box">
-  <input id="plaviInput" placeholder="Ime igrača">
+<div class="input-row">
+  <input id="blueInput" placeholder="Ime igrača">
   <button class="add-btn" onclick="addPlayer('plavi')">Dodaj</button>
 </div>
 
@@ -204,84 +162,84 @@
       <th>Akcija</th>
     </tr>
   </thead>
-  <tbody id="plaviBody"></tbody>
+  <tbody id="blueList"></tbody>
 </table>
 
-<!-- ---------- EDIT MODAL ---------- -->
-<div id="modalOverlay">
-  <div id="modalBox">
-    <span id="modalClose">✕</span>
-    <h3>Izmeni ime igrača</h3>
-    <input id="modalInput" type="text">
-    <button id="modalSave">Sačuvaj</button>
-  </div>
-</div>
-
 <script type="module">
-import { onValue, push, remove, update, get } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+import { onValue, push, set, update, remove } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
-const refCrveni = window.dbRef("players/crveni");
-const refPlavi  = window.dbRef("players/plavi");
+function playerTemplate(id, player, team) {
+  return `
+    <tr>
+      <td>${player.name}</td>
+      <td>
+        <button class="edit-btn" onclick="editPlayer('${team}','${id}','${player.name}')">Izmeni</button>
+        <button class="del-btn" onclick="deletePlayer('${team}','${id}')">Obriši</button>
+      </td>
+    </tr>
+  `;
+}
 
-let editTeam = null;
-let editId = null;
+/* MIGRACIJA: Ako je string → pretvori u objekat */
+function migrateIfNeeded(team, id, value) {
+  if (typeof value === "string") {
+    const obj = {
+      name: value,
+      goals: 0,
+      assists: 0,
+      matches: 0
+    };
+    set(window.dbRef(`players/${team}/${id}`), obj);
+    return obj;
+  }
+  return value;
+}
 
-/* LOAD PLAYERS */
-onValue(refCrveni, snap => renderPlayers(snap.val(), "crveniBody", "crveni"));
-onValue(refPlavi,  snap => renderPlayers(snap.val(), "plaviBody", "plavi"));
+/* PRIKAZ */
+function loadPlayers(team, elementId) {
+  onValue(window.dbRef("players/" + team), snap => {
+    const data = snap.val() || {};
+    const list = document.getElementById(elementId);
+    list.innerHTML = "";
 
-function renderPlayers(data, elementId, team) {
-  const body = document.getElementById(elementId);
-  body.innerHTML = "";
-
-  if (!data) return;
-
-  Object.entries(data).forEach(([id, name]) => {
-    body.innerHTML += `
-      <tr>
-        <td>${name}</td>
-        <td>
-          <button class="edit-btn" onclick="openEdit('${team}','${id}','${name}')">Izmeni</button>
-          <button class="del-btn" onclick="deletePlayer('${team}','${id}')">Obriši</button>
-        </td>
-      </tr>
-    `;
+    Object.entries(data).forEach(([id, p]) => {
+      const player = migrateIfNeeded(team, id, p);
+      list.innerHTML += playerTemplate(id, player, team);
+    });
   });
 }
 
-/* ADD PLAYER */
-window.addPlayer = team => {
-  const input = document.getElementById(team + "Input");
-  if (!input.value.trim()) return;
+loadPlayers("crveni", "redList");
+loadPlayers("plavi", "blueList");
 
-  push(window.dbRef("players/" + team), input.value.trim());
+/* DODAJ */
+window.addPlayer = team => {
+  const input = document.getElementById(team === "crveni" ? "redInput" : "blueInput");
+  const name = input.value.trim();
+  if (!name) return;
+
+  push(window.dbRef("players/" + team), {
+    name,
+    goals: 0,
+    assists: 0,
+    matches: 0
+  });
+
   input.value = "";
 };
 
-/* DELETE */
+/* OBRIŠI */
 window.deletePlayer = (team, id) => {
   if (!confirm("Obrisati igrača?")) return;
   remove(window.dbRef(`players/${team}/${id}`));
 };
 
-/* EDIT PLAYER */
-window.openEdit = (team, id, name) => {
-  editTeam = team;
-  editId = id;
-  document.getElementById("modalInput").value = name;
-
-  document.getElementById("modalOverlay").style.display = "flex";
-};
-
-document.getElementById("modalClose").onclick = () =>
-  document.getElementById("modalOverlay").style.display = "none";
-
-document.getElementById("modalSave").onclick = () => {
-  const newName = document.getElementById("modalInput").value.trim();
+/* EDIT */
+window.editPlayer = (team, id, oldName) => {
+  const newName = prompt("Novo ime:", oldName);
   if (!newName) return;
 
-  update(window.dbRef(`players/${editTeam}/${editId}`), newName);
-  document.getElementById("modalOverlay").style.display = "none";
+  update(window.dbRef(`players/${team}/${id}`), { name: newName });
 };
 </script>
 
