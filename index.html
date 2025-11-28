@@ -2,8 +2,7 @@
 <html lang="sr">
 <head>
   <meta charset="UTF-8">
-  <title>Rezultati svih odigranih utakmica</title>
-
+  <title>Rezultati</title>
   <script type="module" src="firebase.mjs"></script>
 
   <style>
@@ -12,204 +11,176 @@
       max-width: 900px;
       margin: 20px auto;
       padding: 0 15px;
-    }
-
-    /* ADMIN LOGIN BUTTON */
-    #adminBtn {
-      position: fixed;
-      top: 15px;
-      right: 15px;
-      padding: 8px 14px;
-      background: #0044cc;
-      color: white;
-      border-radius: 6px;
-      font-size: 14px;
-      border: none;
-      cursor: pointer;
-      z-index: 99;
+      text-align: center;
     }
 
     h1 {
-      text-align: center;
-      margin-bottom: 35px;
-      font-size: 28px;
-    }
-
-    /* ---- MATCH CARDS ---- */
-    .match {
-      padding: 25px;
       margin-bottom: 25px;
+    }
+
+    /* KARTICA MEČA */
+    .match-box {
+      padding: 25px;
       border-radius: 12px;
-      border: 1px solid #ddd;
+      background: #fff6f6;
+      border: 1px solid #e5dcdc;
+      margin-bottom: 25px;
     }
 
-    .winner-red { background: #fff4f4; }
-    .winner-blue { background: #f4f6ff; }
-    .draw { background: #f8f8f8; }
-
-    .meta {
-      font-size: 14px;
-      text-align: center;
-      color: #666;
-      margin-bottom: 15px;
-    }
-
-    .score-wrapper {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 35px;
-      flex-wrap: wrap;
-    }
-
-    .team {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      width: 110px;
-    }
-
-    .team img {
-      width: 70px;
-      height: 70px;
+    .team-logo {
+      width: 90px;
+      height: 90px;
     }
 
     .team-name {
-      margin-top: 6px;
-      font-size: 16px;
       font-weight: bold;
-      cursor: default;
-      text-decoration: none;
-    }
-
-    .red { color: #c00000; }
-    .blue { color: #0044cc; }
-
-    .see-squad {
-      font-size: 13px;
-      color: #0044cc;
-      margin-top: 4px;
-      cursor: pointer;
-      text-decoration: underline;
+      margin-top: 5px;
     }
 
     .score {
-      font-size: 36px;
+      font-size: 38px;
       font-weight: bold;
-      text-align: center;
-      min-width: 100px;
+      margin: 10px 0;
     }
 
-    .score.winner-red { color: #c00000; }
-    .score.winner-blue { color: #0044cc; }
-    .score.draw { color: #555; }
-
-    /* ---- TABLE WRAPPER ---- */
-    .table-wrapper {
-      width: 100%;
-      overflow-x: auto;
-      margin-top: 25px;
+    /* LINK INFO */
+    .info-link {
+      color: #0044cc;
+      cursor: pointer;
+      font-size: 15px;
+      text-decoration: underline;
     }
 
-    #league {
+    /* TABELA */
+    table {
+      margin: 25px auto;
       width: 100%;
       border-collapse: collapse;
-      table-layout: fixed;
-      text-align: center;
     }
 
-    #league th {
+    th {
       background: #ececec;
       padding: 10px;
       border-bottom: 2px solid #bbb;
-      white-space: nowrap;
     }
 
-    #league td {
+    td {
       padding: 10px;
       border-bottom: 1px solid #ddd;
-      white-space: nowrap;
     }
 
-    #league tr:nth-child(even) td {
-      background: #fafafa;
+    tr.highlight {
+      background: #fff7d1;
     }
 
-    .leader-row td {
-      background: #fff4d0 !important;
-      font-weight: bold;
+    /* FORMA 5 MEČEVA */
+    .form-box {
+      margin-top: 30px;
     }
 
-    /* ---- LAST 5 FORM ---- */
-    #formSection {
-      margin-top: 40px;
+    .dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      display: inline-block;
+      margin-left: 5px;
     }
 
-    #formSection h2 {
-      text-align: center;
-      margin-bottom: 15px;
+    .win { background: green; }
+    .loss { background: red; }
+    .draw { background: orange; }
+
+    /* LOGIN BUTTON */
+    #loginBtn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      padding: 8px 12px;
+      background: #0044cc;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
     }
 
-    .form-row {
-      display: flex;
+    /* MODAL */
+    #modalOverlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.55);
+      backdrop-filter: blur(2px);
       justify-content: center;
       align-items: center;
-      gap: 10px;
-      margin: 4px 0;
     }
 
-    .form-icons span {
-      font-size: 22px;
-      margin: 0 2px;
+    #modalBox {
+      background: white;
+      max-width: 600px;
+      width: 90%;
+      padding: 25px;
+      border-radius: 12px;
+      text-align: left;
+      box-shadow: 0 0 20px rgba(0,0,0,0.25);
+      animation: fadeIn 0.2s ease-out;
     }
 
-    .team-label {
-      min-width: 70px;
-      text-align: right;
-      font-weight: bold;
+    #modalBox h2 {
+      margin-top: 0;
+    }
+
+    #closeModal {
+      float: right;
+      cursor: pointer;
+      font-size: 18px;
+      background: #ccc;
+      border-radius: 4px;
+      padding: 4px 8px;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.9); }
+      to   { opacity: 1; transform: scale(1); }
     }
   </style>
 </head>
 <body>
 
-<button id="adminBtn">Login</button>
+<button id="loginBtn" onclick="window.location='login.html'">Login</button>
 
 <h1>Rezultati svih odigranih utakmica</h1>
 
-<div id="list"></div>
+<div id="matches"></div>
 
-<!-- TABELA LIGE -->
-<div class="table-wrapper">
-  <table id="league">
-    <thead>
-      <tr>
-        <th>Tim</th>
-        <th>Utakmice</th>
-        <th>Pobede</th>
-        <th>Nerešeno</th>
-        <th>Porazi</th>
-        <th>G. dati</th>
-        <th>G. primljeni</th>
-        <th>G. razlika</th>
-        <th>Bodovi</th>
-      </tr>
-    </thead>
-    <tbody id="leagueBody"></tbody>
-  </table>
+<h2>Tabela</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Tim</th>
+      <th>Utakmice</th>
+      <th>Pobede</th>
+      <th>Nerešeno</th>
+      <th>Porazi</th>
+      <th>G. dati</th>
+      <th>G. primljeni</th>
+      <th>G. razlika</th>
+      <th>Bodovi</th>
+    </tr>
+  </thead>
+  <tbody id="leagueBody"></tbody>
+</table>
+
+<div class="form-box">
+  <h2>Forma poslednjih 5 mečeva</h2>
+  <div id="formBox"></div>
 </div>
 
-<!-- FORMA POSLEDNJIH 5 -->
-<div id="formSection">
-  <h2>Forma poslednjih 5 mečeva</h2>
-
-  <div class="form-row">
-    <span class="team-label red">Crveni</span>
-    <span id="formCrveni" class="form-icons"></span>
-  </div>
-
-  <div class="form-row">
-    <span class="team-label blue">Plavi</span>
-    <span id="formPlavi" class="form-icons"></span>
+<!-- MODAL -->
+<div id="modalOverlay">
+  <div id="modalBox">
+    <span id="closeModal">✕</span>
+    <h2>Info o meču</h2>
+    <div id="modalContent" style="white-space:pre-line; margin-top:10px;"></div>
   </div>
 </div>
 
@@ -217,137 +188,144 @@
 <script type="module">
 import { onValue } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
-const ref = window.dbRef("matches");
-
-/* ----- PRIKAZ MEČEVA ----- */
-onValue(ref, snap => {
+/* LOAD MATCHES */
+onValue(window.dbRef("matches"), snap => {
   const data = snap.val() || {};
-  const listEl = document.getElementById("list");
-  listEl.innerHTML = "";
+  const list = Object.values(data).sort((a,b)=>b.timestamp - a.timestamp);
 
-  const matches = Object.values(data).sort((a,b)=>b.timestamp - a.timestamp);
-
-  matches.forEach(m => {
-    const isRedWin = m.red > m.blue;
-    const isBlueWin = m.blue > m.red;
-    const isDraw = m.red === m.blue;
-
-    const cardClass = isDraw ? "draw" : isRedWin ? "winner-red" : "winner-blue";
-    const scoreClass = cardClass;
-
-    listEl.innerHTML += `
-      <div class="match ${cardClass}">
-        <div class="meta">Kolo <b>${m.round}</b> — ${m.date} u ${m.time}</div>
-
-        <div class="score-wrapper">
-
-          <div class="team">
-            <img src="crveni.png">
-            <div class="team-name red">Crveni</div>
-            <div class="see-squad" onclick="window.location.href='crveni.html'">Vidi ekipu</div>
-          </div>
-
-          <div class="score ${scoreClass}">${m.red} - ${m.blue}</div>
-
-          <div class="team">
-            <img src="plavi.png">
-            <div class="team-name blue">Plavi</div>
-            <div class="see-squad" onclick="window.location.href='plavi.html'">Vidi ekipu</div>
-          </div>
-
-        </div>
-      </div>`;
-  });
-
-  /* ----- LIGA TABELA ----- */
-  function calculateTable(matches) {
-    const table = {
-      Crveni: { U:0, P:0, N:0, I:0, GD:0, GP:0, GR:0, B:0 },
-      Plavi:  { U:0, P:0, N:0, I:0, GD:0, GP:0, GR:0, B:0 }
-    };
-
-    matches.forEach(m=>{
-      let r=m.red, b=m.blue;
-      table.Crveni.U++; table.Plavi.U++;
-      table.Crveni.GD+=r; table.Crveni.GP+=b;
-      table.Plavi.GD+=b; table.Plavi.GP+=r;
-
-      if(r>b){ table.Crveni.P++; table.Plavi.I++; table.Crveni.B+=3; }
-      else if(b>r){ table.Plavi.P++; table.Crveni.I++; table.Plavi.B+=3; }
-      else { table.Crveni.N++; table.Plavi.N++; table.Crveni.B++; table.Plavi.B++; }
-    });
-
-    table.Crveni.GR = table.Crveni.GD - table.Crveni.GP;
-    table.Plavi.GR  = table.Plavi.GD - table.Plavi.GP;
-
-    return table;
-  }
-
-  function renderTable(table){
-    const body=document.getElementById("leagueBody");
-    body.innerHTML="";
-
-    let leader = table.Crveni.B > table.Plavi.B ? "Crveni" : "Plavi";
-
-    ["Crveni","Plavi"].forEach(team=>{
-      const t=table[team];
-      body.innerHTML += `
-        <tr class="${team===leader?'leader-row':''}">
-          <td><b>${team}</b></td>
-          <td>${t.U}</td>
-          <td>${t.P}</td>
-          <td>${t.N}</td>
-          <td>${t.I}</td>
-          <td>${t.GD}</td>
-          <td>${t.GP}</td>
-          <td>${t.GR}</td>
-          <td>${t.B}</td>
-        </tr>`;
-    });
-  }
-
-  const table = calculateTable(matches);
-  renderTable(table);
-
-  /* ----- FORMA ----- */
-  function calculateForm(matches){
-    const c=[],p=[];
-    matches.forEach(m=>{
-      if(m.red>m.blue){ c.push("W"); p.push("L"); }
-      else if(m.red<m.blue){ c.push("L"); p.push("W"); }
-      else { c.push("D"); p.push("D"); }
-    });
-    return {
-      Crveni:c.slice(0,5),
-      Plavi:p.slice(0,5)
-    };
-  }
-
-  function renderForm(form){
-    const map={W:"🟢",D:"🟡",L:"🔴"};
-    document.getElementById("formCrveni").innerHTML =
-      form.Crveni.map(x=>`<span>${map[x]}</span>`).join("");
-
-    document.getElementById("formPlavi").innerHTML =
-      form.Plavi.map(x=>`<span>${map[x]}</span>`).join("");
-  }
-
-  renderForm(calculateForm(matches));
+  renderMatches(list);
+  renderTable(list);
+  renderForm(list);
 });
 
-/* ----- LOGIN BUTTON SWITCH ----- */
-const btn=document.getElementById("adminBtn");
-function refreshBtn(){
-  const isAdmin=localStorage.getItem("admin")==="1";
-  if(isAdmin){
-    btn.innerText="Admin panel";
-    btn.onclick=()=>window.location.href="admin.html";
-  } else {
-    btn.innerText="Login";
-    btn.onclick=()=>window.location.href="login.html";
-  }
+/* --- RENDER MATCH BOX --- */
+function renderMatches(matches) {
+  const box = document.getElementById("matches");
+  box.innerHTML = "";
+
+  if (!matches.length) return;
+
+  const m = matches[0]; // poslednji meč
+
+  box.innerHTML = `
+    <div class="match-box">
+      <div style="opacity:0.8; margin-bottom:10px;">
+        Kolo ${m.round} — ${m.date} u ${m.time}
+        ${m.info ? `<div class="info-link" onclick="openInfo(\`${m.info.replace(/`/g,"\\`")}\`)">ℹ Info o meču</div>` : ""}
+      </div>
+
+      <div style="display:flex; justify-content:space-around; align-items:center;">
+        <div>
+          <img src="crveni.png" class="team-logo">
+          <div class="team-name" style="color:#c00000;">Crveni</div>
+          <a href="crveni.html">Vidi ekipu</a>
+        </div>
+
+        <div class="score">${m.red} - ${m.blue}</div>
+
+        <div>
+          <img src="plavi.png" class="team-logo">
+          <div class="team-name" style="color:#0044cc;">Plavi</div>
+          <a href="plavi.html">Vidi ekipu</a>
+        </div>
+      </div>
+    </div>
+  `;
 }
-refreshBtn();
+
+/* --- TABELA --- */
+function renderTable(matches) {
+  const table = {
+    Crveni: { U:0,P:0,N:0,I:0,GD:0,GP:0,GR:0,B:0 },
+    Plavi:  { U:0,P:0,N:0,I:0,GD:0,GP:0,GR:0,B:0 }
+  };
+
+  matches.forEach(m=>{
+    table.Crveni.U++; table.Plavi.U++;
+
+    table.Crveni.GD += m.red;
+    table.Crveni.GP += m.blue;
+
+    table.Plavi.GD += m.blue;
+    table.Plavi.GP += m.red;
+
+    if (m.red > m.blue) {
+      table.Crveni.P++; table.Crveni.B += 3; table.Plavi.I++;
+    } else if (m.blue > m.red) {
+      table.Plavi.P++; table.Plavi.B += 3; table.Crveni.I++;
+    } else {
+      table.Crveni.N++; table.Plavi.N++;
+      table.Crveni.B++; table.Plavi.B++;
+    }
+  });
+
+  table.Crveni.GR = table.Crveni.GD - table.Crveni.GP;
+  table.Plavi.GR  = table.Plavi.GD - table.Plavi.GP;
+
+  const body = document.getElementById("leagueBody");
+  body.innerHTML = `
+    <tr class="highlight">
+      <td>Crveni</td>
+      <td>${table.Crveni.U}</td>
+      <td>${table.Crveni.P}</td>
+      <td>${table.Crveni.N}</td>
+      <td>${table.Crveni.I}</td>
+      <td>${table.Crveni.GD}</td>
+      <td>${table.Crveni.GP}</td>
+      <td>${table.Crveni.GR}</td>
+      <td>${table.Crveni.B}</td>
+    </tr>
+
+    <tr>
+      <td>Plavi</td>
+      <td>${table.Plavi.U}</td>
+      <td>${table.Plavi.P}</td>
+      <td>${table.Plavi.N}</td>
+      <td>${table.Plavi.I}</td>
+      <td>${table.Plavi.GD}</td>
+      <td>${table.Plavi.GP}</td>
+      <td>${table.Plavi.GR}</td>
+      <td>${table.Plavi.B}</td>
+    </tr>
+  `;
+}
+
+/* --- FORMA POSLEDNJIH 5 --- */
+function renderForm(matches) {
+  const last5 = matches.slice(0,5);
+
+  let cr = "";
+  let pl = "";
+
+  last5.forEach(m=>{
+    cr += (m.red > m.blue) ? `<span class="dot win"></span>` :
+          (m.red < m.blue) ? `<span class="dot loss"></span>` :
+                             `<span class="dot draw"></span>`;
+
+    pl += (m.blue > m.red) ? `<span class="dot win"></span>` :
+          (m.blue < m.red) ? `<span class="dot loss"></span>` :
+                             `<span class="dot draw"></span>`;
+  });
+
+  document.getElementById("formBox").innerHTML = `
+    <div>Crveni ${cr}</div>
+    <div style="margin-top:10px;">Plavi ${pl}</div>
+  `;
+}
+
+/* --- MODAL FUNKCIJE --- */
+window.openInfo = info => {
+  document.getElementById("modalContent").innerText = info;
+  document.getElementById("modalOverlay").style.display = "flex";
+};
+
+document.getElementById("closeModal").onclick = () =>
+  document.getElementById("modalOverlay").style.display = "none";
+
+document.getElementById("modalOverlay").onclick = e => {
+  if (e.target.id === "modalOverlay")
+    document.getElementById("modalOverlay").style.display = "none";
+};
 </script>
 
 </body>
