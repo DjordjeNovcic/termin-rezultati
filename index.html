@@ -238,15 +238,30 @@ function renderMainAndRecent(matches) {
   const recent = matches.slice(1, 4);
 
   if (recent.length) {
-    box.innerHTML += `<h3>Još rezultata</h3>`;
+    box.innerHTML += `<h3 style="margin-bottom:15px;">Još rezultata</h3>`;
 
     recent.forEach(m => {
       box.innerHTML += `
-        <div class="small-match">
-          <div style="opacity:0.7; margin-bottom:6px;">
+        <div class="match-box" style="background:#fcfcfc; border-color:#ddd; padding:18px;">
+          <div style="opacity:0.7; margin-bottom:8px;">
             Kolo ${m.round} — ${m.date} u ${m.time}
           </div>
-          <div class="score-small">${m.red} - ${m.blue}</div>
+
+          <div style="display:flex; justify-content:space-around; align-items:center;">
+            <div>
+              <img src="crveni.png" class="team-logo" style="width:60px; height:60px;">
+              <div class="team-name" style="font-size:14px; color:#c00000;">Crveni</div>
+            </div>
+
+            <div class="score-small" style="font-size:28px; font-weight:bold;">
+              ${m.red} - ${m.blue}
+            </div>
+
+            <div>
+              <img src="plavi.png" class="team-logo" style="width:60px; height:60px;">
+              <div class="team-name" style="font-size:14px; color:#0044cc;">Plavi</div>
+            </div>
+          </div>
         </div>
       `;
     });
