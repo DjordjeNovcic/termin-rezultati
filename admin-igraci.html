@@ -1,11 +1,16 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
   <html lang="sr">
   <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
     <title>Upravljanje igračima</title>
     <script type="module" src="firebase.mjs"></script>
 
     <style>
+      * {
+        box-sizing: border-box;
+      }
+
       body {
         font-family: Arial, sans-serif;
         max-width: 900px;
@@ -13,17 +18,20 @@
         padding: 0 20px;
       }
 
-      h1 { text-align:center; margin-bottom:25px; }
+      h1 { text-align:center; margin-bottom:25px; font-size: 28px; }
 
       #adminNav {
         display:flex; gap:10px; background:#f0f0f0;
         padding:12px; margin-bottom:25px;
         border-radius:8px; justify-content:center; border:1px solid #ddd;
+        flex-wrap: wrap;
       }
 
       #adminNav button {
         padding:8px 12px; border-radius:6px; border:none;
-        background:#0044cc; color:white; cursor:pointer; font-size:14px;
+        background:#0044cc; color:white; cursor:pointer; font-size:16px;
+        min-height: 48px;
+        min-width: 120px;
       }
 
       .team-title {
@@ -37,17 +45,28 @@
 
       input {
         flex:1; padding:10px; border-radius:6px;
-        border:1px solid #aaa; font-size:15px;
+        border:1px solid #aaa; font-size:16px;
+        min-height: 48px;
       }
 
       .add-btn {
         background:green; color:white; padding:10px 16px;
         border-radius:6px; border:none; cursor:pointer;
+        font-size: 16px;
+        min-height: 48px;
+        white-space: nowrap;
+      }
+
+      .table-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        margin-bottom: 40px;
       }
 
       table {
         width:100%; border-collapse:collapse;
-        margin-bottom:40px; text-align:center;
+        text-align:center;
+        min-width: 500px;
       }
 
       th {
@@ -56,6 +75,7 @@
         cursor:pointer;
         user-select:none;
         position:relative;
+        font-size: 16px;
       }
 
       th:hover {
@@ -77,17 +97,39 @@
       td {
         padding:12px 10px;
         border-bottom:1px solid #ddd;
+        font-size: 16px;
       }
 
       .edit-btn {
         background:#0044cc; color:white; border:none;
-        padding:6px 12px; border-radius:4px; cursor:pointer;
+        padding:8px 12px; border-radius:4px; cursor:pointer;
         margin-right:5px;
+        font-size: 16px;
+        min-height: 44px;
       }
 
       .del-btn {
         background:#c00000; color:white; border:none;
-        padding:6px 12px; border-radius:4px; cursor:pointer;
+        padding:8px 12px; border-radius:4px; cursor:pointer;
+        font-size: 16px;
+        min-height: 44px;
+      }
+
+      #resetStatsBtn {
+        background:#b10000;
+        color:white;
+        padding:10px 20px;
+        border:none;
+        border-radius:6px;
+        cursor:pointer;
+        font-size:16px;
+        margin-bottom:25px;
+        min-height: 48px;
+        width: 100%;
+        max-width: 400px;
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
       }
 
       /* Captain and Goalkeeper badges */
@@ -115,6 +157,7 @@
         background:rgba(0,0,0,0.55);
         justify-content:center; align-items:center;
         backdrop-filter:blur(2px); z-index:999;
+        padding: 20px;
       }
 
       #modalBox {
@@ -122,11 +165,190 @@
         width:90%; max-width:420px;
         box-shadow:0 0 25px rgba(0,0,0,0.25);
         animation: fadeIn 0.2s ease-out;
+        max-height: 90vh;
+        overflow-y: auto;
       }
 
       @keyframes fadeIn {
         from { opacity:0; transform:scale(0.9); }
         to   { opacity:1; transform:scale(1); }
+      }
+
+      #renameInput {
+        width: 100%;
+        padding: 12px;
+        font-size: 16px;
+        margin: 15px 0;
+        border-radius: 6px;
+        border: 1px solid #aaa;
+        min-height: 48px;
+      }
+
+      .modal-buttons {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+        justify-content: flex-end;
+      }
+
+      .modal-buttons button {
+        padding: 12px 20px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 16px;
+        min-height: 48px;
+        flex: 1;
+      }
+
+      #renameCancel {
+        background: #777;
+        color: white;
+      }
+
+      #renameConfirm {
+        background: #0044cc;
+        color: white;
+      }
+
+      /* MOBILE RESPONSIVE */
+      @media (max-width: 768px) {
+        body {
+          margin: 10px auto;
+          padding: 0 15px;
+        }
+
+        h1 {
+          font-size: 24px;
+          margin-bottom: 20px;
+        }
+
+        #adminNav {
+          gap: 8px;
+          padding: 10px;
+        }
+
+        #adminNav button {
+          flex: 1;
+          min-width: 100px;
+          font-size: 16px;
+        }
+
+        .team-title {
+          font-size: 20px;
+          margin: 20px 0 10px;
+        }
+
+        .input-row {
+          gap: 8px;
+        }
+
+        .add-btn {
+          padding: 10px 14px;
+        }
+
+        #resetStatsBtn {
+          font-size: 16px;
+          padding: 12px 16px;
+          margin-bottom: 20px;
+        }
+
+        .table-wrapper {
+          margin-bottom: 30px;
+          border: 1px solid #ddd;
+          border-radius: 8px;
+        }
+
+        table {
+          font-size: 16px;
+        }
+
+        th, td {
+          padding: 10px 8px;
+          font-size: 16px;
+        }
+
+        .edit-btn, .del-btn {
+          padding: 8px 10px;
+          font-size: 14px;
+          margin: 2px;
+          display: inline-block;
+        }
+
+        #modalBox {
+          padding: 20px;
+          width: 95%;
+        }
+
+        #modalBox h3 {
+          font-size: 20px;
+        }
+
+        .modal-buttons {
+          flex-direction: column;
+        }
+
+        .modal-buttons button {
+          width: 100%;
+        }
+      }
+
+      @media (max-width: 480px) {
+        body {
+          padding: 0 10px;
+        }
+
+        h1 {
+          font-size: 22px;
+        }
+
+        #adminNav {
+          flex-direction: column;
+          gap: 8px;
+        }
+
+        #adminNav button {
+          width: 100%;
+          min-width: unset;
+        }
+
+        .team-title {
+          font-size: 18px;
+        }
+
+        .input-row {
+          flex-direction: column;
+          gap: 10px;
+        }
+
+        .add-btn {
+          width: 100%;
+        }
+
+        td {
+          padding: 8px 5px;
+          font-size: 14px;
+        }
+
+        th {
+          padding: 8px 5px;
+          font-size: 14px;
+        }
+
+        .edit-btn, .del-btn {
+          display: block;
+          width: 100%;
+          margin: 4px 0;
+          padding: 10px;
+        }
+
+        /* Stack action buttons vertically in table cells */
+        td:last-child {
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+          padding: 8px;
+        }
       }
     </style>
   </head>
@@ -148,10 +370,7 @@
   <h1>Upravljanje igračima</h1>
 
   <!-- RESET SVIH STATISTIKA -->
-  <button id="resetStatsBtn"
-    style="background:#b10000;color:white;padding:10px 20px;
-           border:none;border-radius:6px;cursor:pointer;font-size:15px;
-           margin-bottom:25px;">
+  <button id="resetStatsBtn">
     Resetuj SVE golove i utakmice
   </button>
 
@@ -161,17 +380,19 @@
     <input id="redInput" placeholder="Ime igrača">
     <button class="add-btn" onclick="addPlayer('crveni')">Dodaj</button>
   </div>
-  <table>
-    <thead>
-    <tr>
-      <th data-sort="name" data-team="crveni">Igrač</th>
-      <th data-sort="goals" data-team="crveni">Golovi</th>
-      <th data-sort="matches" data-team="crveni">Utakmice</th>
-      <th>Akcija</th>
-    </tr>
-    </thead>
-    <tbody id="redList"></tbody>
-  </table>
+  <div class="table-wrapper">
+    <table>
+      <thead>
+      <tr>
+        <th data-sort="name" data-team="crveni">Igrač</th>
+        <th data-sort="goals" data-team="crveni">Golovi</th>
+        <th data-sort="matches" data-team="crveni">Utakmice</th>
+        <th>Akcija</th>
+      </tr>
+      </thead>
+      <tbody id="redList"></tbody>
+    </table>
+  </div>
 
   <!-- PLAVI -->
   <div class="team-title" style="color:#0033aa;">Plavi</div>
@@ -179,45 +400,30 @@
     <input id="blueInput" placeholder="Ime igrača">
     <button class="add-btn" onclick="addPlayer('plavi')">Dodaj</button>
   </div>
-  <table>
-    <thead>
-    <tr>
-      <th data-sort="name" data-team="plavi">Igrač</th>
-      <th data-sort="goals" data-team="plavi">Golovi</th>
-      <th data-sort="matches" data-team="plavi">Utakmice</th>
-      <th>Akcija</th>
-    </tr>
-    </thead>
-    <tbody id="blueList"></tbody>
-  </table>
+  <div class="table-wrapper">
+    <table>
+      <thead>
+      <tr>
+        <th data-sort="name" data-team="plavi">Igrač</th>
+        <th data-sort="goals" data-team="plavi">Golovi</th>
+        <th data-sort="matches" data-team="plavi">Utakmice</th>
+        <th>Akcija</th>
+      </tr>
+      </thead>
+      <tbody id="blueList"></tbody>
+    </table>
+  </div>
 
   <!-- MODAL RENAME -->
   <div id="modalOverlay">
     <div id="modalBox">
       <h3 style="margin-top:0;">Izmena imena igrača</h3>
 
-      <input id="renameInput"
-         placeholder="Novo ime..."
-         style="
-           width:330px;
-           padding:8px;
-           font-size:15px;
-           margin:15px auto 0;
-           display:block;
-           border-radius:6px;
-           border:1px solid #aaa;
-         ">
+      <input id="renameInput" placeholder="Novo ime...">
 
-      <div style="display:flex;gap:10px;margin-top:20px;justify-content:flex-end;">
-        <button id="renameCancel"
-          style="padding:10px 16px;background:#777;border:none;color:white;border-radius:6px;cursor:pointer;">
-          Otkaži
-        </button>
-
-        <button id="renameConfirm"
-          style="padding:10px 16px;background:#0044cc;border:none;color:white;border-radius:6px;cursor:pointer;">
-          Sačuvaj
-        </button>
+      <div class="modal-buttons">
+        <button id="renameCancel">Otkaži</button>
+        <button id="renameConfirm">Sačuvaj</button>
       </div>
     </div>
   </div>
