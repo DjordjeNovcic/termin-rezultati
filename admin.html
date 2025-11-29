@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+  <!DOCTYPE html>
     <html lang="sr">
     <head>
       <meta charset="UTF-8">
@@ -51,6 +51,18 @@
           cursor: pointer;
           font-size: 14px;
           min-width: 90px;
+        }
+
+        /* Date/Time Row */
+        .date-time-row {
+          display: flex;
+          gap: 10px;
+          margin-bottom: 12px;
+        }
+
+        .date-time-row input {
+          flex: 1;
+          margin-bottom: 0;
         }
 
         /* Igraci */
@@ -223,6 +235,15 @@
             flex: 1;
           }
 
+          .date-time-row {
+            flex-direction: column;
+            gap: 12px;
+          }
+
+          .date-time-row input {
+            width: 100%;
+          }
+
           .player-btn {
             padding: 10px 12px;
             font-size: 13px;
@@ -252,23 +273,32 @@
           .table-wrapper {
             margin: 20px -15px 0;
             padding: 0 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
           }
 
           table {
-            min-width: 550px;
+            min-width: 500px;
           }
 
           th, td {
-            padding: 8px 6px;
+            padding: 8px 4px;
             font-size: 12px;
           }
 
+          th:first-child, td:first-child {
+            padding-left: 6px;
+          }
+
+          th:last-child, td:last-child {
+            padding-right: 6px;
+          }
+
           .edit-btn, .del-btn {
-            padding: 8px 10px;
+            padding: 6px 8px;
             font-size: 11px;
-            display: block;
-            width: 100%;
-            margin: 2px 0;
+            display: inline-block;
+            margin: 2px 1px;
           }
 
           .captain-badge {
@@ -312,12 +342,27 @@
           }
 
           table {
-            min-width: 500px;
+            min-width: 450px;
+            font-size: 11px;
           }
 
           th, td {
-            padding: 6px 4px;
+            padding: 6px 3px;
             font-size: 11px;
+          }
+
+          th:first-child, td:first-child {
+            padding-left: 4px;
+          }
+
+          th:last-child, td:last-child {
+            padding-right: 4px;
+          }
+
+          .edit-btn, .del-btn {
+            padding: 5px 6px;
+            font-size: 10px;
+            margin: 1px;
           }
         }
       </style>
@@ -341,8 +386,11 @@
 
     <!-- INPUT POLJA -->
     <input id="round" placeholder="Kolo" type="number">
-    <input id="date" type="date">
-    <input id="time" type="time">
+
+    <div class="date-time-row">
+      <input id="date" type="date">
+      <input id="time" type="time">
+    </div>
 
     <input id="red" type="number" placeholder="Golovi Crveni">
     <input id="blue" type="number" placeholder="Golovi Plavi">
