@@ -1,4 +1,4 @@
-  <!DOCTYPE html>
+<!DOCTYPE html>
     <html lang="sr">
     <head>
       <meta charset="UTF-8">
@@ -555,8 +555,8 @@
       const latest = matches[0];
 
       const matchLinks = `
-        ${latest.info ? `<div class="info-link" onclick='openInfo(\`${latest.info.replace(/`/g,"\\`").replace(/'/g, "\\'")}`)'>ℹ Info o meču</div>` : ""}
-        <div class="info-link" onclick='openScorers(${JSON.stringify(latest.scorers || [])})'>⚽ Vidi listu strelaca</div>
+        ${latest.info ? `<div class="info-link" onclick="openMatchInfo(0)">ℹ Info o meču</div>` : ""}
+        <div class="info-link" onclick="openMatchScorers(0)">⚽ Vidi listu strelaca</div>
       `;
 
       mainBox.innerHTML = `
@@ -567,7 +567,7 @@
           </div>
 
           <div style="display:flex; justify-content:space-around; align-items:center;">
-
+            
             <div style="text-align:center;">
               <img src="crveni.png" class="team-logo" alt="Crveni">
               <div class="team-name" style="color:#c00000;">Crveni</div>
@@ -591,10 +591,11 @@
       if (recent.length) {
         recentBox.innerHTML += `<h1 style="margin-bottom:15px; margin-top:30px;">Rezultati prošlih kola</h1>`;
 
-        recent.forEach(m => {
+        recent.forEach((m, idx) => {
+          const matchIndex = idx + 1;
           const recentMatchLinks = `
-            ${m.info ? `<div class="info-link" onclick='openInfo(\`${m.info.replace(/`/g,"\\`").replace(/'/g, "\\'")}`)'>ℹ Info o meču</div>` : ""}
-            <div class="info-link" onclick='openScorers(${JSON.stringify(m.scorers || [])})'>⚽ Vidi listu strelaca</div>
+            ${m.info ? `<div class="info-link" onclick="openMatchInfo(${matchIndex})">ℹ Info o meču</div>` : ""}
+            <div class="info-link" onclick="openMatchScorers(${matchIndex})">⚽ Vidi listu strelaca</div>
           `;
 
           recentBox.innerHTML += `
@@ -803,17 +804,25 @@
     }
 
     /* -------- MODAL - INFO -------- */
-    window.openInfo = info => {
+    window.openMatchInfo = idx => {
+      const match = allMatches[idx];
+      if (!match) return;
+
       document.getElementById("modalTitle").innerText = "Info o meču";
-      document.getElementById("modalContent").innerHTML = `<div style="white-space:pre-line;">${info}</div>`;
+      document.getElementById("modalContent").innerHTML = `<div style="white-space:pre-line;">${match.info || ''}</div>`;
       document.getElementById("modalOverlay").style.display = "flex";
     };
 
     /* -------- MODAL - SCORERS -------- */
-    window.openScorers = scorers => {
+    window.openMatchScorers = idx => {
+      const match = allMatches[idx];
+      if (!match) return;
+
+      const scorers = match.scorers || [];
+
       document.getElementById("modalTitle").innerText = "Strelci meča";
 
-      if (!scorers || scorers.length === 0) {
+      if (scorers.length === 0) {
         document.getElementById("modalContent").innerHTML = '<p>Nema strelaca za ovaj meč.</p>';
       } else {
         let html = '';
