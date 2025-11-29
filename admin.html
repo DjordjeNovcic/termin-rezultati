@@ -1,488 +1,509 @@
 <!DOCTYPE html>
-<html lang="sr">
-<head>
-  <meta charset="UTF-8">
-  <title>Admin – Mečevi</title>
-  <script type="module" src="firebase.mjs"></script>
+  <html lang="sr">
+  <head>
+    <meta charset="UTF-8">
+    <title>Admin – Mečevi</title>
+    <script type="module" src="firebase.mjs"></script>
 
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      max-width: 750px;
-      margin: 20px auto;
-      padding: 0 20px;
-    }
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 750px;
+        margin: 20px auto;
+        padding: 0 20px;
+      }
 
-    h1 { text-align:center; margin-bottom:25px; }
+      h1 { text-align:center; margin-bottom:25px; }
 
-    h3 { margin-bottom: 6px !important; }
+      h3 { margin-bottom: 6px !important; }
 
-    #adminNav {
-      display:flex; gap:10px; background:#f0f0f0;
-      padding:12px; margin-bottom:25px;
-      border-radius:8px; justify-content:center; border:1px solid #ddd;
-    }
+      #adminNav {
+        display:flex; gap:10px; background:#f0f0f0;
+        padding:12px; margin-bottom:25px;
+        border-radius:8px; justify-content:center; border:1px solid #ddd;
+      }
 
-    #adminNav button {
-      padding:8px 12px; border-radius:6px; border:none;
-      background:#0044cc; color:white; cursor:pointer; font-size:14px;
-    }
+      #adminNav button {
+        padding:8px 12px; border-radius:6px; border:none;
+        background:#0044cc; color:white; cursor:pointer; font-size:14px;
+      }
 
-    /* Igraci */
-    .player-btn {
-      padding:6px 10px; border-radius:6px; background:#eee;
-      border:1px solid #bbb; cursor:pointer; margin:4px;
-      display:inline-block;
-    }
-    .player-btn.active {
-      font-weight: bold;
-      color: white;
-      border-color: #00000022;
-      box-shadow: 0 0 4px #00000033;
-    }
+      /* Igraci */
+      .player-btn {
+        padding:6px 10px; border-radius:6px; background:#eee;
+        border:1px solid #bbb; cursor:pointer; margin:4px;
+        display:inline-block;
+      }
+      .player-btn.active {
+        font-weight: bold;
+        color: white;
+        border-color: #00000022;
+        box-shadow: 0 0 4px #00000033;
+      }
 
-    #playedRed .player-btn.active,
-      #scorersRedPlayers .player-btn.active {
-      background: #b10000 !important;
-    }
+      #playedRed .player-btn.active,
+        #scorersRedPlayers .player-btn.active {
+        background: #b10000 !important;
+      }
 
-    #playedBlue .player-btn.active,
-      #scorersBluePlayers .player-btn.active {
-      background: #0044cc !important;
-    }
+      #playedBlue .player-btn.active,
+        #scorersBluePlayers .player-btn.active {
+        background: #0044cc !important;
+      }
 
-    /* Strelci tagovi */
-    .tag {
-      background:#ddd; padding:6px 10px; border-radius:6px;
-      margin:4px; display:inline-flex; align-items:center; gap:6px;
-    }
-    .tag button {
-      background:#c00000; border:none; color:white;
-      border-radius:4px; cursor:pointer; padding:0 6px;
-    }
+      /* Strelci tagovi */
+      .tag {
+        background:#ddd; padding:6px 10px; border-radius:6px;
+        margin:4px; display:inline-flex; align-items:center; gap:6px;
+      }
+      .tag button {
+        background:#c00000; border:none; color:white;
+        border-radius:4px; cursor:pointer; padding:0 6px;
+      }
 
-    input, textarea {
-      width:100%; padding:10px; border-radius:6px;
-      border:1px solid #aaa; font-size:15px;
-      margin-bottom:12px;
-    }
+      input, textarea {
+        width:100%; padding:10px; border-radius:6px;
+        border:1px solid #aaa; font-size:15px;
+        margin-bottom:12px;
+      }
 
-    textarea { min-height:120px; }
+      textarea { min-height:120px; }
 
-    .save-btn, .update-btn, .cancel-btn {
-      width:100%; padding:12px; border-radius:6px;
-      font-size:16px; cursor:pointer; margin-top:10px; border:none;
-    }
-    .save-btn { background:#008000; color:white; }
-    .update-btn { background:#d48a00; color:white; display:none; }
-    .cancel-btn { background:#555; color:white; display:none; }
+      .save-btn, .update-btn, .cancel-btn {
+        width:100%; padding:12px; border-radius:6px;
+        font-size:16px; cursor:pointer; margin-top:10px; border:none;
+      }
+      .save-btn { background:#008000; color:white; }
+      .update-btn { background:#d48a00; color:white; display:none; }
+      .cancel-btn { background:#555; color:white; display:none; }
 
-    table { width:100%; border-collapse:collapse; margin-top:25px; }
-    th {
-      background:#ececec; padding:10px;
-      border-bottom:2px solid #bbb; text-align:left;
-    }
-    td {
-      padding:10px; border-bottom:1px solid #ddd;
-    }
+      table { width:100%; border-collapse:collapse; margin-top:25px; }
+      th {
+        background:#ececec; padding:10px;
+        border-bottom:2px solid #bbb; text-align:left;
+      }
+      td {
+        padding:10px; border-bottom:1px solid #ddd;
+      }
 
-    .edit-btn, .del-btn {
-      padding:6px 10px; border-radius:4px; font-size:13px;
-      cursor:pointer; border:none; color:white;
-    }
-    .edit-btn { background:#0044cc; }
-    .del-btn { background:#c00000; }
-  </style>
-</head>
+      .edit-btn, .del-btn {
+        padding:6px 10px; border-radius:4px; font-size:13px;
+        cursor:pointer; border:none; color:white;
+      }
+      .edit-btn { background:#0044cc; }
+      .del-btn { background:#c00000; }
+    </style>
+  </head>
 
-<body>
+  <body>
 
-<!-- NAV -->
-<div id="adminNav">
-  <button onclick="window.location.href='admin.html'">Mečevi</button>
-  <button onclick="window.location.href='admin-igraci.html'">Igrači</button>
-  <button onclick="logout()">Logout</button>
-</div>
+  <!-- NAV -->
+  <div id="adminNav">
+    <button onclick="window.location.href='admin.html'">Mečevi</button>
+    <button onclick="window.location.href='admin-igraci.html'">Igrači</button>
+    <button onclick="logout()">Logout</button>
+  </div>
 
-<script>
-  if (localStorage.getItem("admin") !== "1") window.location.href="login.html";
-  function logout(){ localStorage.removeItem("admin"); window.location.href="index.html"; }
-</script>
+  <script>
+    if (localStorage.getItem("admin") !== "1") window.location.href="login.html";
+    function logout(){ localStorage.removeItem("admin"); window.location.href="index.html"; }
+  </script>
 
-<h1>Upravljanje mečevima</h1>
+  <h1>Upravljanje mečevima</h1>
 
-<!-- INPUT POLJA -->
-<input id="round" placeholder="Kolo">
-<input id="date" type="date">
-<input id="time" type="time">
+  <!-- INPUT POLJA -->
+  <input id="round" placeholder="Kolo">
+  <input id="date" type="date">
+  <input id="time" type="time">
 
-<input id="red" type="number" placeholder="Golovi Crveni">
-<input id="blue" type="number" placeholder="Golovi Plavi">
+  <input id="red" type="number" placeholder="Golovi Crveni">
+  <input id="blue" type="number" placeholder="Golovi Plavi">
 
-<textarea id="info" placeholder="Info o meču"></textarea>
+  <textarea id="info" placeholder="Info o meču"></textarea>
 
-<!-- IGRALI – CRVENI -->
-<h3 style="color:#b10000;">Igrali – Crveni</h3>
-<div id="playedRed"></div>
+  <!-- IGRALI – CRVENI -->
+  <h3 style="color:#b10000;">Igrali – Crveni</h3>
+  <div id="playedRed"></div>
 
-<!-- STRELCI – CRVENI -->
-<h3 style="color:#b10000;">Strelci – Crveni</h3>
-<div id="scorersRedPlayers"></div>
-<div id="scorersRedTags"></div>
+  <!-- STRELCI – CRVENI -->
+  <h3 style="color:#b10000;">Strelci – Crveni</h3>
+  <div id="scorersRedPlayers"></div>
+  <div id="scorersRedTags"></div>
 
-<!-- IGRALI – PLAVI -->
-<h3 style="color:#0044cc; margin-top:50px;">Igrali – Plavi</h3>
-<div id="playedBlue"></div>
+  <!-- IGRALI – PLAVI -->
+  <h3 style="color:#0044cc; margin-top:50px;">Igrali – Plavi</h3>
+  <div id="playedBlue"></div>
 
-<!-- STRELCI – PLAVI -->
-<h3 style="color:#0044cc;">Strelci – Plavi</h3>
-<div id="scorersBluePlayers"></div>
-<div id="scorersBlueTags"></div>
+  <!-- STRELCI – PLAVI -->
+  <h3 style="color:#0044cc;">Strelci – Plavi</h3>
+  <div id="scorersBluePlayers"></div>
+  <div id="scorersBlueTags"></div>
 
-<button class="save-btn" id="saveBtn">Sačuvaj meč</button>
-<button class="update-btn" id="updateBtn">Sačuvaj izmene</button>
-<button class="cancel-btn" id="cancelBtn" onclick="clearForm()">Otkaži izmenu</button>
+  <button class="save-btn" id="saveBtn">Sačuvaj meč</button>
+  <button class="update-btn" id="updateBtn">Sačuvaj izmene</button>
+  <button class="cancel-btn" id="cancelBtn" onclick="clearForm()">Otkaži izmenu</button>
 
-<!-- LISTA MEČEVA -->
-<table>
-  <thead>
-    <tr>
-      <th>Kolo</th>
-      <th>Rezultat</th>
-      <th>Datum</th>
-      <th>Akcije</th>
-    </tr>
-  </thead>
-  <tbody id="matchList"></tbody>
-</table>
+  <!-- LISTA MEČEVA -->
+  <table>
+    <thead>
+      <tr>
+        <th>Kolo</th>
+        <th>Rezultat</th>
+        <th>Datum</th>
+        <th>Akcije</th>
+      </tr>
+    </thead>
+    <tbody id="matchList"></tbody>
+  </table>
 
-<!-- SCRIPT -->
-<script type="module">
-import { onValue, push, update, remove, get }
-  from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+  <!-- SCRIPT -->
+  <script type="module">
+  import { onValue, push, update, remove, get }
+    from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
-let players = { crveni:{}, plavi:{} };
-let scorers = [];
-let editingId = null;
+  let players = { crveni:{}, plavi:{} };
+  let scorers = [];
+  let editingId = null;
 
-/* -------------------------
-   LOAD PLAYERS (WITH IDs)
---------------------------*/
-onValue(window.dbRef("players"), snap => {
-  players = snap.val() || { crveni:{}, plavi:{} };
-  renderPlayers();
-});
-
-/* -------------------------
-        RENDER PLAYERS
---------------------------*/
-function renderPlayers() {
-  const PR = document.getElementById("playedRed");
-  const PB = document.getElementById("playedBlue");
-  const SRP = document.getElementById("scorersRedPlayers");
-  const SBP = document.getElementById("scorersBluePlayers");
-
-  PR.innerHTML = PB.innerHTML = SRP.innerHTML = SBP.innerHTML = "";
-
-  // CRVENI
-  Object.entries(players.crveni).forEach(([id, p]) => {
-    PR.innerHTML  += `<div class="player-btn player-red" data-id="${id}" data-team="crveni">${p.name}</div>`;
-    SRP.innerHTML += `<div class="player-btn player-red" data-id="${id}" data-team="crveni">${p.name}</div>`;
+  /* -------------------------
+     LOAD PLAYERS (WITH IDs)
+  --------------------------*/
+  onValue(window.dbRef("players"), snap => {
+    players = snap.val() || { crveni:{}, plavi:{} };
+    renderPlayers();
   });
 
-  // PLAVI
-  Object.entries(players.plavi).forEach(([id, p]) => {
-    PB.innerHTML  += `<div class="player-btn player-blue" data-id="${id}" data-team="plavi">${p.name}</div>`;
-    SBP.innerHTML += `<div class="player-btn player-blue" data-id="${id}" data-team="plavi">${p.name}</div>`;
-  });
+  /* -------------------------
+          RENDER PLAYERS
+  --------------------------*/
+  function renderPlayers() {
+    const PR = document.getElementById("playedRed");
+    const PB = document.getElementById("playedBlue");
+    const SRP = document.getElementById("scorersRedPlayers");
+    const SBP = document.getElementById("scorersBluePlayers");
 
-  /* selektovanje igrali */
-  document.querySelectorAll("#playedRed .player-btn,#playedBlue .player-btn")
-    .forEach(btn => btn.onclick = () => btn.classList.toggle("active"));
+    PR.innerHTML = PB.innerHTML = SRP.innerHTML = SBP.innerHTML = "";
 
-  /* strelci dodavanje */
-  document
-    .querySelectorAll("#scorersRedPlayers .player-btn,#scorersBluePlayers .player-btn")
-    .forEach(btn => btn.onclick = () => {
-      scorers.push({
-        id: btn.dataset.id,
-        team: btn.dataset.team
+    // CRVENI
+    Object.entries(players.crveni).forEach(([id, p]) => {
+      PR.innerHTML  += `<div class="player-btn player-red" data-id="${id}" data-team="crveni">${p.name}</div>`;
+      SRP.innerHTML += `<div class="player-btn player-red" data-id="${id}" data-team="crveni">${p.name}</div>`;
+    });
+
+    // PLAVI
+    Object.entries(players.plavi).forEach(([id, p]) => {
+      PB.innerHTML  += `<div class="player-btn player-blue" data-id="${id}" data-team="plavi">${p.name}</div>`;
+      SBP.innerHTML += `<div class="player-btn player-blue" data-id="${id}" data-team="plavi">${p.name}</div>`;
+    });
+  }
+
+  /* -------------------------
+     EVENT DELEGATION SETUP
+  --------------------------*/
+  (function setupEventDelegation() {
+    // Igrali - toggle active class
+    document.getElementById("playedRed").addEventListener("click", (e) => {
+      if (e.target.classList.contains("player-btn")) {
+        e.target.classList.toggle("active");
+      }
+    });
+
+    document.getElementById("playedBlue").addEventListener("click", (e) => {
+      if (e.target.classList.contains("player-btn")) {
+        e.target.classList.toggle("active");
+      }
+    });
+
+    // Strelci - add goals
+    document.getElementById("scorersRedPlayers").addEventListener("click", (e) => {
+      if (e.target.classList.contains("player-btn")) {
+        scorers.push({
+          id: e.target.dataset.id,
+          team: e.target.dataset.team
+        });
+        refreshTags();
+      }
+    });
+
+    document.getElementById("scorersBluePlayers").addEventListener("click", (e) => {
+      if (e.target.classList.contains("player-btn")) {
+        scorers.push({
+          id: e.target.dataset.id,
+          team: e.target.dataset.team
+        });
+        refreshTags();
+      }
+    });
+  })();
+
+  /* -------------------------
+           TAGOVI STRELACA
+  --------------------------*/
+  function refreshTags(){
+    document.getElementById("scorersRedTags").innerHTML = "";
+    document.getElementById("scorersBlueTags").innerHTML = "";
+
+    scorers.forEach((s,i)=>{
+      const name = players[s.team][s.id]?.name || "(obrisan)";
+      const tag = `<div class="tag">${name}<button onclick="removeGoal(${i})">x</button></div>`;
+      if (s.team==="crveni")
+        document.getElementById("scorersRedTags").innerHTML += tag;
+      else
+        document.getElementById("scorersBlueTags").innerHTML += tag;
+    });
+
+    autoSetGoals();
+  }
+
+  window.removeGoal = i => { scorers.splice(i,1); refreshTags(); };
+
+  function autoSetGoals() {
+    const redGoals = scorers.filter(s => s.team === "crveni").length;
+    const blueGoals = scorers.filter(s => s.team === "plavi").length;
+
+    red.value = redGoals;
+    blue.value = blueGoals;
+  }
+
+  /* -------------------------
+             GET PLAYED
+  --------------------------*/
+  function getPlayed() {
+    const played = {};
+    document.querySelectorAll("#playedRed .active,#playedBlue .active")
+      .forEach(btn => played[btn.dataset.id] = btn.dataset.team);
+    return played;
+  }
+
+  /* -------------------------
+          VALIDACIJA
+  --------------------------*/
+  function validate(){
+    const e=[];
+    if(!round.value) e.push("Kolo?");
+    if(!date.value)  e.push("Datum?");
+    if(!time.value)  e.push("Vreme?");
+    if(!info.value.trim()) e.push("Info?");
+    if(Object.keys(getPlayed()).length===0) e.push("Igrali?");
+    if(scorers.length===0)  e.push("Strelci?");
+
+    if(e.length){
+      alert("Greške:\n\n"+e.join("\n"));
+      return false;
+    }
+    return true;
+  }
+
+  /* -------------------------
+       UPDATE STATISTIKA
+  --------------------------*/
+  async function updateOne(team,id,field,delta){
+    const ref = window.dbRef(`players/${team}/${id}`);
+    const snap = await get(ref);
+    if (!snap.exists()) return;
+
+    const p = snap.val();
+    const next = Math.max(0, (p[field]||0) + delta);
+
+    await update(ref, { [field]: next });
+  }
+
+  async function applyStats(match, dir) {
+    const played = Object.entries(match.played || {});
+    const scor = match.scorers || [];
+
+    for (const [id, team] of played) {
+      await updateOne(team, id, "matches", dir);
+    }
+
+    for (const s of scor) {
+      await updateOne(s.team, s.id, "goals", dir);
+    }
+  }
+
+  /* -------------------------
+           SAVE NEW MATCH
+  --------------------------*/
+  saveBtn.onclick = async () =>{
+    if(!validate()) return;
+
+    const scorersCopy = JSON.parse(JSON.stringify(scorers));
+
+    const match = {
+      round:round.value,
+      date:date.value,
+      time:time.value,
+      red:+red.value,
+      blue:+blue.value,
+      info:info.value.trim(),
+      played:getPlayed(),
+      scorers: scorersCopy,
+      timestamp:Date.now()
+    };
+
+    const newRef = await push(window.dbRef("matches"), match);
+
+    await applyStats(match, +1);
+
+    clearForm();
+  };
+
+  /* -------------------------
+           UPDATE MATCH
+  --------------------------*/
+  updateBtn.onclick = async () => {
+    if(!validate()) return;
+
+    const scorersCopy = JSON.parse(JSON.stringify(scorers));
+
+    const oldSnap = await get(window.dbRef(`matches/${editingId}`));
+    const oldMatch = oldSnap.val();
+
+    await applyStats(oldMatch, -1);
+
+    const newMatch = {
+      round:round.value,
+      date:date.value,
+      time:time.value,
+      red:+red.value,
+      blue:+blue.value,
+      info:info.value.trim(),
+      played:getPlayed(),
+      scorers: scorersCopy,
+      timestamp: oldMatch.timestamp
+    };
+
+    await update(window.dbRef(`matches/${editingId}`), newMatch);
+    await applyStats(newMatch, +1);
+
+    clearForm();
+  };
+
+  /* -------------------------
+           DELETE MATCH
+  --------------------------*/
+  window.deleteMatch = async id => {
+    if (!confirm("Obrisati meč?")) return;
+
+    const snap = await get(window.dbRef(`matches/${id}`));
+    await applyStats(snap.val(), -1);
+
+    await remove(window.dbRef(`matches/${id}`));
+  };
+
+  /* -------------------------
+           CLEAR FORM
+  --------------------------*/
+  window.clearForm = function(){
+    editingId=null;
+    scorers=[];
+
+    round.value = "";
+    red.value = "";
+    blue.value = "";
+    info.value = "";
+    autoFillRound();
+
+    document.querySelectorAll(".player-btn.active")
+      .forEach(b=>b.classList.remove("active"));
+
+    refreshTags();
+
+    const d = getNextThursday();
+    date.value = d.toISOString().split("T")[0];
+    time.value = "18:00";
+
+    saveBtn.style.display="block";
+    updateBtn.style.display="none";
+    cancelBtn.style.display="none";
+  };
+
+  /* -------------------------
+         LISTA MEČEVA
+  --------------------------*/
+  onValue(window.dbRef("matches"), snap=>{
+    const tbody=document.getElementById("matchList");
+    tbody.innerHTML="";
+
+    Object.entries(snap.val()||{})
+      .sort((a,b)=>b[1].timestamp-a[1].timestamp)
+      .forEach(([id,m])=>{
+        tbody.innerHTML+=`
+          <tr>
+            <td>${m.round}</td>
+            <td>Crveni ${m.red} - ${m.blue} Plavi</td>
+            <td>${m.date} ${m.time}</td>
+            <td>
+              <button class="edit-btn" onclick="editMatch('${id}')">Izmeni</button>
+              <button class="del-btn"  onclick="deleteMatch('${id}')">Obriši</button>
+            </td>
+          </tr>`;
       });
-      refreshTags();
-    });
-}
-
-/* -------------------------
-         TAGOVI STRELACA
---------------------------*/
-
-function refreshTags(){
-  document.getElementById("scorersRedTags").innerHTML = "";
-  document.getElementById("scorersBlueTags").innerHTML = "";
-
-  scorers.forEach((s,i)=>{
-    const name = players[s.team][s.id]?.name || "(obrisan)";
-    const tag = `<div class="tag">${name}<button onclick="removeGoal(${i})">x</button></div>`;
-    if (s.team==="crveni")
-      document.getElementById("scorersRedTags").innerHTML += tag;
-    else
-      document.getElementById("scorersBlueTags").innerHTML += tag;
-  });
-  
-  autoSetGoals();
-}
-
-window.removeGoal = i => { scorers.splice(i,1); refreshTags(); };
-
- function autoSetGoals() {
-  const redGoals = scorers.filter(s => s.team === "crveni").length;
-  const blueGoals = scorers.filter(s => s.team === "plavi").length;
-
-  red.value = redGoals;
-  blue.value = blueGoals;
-} 
-
-/* -------------------------
-           GET PLAYED
---------------------------*/
-function getPlayed() {
-  const played = {};
-  document.querySelectorAll("#playedRed .active,#playedBlue .active")
-    .forEach(btn => played[btn.dataset.id] = btn.dataset.team);
-  return played;
-}
-
-/* -------------------------
-        VALIDACIJA
---------------------------*/
-function validate(){
-  const e=[];
-  if(!round.value) e.push("Kolo?");
-  if(!date.value)  e.push("Datum?");
-  if(!time.value)  e.push("Vreme?");
-  if(!info.value.trim()) e.push("Info?");
-  if(Object.keys(getPlayed()).length===0) e.push("Igrali?");
-  if(scorers.length===0)  e.push("Strelci?");
-
-  if(e.length){
-    alert("Greške:\n\n"+e.join("\n"));
-    return false;
-  }
-  return true;
-}
-
-/* -------------------------
-     UPDATE STATISTIKA
---------------------------*/
-async function updateOne(team,id,field,delta){
-  const ref = window.dbRef(`players/${team}/${id}`);
-  const snap = await get(ref);
-  if (!snap.exists()) return;
-
-  const p = snap.val();
-  const next = Math.max(0, (p[field]||0) + delta);
-
-  await update(ref, { [field]: next });
-}
-
-async function applyStats(match, dir) {
-  const played = Object.entries(match.played || {});
-  const scor = match.scorers || [];
-
-  for (const [id, team] of played) {
-    await updateOne(team, id, "matches", dir);
-  }
-
-  for (const s of scor) {
-    await updateOne(s.team, s.id, "goals", dir);
-  }
-}
-
-/* -------------------------
-         SAVE NEW MATCH
---------------------------*/
-saveBtn.onclick = async () =>{
-  if(!validate()) return;
-
-  const scorersCopy = JSON.parse(JSON.stringify(scorers));
-
-  const match = {
-    round:round.value,
-    date:date.value,
-    time:time.value,
-    red:+red.value,
-    blue:+blue.value,
-    info:info.value.trim(),
-    played:getPlayed(),
-    scorers: scorersCopy,
-    timestamp:Date.now()
-  };
-
-  const newRef = await push(window.dbRef("matches"), match);
-
-  await applyStats(match, +1);
-
-  clearForm();
-};
-  
-/* -------------------------
-         UPDATE MATCH
---------------------------*/
-updateBtn.onclick = async () => {
-  if(!validate()) return;
-
-  const scorersCopy = JSON.parse(JSON.stringify(scorers));
-
-  const oldSnap = await get(window.dbRef(`matches/${editingId}`));
-  const oldMatch = oldSnap.val();
-
-  await applyStats(oldMatch, -1);
-
-  const newMatch = {
-    round:round.value,
-    date:date.value,
-    time:time.value,
-    red:+red.value,
-    blue:+blue.value,
-    info:info.value.trim(),
-    played:getPlayed(),
-    scorers: scorersCopy,
-    timestamp: oldMatch.timestamp
-  };
-
-  await update(window.dbRef(`matches/${editingId}`), newMatch);
-  await applyStats(newMatch, +1);
-
-  clearForm();
-};
-
-/* -------------------------
-         DELETE MATCH
---------------------------*/
-window.deleteMatch = async id => {
-  if (!confirm("Obrisati meč?")) return;
-
-  const snap = await get(window.dbRef(`matches/${id}`));
-  await applyStats(snap.val(), -1);
-
-  await remove(window.dbRef(`matches/${id}`));
-};
-
-/* -------------------------
-         CLEAR FORM
---------------------------*/
-window.clearForm = function(){
-  editingId=null;
-  scorers=[];
-
-  round.value = "";
-  red.value = "";
-  blue.value = "";
-  info.value = "";
-  autoFillRound();
-
-  document.querySelectorAll(".player-btn.active")
-    .forEach(b=>b.classList.remove("active"));
-
-  refreshTags();
-
-  const d = getNextThursday();
-  date.value = d.toISOString().split("T")[0];
-  time.value = "18:00";
-
-  saveBtn.style.display="block";
-  updateBtn.style.display="none";
-  cancelBtn.style.display="none";
-};
-
-/* -------------------------
-       LISTA MEČEVA
---------------------------*/
-onValue(window.dbRef("matches"), snap=>{
-  const tbody=document.getElementById("matchList");
-  tbody.innerHTML="";
-
-  Object.entries(snap.val()||{})
-    .sort((a,b)=>b[1].timestamp-a[1].timestamp)
-    .forEach(([id,m])=>{
-      tbody.innerHTML+=`
-        <tr>
-          <td>${m.round}</td>
-          <td>Crveni ${m.red} - ${m.blue} Plavi</td>
-          <td>${m.date} ${m.time}</td>
-          <td>
-            <button class="edit-btn" onclick="editMatch('${id}')">Izmeni</button>
-            <button class="del-btn"  onclick="deleteMatch('${id}')">Obriši</button>
-          </td>
-        </tr>`;
-    });
-});
-
-/* -------------------------
-        EDIT MATCH
---------------------------*/
-window.editMatch = async id => {
-  editingId = id;
-
-  const snap = await get(window.dbRef(`matches/${id}`));
-  const m = snap.val();
-
-  round.value=m.round;
-  date.value=m.date;
-  time.value=m.time;
-  red.value=m.red;
-  blue.value=m.blue;
-  info.value=m.info;
-
-  scorers = [...m.scorers];
-  refreshTags();
-
-  document.querySelectorAll(".player-btn").forEach(b => b.classList.remove("active"));
-
-  Object.entries(m.played || {}).forEach(([id, team]) => {
-    const btn = document.querySelector(`.player-btn[data-id="${id}"][data-team="${team}"]`);
-    if (btn) btn.classList.add("active");
   });
 
+  /* -------------------------
+          EDIT MATCH
+  --------------------------*/
+  window.editMatch = async id => {
+    editingId = id;
 
-  saveBtn.style.display="none";
-  updateBtn.style.display="block";
-  cancelBtn.style.display="block";
-};
+    const snap = await get(window.dbRef(`matches/${id}`));
+    const m = snap.val();
 
-/* -------------------------
-       AUTO NEXT THURSDAY
---------------------------*/
-function getNextThursday() {
-  const now = new Date();
-  let diff = (4 - now.getDay() + 7) % 7;
-  if (diff === 0) diff = 7;
-  const d = new Date();
-  d.setDate(now.getDate() + diff);
-  return d;
-}
+    round.value=m.round;
+    date.value=m.date;
+    time.value=m.time;
+    red.value=m.red;
+    blue.value=m.blue;
+    info.value=m.info;
 
-(function(){
-  const d = getNextThursday();
-  date.value = d.toISOString().split("T")[0];
-  time.value = "18:00";
-  autoFillRound();
-})();
+    scorers = [...m.scorers];
+    refreshTags();
 
-/* -------------------------
-       AUTO ROUND (KOLO)
---------------------------*/
-function autoFillRound() {
-  onValue(window.dbRef("matches"), snap => {
-    const data = snap.val() || {};
-    const rounds = Object.values(data).map(m => Number(m.round) || 0);
-    const nextRound = (rounds.length ? Math.max(...rounds) + 1 : 1);
-    round.value = nextRound;
-  }, { onlyOnce: true });
-}
+    document.querySelectorAll(".player-btn").forEach(b => b.classList.remove("active"));
 
-  
-</script>
+    Object.entries(m.played || {}).forEach(([id, team]) => {
+      const btn = document.querySelector(`.player-btn[data-id="${id}"][data-team="${team}"]`);
+      if (btn) btn.classList.add("active");
+    });
 
-</body>
-</html>
+    saveBtn.style.display="none";
+    updateBtn.style.display="block";
+    cancelBtn.style.display="block";
+  };
+
+  /* -------------------------
+         AUTO NEXT THURSDAY
+  --------------------------*/
+  function getNextThursday() {
+    const now = new Date();
+    let diff = (4 - now.getDay() + 7) % 7;
+    if (diff === 0) diff = 7;
+    const d = new Date();
+    d.setDate(now.getDate() + diff);
+    return d;
+  }
+
+  (function(){
+    const d = getNextThursday();
+    date.value = d.toISOString().split("T")[0];
+    time.value = "18:00";
+    autoFillRound();
+  })();
+
+  /* -------------------------
+         AUTO ROUND (KOLO)
+  --------------------------*/
+  function autoFillRound() {
+    onValue(window.dbRef("matches"), snap => {
+      const data = snap.val() || {};
+      const rounds = Object.values(data).map(m => Number(m.round) || 0);
+      const nextRound = (rounds.length ? Math.max(...rounds) + 1 : 1);
+      round.value = nextRound;
+    }, { onlyOnce: true });
+  }
+
+  </script>
+
+  </body>
+  </html>
