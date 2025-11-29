@@ -4,42 +4,303 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
     <title>Upravljanje igračima</title>
-    <link rel="stylesheet" href="styles.css">
     <script type="module" src="firebase.mjs"></script>
 
     <style>
-      /* Page-specific overrides only */
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 20px 10px;
+      }
+
       .container {
         max-width: 900px;
+        margin: 0 auto;
+      }
+
+      /* HEADER */
+      header {
+        background: white;
+        border-radius: 16px;
+        padding: 20px 30px;
+        margin-bottom: 20px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 15px;
+      }
+
+      .logo {
+        font-size: 24px;
+        font-weight: bold;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .nav-buttons {
+        display: flex;
+        gap: 10px;
+      }
+
+      .nav-btn {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 10px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background: #f0f0f0;
+        color: #333;
+      }
+
+      .nav-btn:hover {
+        background: #e0e0e0;
+        transform: translateY(-2px);
+      }
+
+      .nav-btn.active {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+      }
+
+      .nav-btn.logout {
+        background: #ff4757;
+        color: white;
+      }
+
+      .nav-btn.logout:hover {
+        background: #ee5a6f;
+      }
+
+      /* MAIN CARD */
+      .card {
+        background: white;
+        border-radius: 16px;
+        padding: 30px;
+        margin-bottom: 20px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      }
+
+      .card-title {
+        font-size: 22px;
+        font-weight: 700;
+        margin-bottom: 25px;
+        color: #2d3436;
+        text-align: center;
+      }
+
+      /* FORM STYLING */
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      .form-label {
+        display: block;
+        font-size: 13px;
+        font-weight: 600;
+        color: #636e72;
+        margin-bottom: 8px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      input, textarea {
+        width: 100%;
+        padding: 14px 16px;
+        border: 2px solid #e0e0e0;
+        border-radius: 10px;
+        font-size: 15px;
+        transition: all 0.3s ease;
+        font-family: inherit;
+      }
+
+      input:focus, textarea:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+      }
+
+      textarea {
+        min-height: 100px;
+        resize: vertical;
+      }
+
+      .input-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+      }
+
+      /* TEAM TITLE */
+      .team-title {
+        font-size: 22px;
+        font-weight: bold;
+        margin: 25px 0 15px;
+      }
+
+      /* BADGES */
+      .captain-badge {
+        display: inline-block;
+        background: linear-gradient(135deg, #ffd700, #ffed4e);
+        color: #333;
+        font-weight: bold;
+        padding: 2px 6px;
+        border-radius: 4px;
+        margin-left: 6px;
+        font-size: 10px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+      }
+
+      .goalkeeper-badge {
+        margin-left: 6px;
+        font-size: 16px;
+      }
+
+      /* ACTION BUTTONS */
+      .btn, .add-btn {
+        width: 100%;
+        padding: 16px;
+        border: none;
+        border-radius: 12px;
+        font-size: 16px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 15px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .add-btn {
+        background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
+        color: white;
+        box-shadow: 0 4px 15px rgba(0, 184, 148, 0.3);
+        margin-top: 0;
+        padding: 14px 20px;
+      }
+
+      .add-btn:hover {
+        box-shadow: 0 6px 20px rgba(0, 184, 148, 0.4);
+        transform: translateY(-2px);
       }
 
       #resetStatsBtn {
         background: linear-gradient(135deg, #ff4757 0%, #ee5a6f 100%);
         color: white;
-        padding: 14px 24px;
-        border: none;
-        border-radius: 12px;
-        cursor: pointer;
-        font-size: 16px;
-        margin-bottom: 25px;
-        width: 100%;
+        box-shadow: 0 4px 15px rgba(255, 71, 87, 0.3);
         max-width: 400px;
         display: block;
         margin-left: auto;
         margin-right: auto;
-        font-weight: 700;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 15px rgba(255, 71, 87, 0.3);
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
+        margin-bottom: 25px;
       }
 
       #resetStatsBtn:hover {
-        transform: translateY(-2px);
         box-shadow: 0 6px 20px rgba(255, 71, 87, 0.4);
+        transform: translateY(-2px);
       }
 
-      /* Modal */
+      /* MATCHES TABLE */
+      .table-wrapper {
+        overflow-x: auto;
+        margin-top: 25px;
+        border-radius: 12px;
+        border: 2px solid #f0f0f0;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 600px;
+      }
+
+      th {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        padding: 15px 12px;
+        text-align: left;
+        font-size: 13px;
+        font-weight: 700;
+        color: #636e72;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border-bottom: 2px solid #e0e0e0;
+        cursor: pointer;
+        user-select: none;
+      }
+
+      th:hover {
+        background: #e0e0e0;
+      }
+
+      th.sorted-asc::after {
+        content: " ▲";
+        font-size: 12px;
+        color: #667eea;
+      }
+
+      th.sorted-desc::after {
+        content: " ▼";
+        font-size: 12px;
+        color: #667eea;
+      }
+
+      td {
+        padding: 15px 12px;
+        border-bottom: 1px solid #f0f0f0;
+        font-size: 14px;
+        color: #2d3436;
+        text-align: center;
+      }
+
+      tr:hover {
+        background: #f8f9fa;
+      }
+
+      .edit-btn, .del-btn {
+        padding: 8px 14px;
+        border: none;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        margin-right: 6px;
+      }
+
+      .edit-btn {
+        background: #667eea;
+        color: white;
+      }
+
+      .edit-btn:hover {
+        background: #5568d3;
+        transform: scale(1.05);
+      }
+
+      .del-btn {
+        background: #ff4757;
+        color: white;
+      }
+
+      .del-btn:hover {
+        background: #ee5a6f;
+        transform: scale(1.05);
+      }
+
+      /* MODAL */
       #modalOverlay {
         display: none;
         position: fixed;
@@ -121,7 +382,70 @@
         box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
       }
 
+      /* MOBILE RESPONSIVE */
       @media (max-width: 768px) {
+        body {
+          padding: 10px 5px;
+        }
+
+        .container {
+          max-width: 100%;
+        }
+
+        header {
+          padding: 15px 20px;
+          border-radius: 12px;
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .logo {
+          text-align: center;
+          font-size: 20px;
+        }
+
+        .nav-buttons {
+          flex-direction: column;
+        }
+
+        .nav-btn {
+          width: 100%;
+          text-align: center;
+        }
+
+        .card {
+          padding: 20px;
+          border-radius: 12px;
+        }
+
+        .card-title {
+          font-size: 20px;
+        }
+
+        .input-row {
+          grid-template-columns: 1fr;
+        }
+
+        .team-title {
+          font-size: 20px;
+          margin: 20px 0 12px;
+        }
+
+        table {
+          min-width: 500px;
+        }
+
+        th, td {
+          padding: 12px 8px;
+          font-size: 12px;
+        }
+
+        .edit-btn, .del-btn {
+          display: block;
+          width: 100%;
+          margin: 4px 0;
+        }
+
         #modalBox {
           padding: 20px;
           width: 95%;
@@ -129,6 +453,20 @@
 
         .modal-buttons {
           flex-direction: column;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .card {
+          padding: 15px;
+        }
+
+        .team-title {
+          font-size: 18px;
+        }
+
+        table {
+          min-width: 450px;
         }
       }
     </style>
