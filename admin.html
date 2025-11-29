@@ -2,10 +2,15 @@
   <html lang="sr">
   <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin – Mečevi</title>
     <script type="module" src="firebase.mjs"></script>
 
     <style>
+      * {
+        box-sizing: border-box;
+      }
+
       body {
         font-family: Arial, sans-serif;
         max-width: 750px;
@@ -13,27 +18,54 @@
         padding: 0 20px;
       }
 
-      h1 { text-align:center; margin-bottom:25px; }
+      h1 {
+        text-align: center;
+        margin-bottom: 25px;
+        font-size: 26px;
+      }
 
-      h3 { margin-bottom: 6px !important; }
+      h3 {
+        margin-bottom: 8px !important;
+        margin-top: 25px;
+        font-size: 18px;
+      }
 
       #adminNav {
-        display:flex; gap:10px; background:#f0f0f0;
-        padding:12px; margin-bottom:25px;
-        border-radius:8px; justify-content:center; border:1px solid #ddd;
+        display: flex;
+        gap: 10px;
+        background: #f0f0f0;
+        padding: 12px;
+        margin-bottom: 25px;
+        border-radius: 8px;
+        justify-content: center;
+        border: 1px solid #ddd;
+        flex-wrap: wrap;
       }
 
       #adminNav button {
-        padding:8px 12px; border-radius:6px; border:none;
-        background:#0044cc; color:white; cursor:pointer; font-size:14px;
+        padding: 10px 16px;
+        border-radius: 6px;
+        border: none;
+        background: #0044cc;
+        color: white;
+        cursor: pointer;
+        font-size: 14px;
+        min-width: 90px;
       }
 
       /* Igraci */
       .player-btn {
-        padding:6px 10px; border-radius:6px; background:#eee;
-        border:1px solid #bbb; cursor:pointer; margin:4px;
-        display:inline-block;
+        padding: 8px 12px;
+        border-radius: 6px;
+        background: #eee;
+        border: 1px solid #bbb;
+        cursor: pointer;
+        margin: 4px;
+        display: inline-block;
+        font-size: 14px;
+        user-select: none;
       }
+
       .player-btn.active {
         font-weight: bold;
         color: white;
@@ -42,12 +74,12 @@
       }
 
       #playedRed .player-btn.active,
-        #scorersRedPlayers .player-btn.active {
+      #scorersRedPlayers .player-btn.active {
         background: #b10000 !important;
       }
 
       #playedBlue .player-btn.active,
-        #scorersBluePlayers .player-btn.active {
+      #scorersBluePlayers .player-btn.active {
         background: #0044cc !important;
       }
 
@@ -72,45 +104,222 @@
 
       /* Strelci tagovi */
       .tag {
-        background:#ddd; padding:6px 10px; border-radius:6px;
-        margin:4px; display:inline-flex; align-items:center; gap:6px;
+        background: #ddd;
+        padding: 8px 12px;
+        border-radius: 6px;
+        margin: 4px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
       }
+
       .tag button {
-        background:#c00000; border:none; color:white;
-        border-radius:4px; cursor:pointer; padding:0 6px;
+        background: #c00000;
+        border: none;
+        color: white;
+        border-radius: 4px;
+        cursor: pointer;
+        padding: 2px 8px;
+        font-size: 14px;
       }
 
       input, textarea {
-        width:100%; padding:10px; border-radius:6px;
-        border:1px solid #aaa; font-size:15px;
-        margin-bottom:12px;
+        width: 100%;
+        padding: 12px;
+        border-radius: 6px;
+        border: 1px solid #aaa;
+        font-size: 16px;
+        margin-bottom: 12px;
       }
 
-      textarea { min-height:120px; }
+      textarea {
+        min-height: 120px;
+        resize: vertical;
+      }
 
       .save-btn, .update-btn, .cancel-btn {
-        width:100%; padding:12px; border-radius:6px;
-        font-size:16px; cursor:pointer; margin-top:10px; border:none;
+        width: 100%;
+        padding: 14px;
+        border-radius: 6px;
+        font-size: 16px;
+        cursor: pointer;
+        margin-top: 10px;
+        border: none;
+        font-weight: 500;
       }
-      .save-btn { background:#008000; color:white; }
-      .update-btn { background:#d48a00; color:white; display:none; }
-      .cancel-btn { background:#555; color:white; display:none; }
 
-      table { width:100%; border-collapse:collapse; margin-top:25px; }
-      th {
-        background:#ececec; padding:10px;
-        border-bottom:2px solid #bbb; text-align:left;
+      .save-btn { background: #008000; color: white; }
+      .update-btn { background: #d48a00; color: white; display: none; }
+      .cancel-btn { background: #555; color: white; display: none; }
+
+      .table-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        margin: 25px -20px 0;
+        padding: 0 20px;
       }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 600px;
+      }
+
+      th {
+        background: #ececec;
+        padding: 10px 8px;
+        border-bottom: 2px solid #bbb;
+        text-align: left;
+        font-size: 13px;
+        white-space: nowrap;
+      }
+
       td {
-        padding:10px; border-bottom:1px solid #ddd;
+        padding: 10px 8px;
+        border-bottom: 1px solid #ddd;
+        font-size: 13px;
       }
 
       .edit-btn, .del-btn {
-        padding:6px 10px; border-radius:4px; font-size:13px;
-        cursor:pointer; border:none; color:white;
+        padding: 6px 10px;
+        border-radius: 4px;
+        font-size: 12px;
+        cursor: pointer;
+        border: none;
+        color: white;
+        margin: 2px;
       }
-      .edit-btn { background:#0044cc; }
-      .del-btn { background:#c00000; }
+
+      .edit-btn { background: #0044cc; }
+      .del-btn { background: #c00000; }
+
+      /* MOBILE STYLES */
+      @media (max-width: 768px) {
+        body {
+          margin: 10px auto;
+          padding: 0 15px;
+        }
+
+        h1 {
+          font-size: 22px;
+          margin-bottom: 20px;
+        }
+
+        h3 {
+          font-size: 16px;
+          margin-top: 20px;
+        }
+
+        #adminNav {
+          padding: 10px;
+          gap: 8px;
+        }
+
+        #adminNav button {
+          padding: 10px 14px;
+          font-size: 13px;
+          min-width: 80px;
+          flex: 1;
+        }
+
+        .player-btn {
+          padding: 10px 12px;
+          font-size: 13px;
+          margin: 3px;
+        }
+
+        .tag {
+          padding: 8px 10px;
+          font-size: 13px;
+        }
+
+        .tag button {
+          padding: 2px 6px;
+          font-size: 13px;
+        }
+
+        input, textarea {
+          padding: 12px;
+          font-size: 16px;
+        }
+
+        .save-btn, .update-btn, .cancel-btn {
+          padding: 14px;
+          font-size: 15px;
+        }
+
+        .table-wrapper {
+          margin: 20px -15px 0;
+          padding: 0 15px;
+        }
+
+        table {
+          min-width: 550px;
+        }
+
+        th, td {
+          padding: 8px 6px;
+          font-size: 12px;
+        }
+
+        .edit-btn, .del-btn {
+          padding: 8px 10px;
+          font-size: 11px;
+          display: block;
+          width: 100%;
+          margin: 2px 0;
+        }
+
+        .captain-badge {
+          font-size: 8px;
+          padding: 1px 3px;
+        }
+
+        .goalkeeper-badge {
+          font-size: 12px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        body {
+          padding: 0 10px;
+        }
+
+        h1 {
+          font-size: 20px;
+        }
+
+        h3 {
+          font-size: 15px;
+        }
+
+        #adminNav button {
+          padding: 8px 10px;
+          font-size: 12px;
+          min-width: 70px;
+        }
+
+        .player-btn {
+          padding: 8px 10px;
+          font-size: 12px;
+          margin: 2px;
+        }
+
+        .tag {
+          padding: 6px 8px;
+          font-size: 12px;
+        }
+
+        table {
+          min-width: 500px;
+        }
+
+        th, td {
+          padding: 6px 4px;
+          font-size: 11px;
+        }
+      }
     </style>
   </head>
 
@@ -131,7 +340,7 @@
   <h1>Upravljanje mečevima</h1>
 
   <!-- INPUT POLJA -->
-  <input id="round" placeholder="Kolo">
+  <input id="round" placeholder="Kolo" type="number">
   <input id="date" type="date">
   <input id="time" type="time">
 
@@ -150,7 +359,7 @@
   <div id="scorersRedTags"></div>
 
   <!-- IGRALI – PLAVI -->
-  <h3 style="color:#0044cc; margin-top:50px;">Igrali – Plavi</h3>
+  <h3 style="color:#0044cc; margin-top:30px;">Igrali – Plavi</h3>
   <div id="playedBlue"></div>
 
   <!-- STRELCI – PLAVI -->
@@ -163,17 +372,19 @@
   <button class="cancel-btn" id="cancelBtn" onclick="clearForm()">Otkaži izmenu</button>
 
   <!-- LISTA MEČEVA -->
-  <table>
-    <thead>
-      <tr>
-        <th>Kolo</th>
-        <th>Rezultat</th>
-        <th>Datum</th>
-        <th>Akcije</th>
-      </tr>
-    </thead>
-    <tbody id="matchList"></tbody>
-  </table>
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>Kolo</th>
+          <th>Rezultat</th>
+          <th>Datum</th>
+          <th>Akcije</th>
+        </tr>
+      </thead>
+      <tbody id="matchList"></tbody>
+    </table>
+  </div>
 
   <!-- SCRIPT -->
   <script type="module">
@@ -194,14 +405,12 @@
     let displayName = name;
     let badges = '';
 
-    // Check for captain
     const captainRegex = /\s*\(c\)\s*/i;
     if (captainRegex.test(name)) {
       displayName = name.replace(captainRegex, ' ').trim();
       badges += '<span class="captain-badge">C</span>';
     }
 
-    // Check for goalkeeper
     const goalkeeperRegex = /\s*\(g\)\s*/i;
     if (goalkeeperRegex.test(name)) {
       displayName = name.replace(goalkeeperRegex, ' ').trim();
@@ -218,7 +427,6 @@
     players = snap.val() || { crveni:{}, plavi:{} };
     renderPlayers();
 
-    // Apply pending played selections after render
     if (pendingPlayed) {
       applyPlayedSelection(pendingPlayed);
     }
@@ -247,7 +455,6 @@
       SBP.innerHTML += `<div class="player-btn player-blue" data-id="${id}" data-team="plavi">${formatPlayerName(p.name)}</div>`;
     });
 
-    // Re-apply pending selection after render
     if (pendingPlayed) {
       applyPlayedSelection(pendingPlayed);
     }
@@ -257,11 +464,9 @@
      APPLY PLAYED SELECTION
   --------------------------*/
   function applyPlayedSelection(played) {
-    // Clear all active states first
     document.querySelectorAll("#playedRed .player-btn, #playedBlue .player-btn")
       .forEach(b => b.classList.remove("active"));
 
-    // Apply active state to selected players
     Object.entries(played || {}).forEach(([playerId, team]) => {
       const container = team === "crveni" ? "#playedRed" : "#playedBlue";
       const btn = document.querySelector(`${container} .player-btn[data-id="${playerId}"]`);
@@ -275,7 +480,6 @@
      EVENT DELEGATION SETUP
   --------------------------*/
   (function setupEventDelegation() {
-    // Igrali - toggle active class
     document.getElementById("playedRed").addEventListener("click", (e) => {
       if (e.target.classList.contains("player-btn")) {
         e.target.classList.toggle("active");
@@ -290,7 +494,6 @@
       }
     });
 
-    // Strelci - add goals
     document.getElementById("scorersRedPlayers").addEventListener("click", (e) => {
       if (e.target.classList.contains("player-btn")) {
         scorers.push({
@@ -418,8 +621,7 @@
       timestamp:Date.now()
     };
 
-    const newRef = await push(window.dbRef("matches"), match);
-
+    await push(window.dbRef("matches"), match);
     await applyStats(match, +1);
 
     clearForm();
@@ -538,13 +740,14 @@
     scorers = [...m.scorers];
     refreshTags();
 
-    // Store played selection and apply it
     pendingPlayed = m.played || {};
     applyPlayedSelection(pendingPlayed);
 
     saveBtn.style.display = "none";
     updateBtn.style.display = "block";
     cancelBtn.style.display = "block";
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   /* -------------------------
@@ -561,7 +764,7 @@
 
   (function(){
     const d = getNextThursday();
-    date.value = d.toISOString().split("T")[0];
+    date.value = d.toISOString().split("T")[0);
     time.value = "18:00";
     autoFillRound();
   })();
