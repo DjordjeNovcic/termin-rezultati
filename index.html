@@ -181,7 +181,7 @@
     <button id="loginBtn" onclick="window.location='login.html'">Login</button>
   </div>
 
-  <h1>Rezultati svih odigranih utakmica</h1>
+  <h1>Rezultat poslednjeg kola</h1>
 
   <!-- GLAVNI MEČ -->
   <div id="mainMatch"></div>
@@ -326,7 +326,7 @@
     const recent = matches.slice(1,4);
 
     if (recent.length) {
-      recentBox.innerHTML += `<h3 style="margin-bottom:15px; margin-top:30px;">Još rezultata</h3>`;
+      recentBox.innerHTML += `<h1 style="margin-bottom:15px; margin-top:30px;">Rezultati prošlih kola</h1>`;
 
       recent.forEach(m => {
         recentBox.innerHTML += `
