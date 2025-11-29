@@ -2,10 +2,15 @@
   <html lang="sr">
   <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rezultati</title>
     <script type="module" src="firebase.mjs"></script>
 
     <style>
+      * {
+        box-sizing: border-box;
+      }
+
       body {
         font-family: Arial, sans-serif;
         max-width: 900px;
@@ -15,6 +20,7 @@
       }
 
       h1 { margin-bottom: 25px; }
+      h2 { margin-top: 40px; }
 
       #loginHolder {
         width: 100%;
@@ -24,7 +30,7 @@
       }
 
       #loginBtn {
-        padding: 8px 16px;
+        padding: 10px 20px;
         background: #0044cc;
         color: white;
         border-radius: 6px;
@@ -42,8 +48,17 @@
         margin-bottom: 25px;
       }
 
-      .team-logo { width: 90px; height: 90px; }
-      .team-name { font-weight: bold; margin-top: 5px; }
+      .team-logo {
+        width: 90px;
+        height: 90px;
+        object-fit: contain;
+      }
+
+      .team-name {
+        font-weight: bold;
+        margin-top: 5px;
+        font-size: 16px;
+      }
 
       .score {
         font-size: 38px;
@@ -62,45 +77,65 @@
         cursor: pointer;
         font-size: 15px;
         text-decoration: underline;
+        margin-top: 5px;
+        display: inline-block;
       }
 
       /* TABELA */
+      .table-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        margin: 25px -15px;
+        padding: 0 15px;
+      }
+
       table {
-        margin: 25px auto;
         width: 100%;
         border-collapse: collapse;
+        min-width: 600px;
       }
+
       th {
         background: #ececec;
-        padding: 10px;
+        padding: 10px 8px;
         border-bottom: 2px solid #bbb;
         cursor: pointer;
         user-select: none;
         position: relative;
+        font-size: 13px;
+        white-space: nowrap;
       }
+
       th:hover {
         background: #ddd;
       }
+
       th.sorted-asc::after {
         content: " ▲";
-        font-size: 12px;
+        font-size: 10px;
         color: #0044cc;
       }
+
       th.sorted-desc::after {
         content: " ▼";
-        font-size: 12px;
+        font-size: 10px;
         color: #0044cc;
       }
+
       th.no-sort {
         cursor: default;
       }
+
       th.no-sort:hover {
         background: #ececec;
       }
+
       td {
-        padding: 10px;
+        padding: 10px 8px;
         border-bottom: 1px solid #ddd;
+        font-size: 14px;
       }
+
       tr.highlight { background: #fff7d1; }
 
       /* SCORER COLORS */
@@ -154,14 +189,14 @@
 
       /* Dugme */
       .more-btn {
-        padding: 10px 20px;
+        padding: 12px 24px;
         margin-top: 15px;
         cursor: pointer;
         border: none;
         background: #0044cc;
         color: white;
         border-radius: 6px;
-        font-size: 15px;
+        font-size: 16px;
       }
 
       /* MODAL */
@@ -174,23 +209,171 @@
         backdrop-filter: blur(2px);
         justify-content: center;
         align-items: center;
+        z-index: 1000;
       }
+
       #modalBox {
         background: white;
         max-width: 600px;
         width: 90%;
+        max-height: 80vh;
+        overflow-y: auto;
         padding: 25px;
         border-radius: 12px;
         text-align: left;
         box-shadow: 0 0 20px rgba(0,0,0,0.25);
+        margin: 20px;
       }
+
       #closeModal {
         float: right;
         cursor: pointer;
-        font-size: 18px;
+        font-size: 24px;
         background: #ccc;
         border-radius: 4px;
-        padding: 4px 8px;
+        padding: 4px 10px;
+        line-height: 1;
+      }
+
+      /* MOBILE STYLES */
+      @media (max-width: 768px) {
+        body {
+          margin: 10px auto;
+          padding: 0 10px;
+        }
+
+        h1 {
+          font-size: 24px;
+          margin-bottom: 15px;
+        }
+
+        h2 {
+          font-size: 20px;
+          margin-top: 30px;
+        }
+
+        /* Match cards */
+        .match-box {
+          padding: 15px;
+          margin-bottom: 15px;
+        }
+
+        .team-logo {
+          width: 60px;
+          height: 60px;
+        }
+
+        .team-name {
+          font-size: 13px;
+        }
+
+        .score {
+          font-size: 28px;
+        }
+
+        .score-small {
+          font-size: 20px;
+        }
+
+        /* Tables */
+        .table-wrapper {
+          margin: 15px -10px;
+          padding: 0 10px;
+        }
+
+        table {
+          min-width: 500px;
+        }
+
+        th, td {
+          padding: 8px 4px;
+          font-size: 12px;
+        }
+
+        th {
+          font-size: 11px;
+        }
+
+        /* Buttons */
+        #loginBtn {
+          padding: 10px 16px;
+          font-size: 14px;
+        }
+
+        .more-btn {
+          width: 100%;
+          padding: 14px;
+          font-size: 15px;
+        }
+
+        /* Form boxes */
+        .form-box {
+          font-size: 14px;
+        }
+
+        .dot {
+          width: 12px;
+          height: 12px;
+          margin-left: 3px;
+        }
+
+        /* Modal */
+        #modalBox {
+          width: 95%;
+          padding: 20px;
+          margin: 10px;
+        }
+
+        #closeModal {
+          font-size: 20px;
+          padding: 2px 8px;
+        }
+
+        /* Info link */
+        .info-link {
+          font-size: 13px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        h1 {
+          font-size: 20px;
+        }
+
+        h2 {
+          font-size: 18px;
+        }
+
+        .match-box {
+          padding: 12px;
+        }
+
+        .team-logo {
+          width: 50px;
+          height: 50px;
+        }
+
+        .score {
+          font-size: 24px;
+        }
+
+        table {
+          min-width: 450px;
+        }
+
+        th, td {
+          padding: 6px 3px;
+          font-size: 11px;
+        }
+
+        .captain-badge {
+          font-size: 9px;
+          padding: 1px 4px;
+        }
+
+        .goalkeeper-badge {
+          font-size: 14px;
+        }
       }
     </style>
   </head>
@@ -207,35 +390,39 @@
 
   <!-- TABELA -->
   <h2>Tabela</h2>
-  <table>
-    <thead>
-      <tr>
-        <th class="no-sort">Tim</th>
-        <th data-sort="U" data-table="league">Utakmice</th>
-        <th data-sort="P" data-table="league">Pobede</th>
-        <th data-sort="N" data-table="league">Nerešeno</th>
-        <th data-sort="I" data-table="league">Porazi</th>
-        <th data-sort="GD" data-table="league">G. dati</th>
-        <th data-sort="GP" data-table="league">G. primljeni</th>
-        <th data-sort="GR" data-table="league">G. razlika</th>
-        <th data-sort="B" data-table="league">Bodovi</th>
-      </tr>
-    </thead>
-    <tbody id="leagueBody"></tbody>
-  </table>
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th class="no-sort">Tim</th>
+          <th data-sort="U" data-table="league">Utakmice</th>
+          <th data-sort="P" data-table="league">Pobede</th>
+          <th data-sort="N" data-table="league">Nerešeno</th>
+          <th data-sort="I" data-table="league">Porazi</th>
+          <th data-sort="GD" data-table="league">G. dati</th>
+          <th data-sort="GP" data-table="league">G. primljeni</th>
+          <th data-sort="GR" data-table="league">G. razlika</th>
+          <th data-sort="B" data-table="league">Bodovi</th>
+        </tr>
+      </thead>
+      <tbody id="leagueBody"></tbody>
+    </table>
+  </div>
 
   <!-- LISTA STRELACA -->
   <h2>Lista strelaca</h2>
-  <table>
-    <thead>
-      <tr>
-        <th data-sort="name" data-table="scorers">Ime</th>
-        <th data-sort="team" data-table="scorers">Tim</th>
-        <th data-sort="goals" data-table="scorers">Golovi</th>
-      </tr>
-    </thead>
-    <tbody id="scorersBody"></tbody>
-  </table>
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th data-sort="name" data-table="scorers">Ime</th>
+          <th data-sort="team" data-table="scorers">Tim</th>
+          <th data-sort="goals" data-table="scorers">Golovi</th>
+        </tr>
+      </thead>
+      <tbody id="scorersBody"></tbody>
+    </table>
+  </div>
 
   <!-- FORMA -->
   <div class="form-box">
@@ -273,14 +460,12 @@
     let displayName = name;
     let badges = '';
 
-    // Check for captain
     const captainRegex = /\s*\(c\)\s*/i;
     if (captainRegex.test(name)) {
       displayName = name.replace(captainRegex, ' ').trim();
       badges += '<span class="captain-badge">C</span>';
     }
 
-    // Check for goalkeeper
     const goalkeeperRegex = /\s*\(g\)\s*/i;
     if (goalkeeperRegex.test(name)) {
       displayName = name.replace(goalkeeperRegex, ' ').trim();
@@ -337,7 +522,6 @@
 
     const latest = matches[0];
 
-    /* ---- Najnoviji meč ---- */
     mainBox.innerHTML = `
       <div class="match-box">
         <div style="opacity:0.8; margin-bottom:10px;">
@@ -348,7 +532,7 @@
         <div style="display:flex; justify-content:space-around; align-items:center;">
           
           <div style="text-align:center;">
-            <img src="crveni.png" class="team-logo">
+            <img src="crveni.png" class="team-logo" alt="Crveni">
             <div class="team-name" style="color:#c00000;">Crveni</div>
             <a href="crveni.html" style="font-size:14px;">Vidi ekipu</a>
           </div>
@@ -356,7 +540,7 @@
           <div class="score">${latest.red} - ${latest.blue}</div>
 
           <div style="text-align:center;">
-            <img src="plavi.png" class="team-logo">
+            <img src="plavi.png" class="team-logo" alt="Plavi">
             <div class="team-name" style="color:#0044cc;">Plavi</div>
             <a href="plavi.html" style="font-size:14px;">Vidi ekipu</a>
           </div>
@@ -365,7 +549,6 @@
       </div>
     `;
 
-    /* ---- Poslednja 3 meča DOLE ---- */
     const recent = matches.slice(1,4);
 
     if (recent.length) {
@@ -382,14 +565,14 @@
             <div style="display:flex; justify-content:space-around; align-items:center;">
 
               <div style="text-align:center;">
-                <img src="crveni.png" class="team-logo" style="width:60px; height:60px;">
+                <img src="crveni.png" class="team-logo" style="width:60px; height:60px;" alt="Crveni">
                 <div class="team-name" style="font-size:14px; color:#c00000;">Crveni</div>
               </div>
 
               <div class="score-small">${m.red} - ${m.blue}</div>
 
               <div style="text-align:center;">
-                <img src="plavi.png" class="team-logo" style="width:60px; height:60px;">
+                <img src="plavi.png" class="team-logo" style="width:60px; height:60px;" alt="Plavi">
                 <div class="team-name" style="font-size:14px; color:#0044cc;">Plavi</div>
               </div>
 
@@ -441,13 +624,12 @@
     const teams = Object.values(tableData);
     const { field, dir } = currentSort.league;
 
-    // Sort teams
     teams.sort((a, b) => {
       const valA = a[field];
       const valB = b[field];
 
       if (valA === valB) {
-        return b.B - a.B; // Secondary sort by points
+        return b.B - a.B;
       }
 
       return dir === 'asc' ? valA - valB : valB - valA;
@@ -481,10 +663,8 @@
     const scorers = [...scorersData];
     const { field, dir } = currentSort.scorers;
 
-    // Sort scorers
     scorers.sort((a, b) => {
       if (field === 'name') {
-        // Remove badges for sorting
         const nameA = a.name.replace(/\s*\(c\)\s*/gi, '').replace(/\s*\(g\)\s*/gi, '').trim().toLowerCase();
         const nameB = b.name.replace(/\s*\(c\)\s*/gi, '').replace(/\s*\(g\)\s*/gi, '').trim().toLowerCase();
         return dir === 'asc'
@@ -492,12 +672,12 @@
           : nameB.localeCompare(nameA, 'sr');
       } else if (field === 'team') {
         if (a.team === b.team) {
-          return b.goals - a.goals; // Secondary sort by goals
+          return b.goals - a.goals;
         }
         return dir === 'asc'
           ? a.team.localeCompare(b.team, 'sr')
           : b.team.localeCompare(a.team, 'sr');
-      } else { // goals
+      } else {
         if (a.goals === b.goals) {
           const nameA = a.name.replace(/\s*\(c\)\s*/gi, '').replace(/\s*\(g\)\s*/gi, '').trim();
           const nameB = b.name.replace(/\s*\(c\)\s*/gi, '').replace(/\s*\(g\)\s*/gi, '').trim();
