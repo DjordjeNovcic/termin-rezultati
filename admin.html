@@ -292,6 +292,8 @@ async function applyStats(match,dir){
 saveBtn.onclick = async () =>{
   if(!validate()) return;
 
+  const scorersCopy = JSON.parse(JSON.stringify(scorers));
+
   const match = {
     round:round.value,
     date:date.value,
@@ -300,7 +302,7 @@ saveBtn.onclick = async () =>{
     blue:+blue.value,
     info:info.value.trim(),
     played:getPlayed(),
-    scorers:[...scorers],
+    scorers: scorersCopy,
     timestamp:Date.now()
   };
 
@@ -316,6 +318,8 @@ saveBtn.onclick = async () =>{
 updateBtn.onclick = async () => {
   if(!validate()) return;
 
+  const scorersCopy = JSON.parse(JSON.stringify(scorers));
+
   const oldSnap = await get(window.dbRef(`matches/${editingId}`));
   const oldMatch = oldSnap.val();
 
@@ -329,7 +333,7 @@ updateBtn.onclick = async () => {
     blue:+blue.value,
     info:info.value.trim(),
     played:getPlayed(),
-    scorers:[...scorers]
+    scorers: scorersCopy
   };
 
   await update(window.dbRef(`matches/${editingId}`), newMatch);
