@@ -1,762 +1,596 @@
 <!DOCTYPE html>
-  <html lang="sr">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-    <title>Upravljanje igračima</title>
-    <script type="module" src="firebase.mjs"></script>
+<html lang="sr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <title>Upravljanje igračima</title>
+  <link rel="stylesheet" href="styles.css">
+  <script type="module" src="firebase.mjs"></script>
 
-    <style>
-      * {
-        box-sizing: border-box;
-      }
+  <style>
+    /* Page-specific styles only */
+    body {
+      max-width: 900px;
+      margin: 20px auto;
+      padding: 0 20px;
+    }
 
+    h1 {
+      text-align: center;
+      margin-bottom: 25px;
+      font-size: 28px;
+      color: white;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .team-title {
+      font-size: 22px;
+      font-weight: bold;
+      margin: 25px 0 10px;
+    }
+
+    .input-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+
+    .add-btn {
+      background: green;
+      color: white;
+      padding: 10px 16px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+      min-height: 48px;
+      white-space: nowrap;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .add-btn:hover {
+      background: #006600;
+      transform: translateY(-2px);
+    }
+
+    #resetStatsBtn {
+      background: #b10000;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+      margin-bottom: 25px;
+      min-height: 48px;
+      width: 100%;
+      max-width: 400px;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    #resetStatsBtn:hover {
+      background: #900000;
+      transform: translateY(-2px);
+    }
+
+    /* Navigation - override global for this page */
+    .nav-menu {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 12px;
+      margin-bottom: 25px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    .nav-btn {
+      background: rgba(102, 126, 234, 0.1);
+      color: #667eea;
+      border: 2px solid transparent;
+    }
+
+    .nav-btn:hover {
+      background: #667eea;
+      color: white;
+      border-color: #5568d3;
+    }
+
+    .nav-btn.active {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+    }
+
+    .nav-btn.logout {
+      background: #dc3545;
+      color: white;
+      border-color: #c82333;
+    }
+
+    .nav-btn.logout:hover {
+      background: #c82333;
+      border-color: #bd2130;
+    }
+
+    /* Modal specific positioning */
+    #modalOverlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.55);
+      justify-content: center;
+      align-items: center;
+      backdrop-filter: blur(2px);
+      z-index: 999;
+      padding: 20px;
+    }
+
+    #modalBox {
+      background: white;
+      padding: 25px;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 420px;
+      box-shadow: 0 0 25px rgba(0, 0, 0, 0.25);
+      animation: fadeIn 0.2s ease-out;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    #renameInput {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      margin: 15px 0;
+      border-radius: 6px;
+      border: 2px solid #ddd;
+      min-height: 48px;
+    }
+
+    .modal-buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+      justify-content: flex-end;
+    }
+
+    .modal-buttons button {
+      padding: 12px 20px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+      min-height: 48px;
+      flex: 1;
+      font-weight: 600;
+    }
+
+    #renameCancel {
+      background: #777;
+      color: white;
+    }
+
+    #renameCancel:hover {
+      background: #666;
+    }
+
+    #renameConfirm {
+      background: #667eea;
+      color: white;
+    }
+
+    #renameConfirm:hover {
+      background: #5568d3;
+    }
+
+    /* MOBILE RESPONSIVE */
+    @media (max-width: 768px) {
       body {
-        font-family: Arial, sans-serif;
-        max-width: 900px;
-        margin: 20px auto;
-        padding: 0 20px;
+        margin: 10px auto;
+        padding: 0 15px;
       }
 
-      h1 { text-align:center; margin-bottom:25px; font-size: 28px; }
-
-      #adminNav {
-        display: flex;
-        gap: 8px;
-        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-        padding: 12px;
-        margin-bottom: 25px;
-        border-radius: 12px;
-        justify-content: center;
-        border: 1px solid #dee2e6;
-        flex-wrap: wrap;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      h1 {
+        font-size: 22px;
+        margin-bottom: 20px;
       }
 
-      #adminNav button {
-        padding: 10px 20px;
-        border-radius: 8px;
-        border: 2px solid transparent;
-        background: white;
-        color: #495057;
-        cursor: pointer;
-        font-size: 14px;
-        font-weight: 500;
-        min-width: 100px;
-        transition: all 0.3s ease;
-        position: relative;
-        overflow: hidden;
+      .nav-menu {
+        gap: 6px;
+        padding: 10px;
       }
 
-      #adminNav button::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-        transition: left 0.5s;
-      }
-
-      #adminNav button:hover::before {
-        left: 100%;
-      }
-
-      #adminNav button:hover {
-        background: #0044cc;
-        color: white;
-        border-color: #0033aa;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0, 68, 204, 0.3);
-      }
-
-      #adminNav button:active {
-        transform: translateY(0);
-        box-shadow: 0 2px 6px rgba(0, 68, 204, 0.2);
-      }
-
-      /* Active page indicator */
-      #adminNav button.active {
-        background: #0044cc;
-        color: white;
-        border-color: #0033aa;
-        box-shadow: 0 0 0 3px rgba(0, 68, 204, 0.15);
-        cursor: default;
-      }
-
-      #adminNav button.active:hover {
-        transform: none;
-      }
-
-      /* Logout button - different style */
-      #adminNav button.logout-btn {
-        background: #dc3545;
-        color: white;
-        border-color: #c82333;
-      }
-
-      #adminNav button.logout-btn:hover {
-        background: #c82333;
-        border-color: #bd2130;
-        box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
-      }
-
-      .team-title {
-        font-size:22px; font-weight:bold;
-        margin:25px 0 10px;
-      }
-
-      .input-row {
-        display:flex; gap:10px; margin-bottom:15px;
-      }
-
-      input {
-        flex:1; padding:10px; border-radius:6px;
-        border:1px solid #aaa; font-size:16px;
-        min-height: 48px;
-      }
-
-      .add-btn {
-        background:green; color:white; padding:10px 16px;
-        border-radius:6px; border:none; cursor:pointer;
-        font-size: 16px;
-        min-height: 48px;
-        white-space: nowrap;
-      }
-
-      .table-wrapper {
-        overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-        margin-bottom: 40px;
-      }
-
-      table {
-        width:100%; border-collapse:collapse;
-        text-align:center;
-        min-width: 600px;
-      }
-
-      th {
-        background:#ececec; padding:10px;
-        border-bottom:2px solid #bbb;
-        cursor:pointer;
-        user-select:none;
-        position:relative;
+      .nav-btn {
+        padding: 12px 16px;
         font-size: 13px;
-        white-space: nowrap;
-      }
-
-      th:hover {
-        background:#ddd;
-      }
-
-      th.sorted-asc::after {
-        content: " ▲";
-        font-size: 12px;
-        color: #0044cc;
-      }
-
-      th.sorted-desc::after {
-        content: " ▼";
-        font-size: 12px;
-        color: #0044cc;
-      }
-
-      td {
-        padding:10px 8px;
-        border-bottom:1px solid #ddd;
-        font-size: 13px;
-      }
-
-      .edit-btn {
-        background:#0044cc; color:white; border:none;
-        padding:6px 10px; border-radius:4px; cursor:pointer;
-        margin-right:5px;
-        font-size: 12px;
-      }
-
-      .del-btn {
-        background:#c00000; color:white; border:none;
-        padding:6px 10px; border-radius:4px; cursor:pointer;
-        font-size: 12px;
-      }
-
-      #resetStatsBtn {
-        background:#b10000;
-        color:white;
-        padding:10px 20px;
-        border:none;
-        border-radius:6px;
-        cursor:pointer;
-        font-size:16px;
-        margin-bottom:25px;
-        min-height: 48px;
-        width: 100%;
-        max-width: 400px;
-        display: block;
-        margin-left: auto;
-        margin-right: auto;
-      }
-
-      /* Captain and Goalkeeper badges */
-      .captain-badge {
-        display: inline-block;
-        background: linear-gradient(135deg, #ffd700, #ffed4e);
-        color: #333;
-        font-weight: bold;
-        padding: 2px 6px;
-        border-radius: 4px;
-        margin-left: 6px;
-        font-size: 11px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        border: 1px solid #daa520;
-      }
-
-      .goalkeeper-badge {
-        margin-left: 6px;
-        font-size: 18px;
-      }
-
-      /* MODAL */
-      #modalOverlay {
-        display:none; position:fixed; inset:0;
-        background:rgba(0,0,0,0.55);
-        justify-content:center; align-items:center;
-        backdrop-filter:blur(2px); z-index:999;
-        padding: 20px;
-      }
-
-      #modalBox {
-        background:white; padding:25px; border-radius:10px;
-        width:90%; max-width:420px;
-        box-shadow:0 0 25px rgba(0,0,0,0.25);
-        animation: fadeIn 0.2s ease-out;
-        max-height: 90vh;
-        overflow-y: auto;
-      }
-
-      @keyframes fadeIn {
-        from { opacity:0; transform:scale(0.9); }
-        to   { opacity:1; transform:scale(1); }
-      }
-
-      #renameInput {
-        width: 100%;
-        padding: 12px;
-        font-size: 16px;
-        margin: 15px 0;
-        border-radius: 6px;
-        border: 1px solid #aaa;
-        min-height: 48px;
-      }
-
-      .modal-buttons {
-        display: flex;
-        gap: 10px;
-        margin-top: 20px;
-        justify-content: flex-end;
-      }
-
-      .modal-buttons button {
-        padding: 12px 20px;
-        border: none;
-        border-radius: 6px;
-        cursor: pointer;
-        font-size: 16px;
-        min-height: 48px;
+        min-width: 90px;
         flex: 1;
       }
 
-      #renameCancel {
-        background: #777;
-        color: white;
+      .team-title {
+        font-size: 20px;
+        margin: 20px 0 10px;
       }
 
-      #renameConfirm {
-        background: #0044cc;
-        color: white;
+      .input-row {
+        gap: 8px;
       }
 
-      /* MOBILE RESPONSIVE */
-      @media (max-width: 768px) {
-        body {
-          margin: 10px auto;
-          padding: 0 15px;
-        }
-
-        h1 {
-          font-size: 22px;
-          margin-bottom: 20px;
-        }
-
-        #adminNav {
-          gap: 6px;
-          padding: 10px;
-          border-radius: 10px;
-        }
-
-        #adminNav button {
-          padding: 12px 16px;
-          font-size: 13px;
-          min-width: 90px;
-          flex: 1;
-          border-radius: 8px;
-        }
-
-        #adminNav button:hover {
-          transform: none;
-        }
-
-        #adminNav button:active {
-          transform: scale(0.95);
-        }
-
-        .team-title {
-          font-size: 20px;
-          margin: 20px 0 10px;
-        }
-
-        .input-row {
-          gap: 8px;
-        }
-
-        .add-btn {
-          padding: 10px 14px;
-        }
-
-        #resetStatsBtn {
-          font-size: 16px;
-          padding: 12px 16px;
-          margin-bottom: 20px;
-        }
-
-        .table-wrapper {
-          margin-bottom: 30px;
-          border: 1px solid #ddd;
-          border-radius: 8px;
-        }
-
-        table {
-          min-width: 500px;
-        }
-
-        th, td {
-          padding: 8px 4px;
-          font-size: 12px;
-        }
-
-        th:first-child, td:first-child {
-          padding-left: 6px;
-        }
-
-        th:last-child, td:last-child {
-          padding-right: 6px;
-        }
-
-        .edit-btn, .del-btn {
-          padding: 6px 8px;
-          font-size: 11px;
-          display: inline-block;
-          margin: 2px 1px;
-        }
-
-        .captain-badge {
-          font-size: 8px;
-          padding: 1px 3px;
-        }
-
-        .goalkeeper-badge {
-          font-size: 12px;
-        }
-
-        #modalBox {
-          padding: 20px;
-          width: 95%;
-        }
-
-        #modalBox h3 {
-          font-size: 20px;
-        }
-
-        .modal-buttons {
-          flex-direction: column;
-        }
-
-        .modal-buttons button {
-          width: 100%;
-        }
+      #resetStatsBtn {
+        font-size: 16px;
+        padding: 12px 16px;
+        margin-bottom: 20px;
       }
 
-      @media (max-width: 480px) {
-        body {
-          padding: 0 10px;
-        }
-
-        h1 {
-          font-size: 20px;
-        }
-
-        #adminNav {
-          gap: 8px;
-          padding: 8px;
-        }
-
-        #adminNav button {
-          padding: 12px 12px;
-          font-size: 12px;
-          min-width: 0;
-          flex: 1;
-        }
-
-        .team-title {
-          font-size: 18px;
-        }
-
-        .input-row {
-          flex-direction: column;
-          gap: 10px;
-        }
-
-        .add-btn {
-          width: 100%;
-        }
-
-        table {
-          min-width: 450px;
-        }
-
-        th, td {
-          padding: 6px 3px;
-          font-size: 11px;
-        }
-
-        th:first-child, td:first-child {
-          padding-left: 4px;
-        }
-
-        th:last-child, td:last-child {
-          padding-right: 4px;
-        }
-
-        .edit-btn, .del-btn {
-          padding: 5px 6px;
-          font-size: 10px;
-          margin: 1px;
-        }
+      #modalBox {
+        padding: 20px;
+        width: 95%;
       }
-    </style>
-  </head>
 
-  <body>
+      #modalBox h3 {
+        font-size: 20px;
+      }
 
-  <!-- NAV -->
-  <div id="adminNav">
-    <button onclick="window.location.href='admin.html'">Mečevi</button>
-    <button class="active" onclick="window.location.href='admin-igraci.html'">Igrači</button>
-    <button class="logout-btn" onclick="logout()">Logout</button>
-  </div>
+      .modal-buttons {
+        flex-direction: column;
+      }
+    }
 
-  <script>
-    if (localStorage.getItem("admin") !== "1") window.location.href="login.html";
-    function logout(){ localStorage.removeItem("admin"); window.location.href="index.html"; }
-  </script>
+    @media (max-width: 480px) {
+      body {
+        padding: 0 10px;
+      }
 
-  <h1>Upravljanje igračima</h1>
+      h1 {
+        font-size: 20px;
+      }
 
-  <!-- RESET SVIH STATISTIKA -->
-  <button id="resetStatsBtn">
-    Resetuj SVE golove i utakmice
-  </button>
+      .nav-menu {
+        gap: 8px;
+        padding: 8px;
+      }
 
-  <!-- CRVENI -->
-  <div class="team-title" style="color:#b10000;">Crveni</div>
-  <div class="input-row">
-    <input id="redInput" placeholder="Ime igrača">
-    <button class="add-btn" onclick="addPlayer('crveni')">Dodaj</button>
-  </div>
-  <div class="table-wrapper">
-    <table>
-      <thead>
-      <tr>
-        <th data-sort="name" data-team="crveni">Igrač</th>
-        <th data-sort="goals" data-team="crveni">Golovi</th>
-        <th data-sort="matches" data-team="crveni">Utakmice</th>
-        <th>Akcija</th>
-      </tr>
-      </thead>
-      <tbody id="redList"></tbody>
-    </table>
-  </div>
+      .nav-btn {
+        padding: 12px 12px;
+        font-size: 12px;
+        min-width: 0;
+      }
 
-  <!-- PLAVI -->
-  <div class="team-title" style="color:#0033aa;">Plavi</div>
-  <div class="input-row">
-    <input id="blueInput" placeholder="Ime igrača">
-    <button class="add-btn" onclick="addPlayer('plavi')">Dodaj</button>
-  </div>
-  <div class="table-wrapper">
-    <table>
-      <thead>
-      <tr>
-        <th data-sort="name" data-team="plavi">Igrač</th>
-        <th data-sort="goals" data-team="plavi">Golovi</th>
-        <th data-sort="matches" data-team="plavi">Utakmice</th>
-        <th>Akcija</th>
-      </tr>
-      </thead>
-      <tbody id="blueList"></tbody>
-    </table>
-  </div>
+      .team-title {
+        font-size: 18px;
+      }
 
-  <!-- MODAL RENAME -->
-  <div id="modalOverlay">
-    <div id="modalBox">
-      <h3 style="margin-top:0;">Izmena imena igrača</h3>
+      .input-row {
+        flex-direction: column;
+        gap: 10px;
+      }
 
-      <input id="renameInput" placeholder="Novo ime...">
+      .add-btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
 
-      <div class="modal-buttons">
-        <button id="renameCancel">Otkaži</button>
-        <button id="renameConfirm">Sačuvaj</button>
-      </div>
+<body>
+
+<!-- NAV -->
+<div class="nav-menu">
+  <button class="nav-btn" onclick="window.location.href='admin.html'">Mečevi</button>
+  <button class="nav-btn active" onclick="window.location.href='admin-igraci.html'">Igrači</button>
+  <button class="nav-btn logout" onclick="logout()">Logout</button>
+</div>
+
+<script>
+  if (localStorage.getItem("admin") !== "1") window.location.href="login.html";
+  function logout(){ localStorage.removeItem("admin"); window.location.href="index.html"; }
+</script>
+
+<h1>Upravljanje igračima</h1>
+
+<!-- RESET SVIH STATISTIKA -->
+<button id="resetStatsBtn">
+  Resetuj SVE golove i utakmice
+</button>
+
+<!-- CRVENI -->
+<div class="team-title" style="color:#e53e3e;">Crveni</div>
+<div class="input-row">
+  <input id="redInput" placeholder="Ime igrača">
+  <button class="add-btn" onclick="addPlayer('crveni')">Dodaj</button>
+</div>
+<div class="table-wrapper">
+  <table>
+    <thead>
+    <tr>
+      <th data-sort="name" data-team="crveni">Igrač</th>
+      <th data-sort="goals" data-team="crveni">Golovi</th>
+      <th data-sort="matches" data-team="crveni">Utakmice</th>
+      <th>Akcija</th>
+    </tr>
+    </thead>
+    <tbody id="redList"></tbody>
+  </table>
+</div>
+
+<!-- PLAVI -->
+<div class="team-title" style="color:#3182ce;">Plavi</div>
+<div class="input-row">
+  <input id="blueInput" placeholder="Ime igrača">
+  <button class="add-btn" onclick="addPlayer('plavi')">Dodaj</button>
+</div>
+<div class="table-wrapper">
+  <table>
+    <thead>
+    <tr>
+      <th data-sort="name" data-team="plavi">Igrač</th>
+      <th data-sort="goals" data-team="plavi">Golovi</th>
+      <th data-sort="matches" data-team="plavi">Utakmice</th>
+      <th>Akcija</th>
+    </tr>
+    </thead>
+    <tbody id="blueList"></tbody>
+  </table>
+</div>
+
+<!-- MODAL RENAME -->
+<div id="modalOverlay">
+  <div id="modalBox">
+    <h3 style="margin-top:0;">Izmena imena igrača</h3>
+
+    <input id="renameInput" placeholder="Novo ime...">
+
+    <div class="modal-buttons">
+      <button id="renameCancel">Otkaži</button>
+      <button id="renameConfirm">Sačuvaj</button>
     </div>
   </div>
+</div>
 
-  <script type="module">
-  import { onValue, push, set, update, remove, get }
-    from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+<script type="module">
+import { onValue, push, set, update, remove, get }
+  from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
-  /* ------------------ STATE ------------------ */
-  const playersData = {
-    crveni: {},
-    plavi: {}
-  };
+/* ------------------ STATE ------------------ */
+const playersData = {
+  crveni: {},
+  plavi: {}
+};
 
-  const sortState = {
-    crveni: { field: 'name', dir: 'asc' },
-    plavi: { field: 'name', dir: 'asc' }
-  };
+const sortState = {
+  crveni: { field: 'name', dir: 'asc' },
+  plavi: { field: 'name', dir: 'asc' }
+};
 
-  /* ------------------ FORMAT PLAYER NAME ------------------ */
-  function formatPlayerName(name) {
-    if (!name) return '';
+/* ------------------ FORMAT PLAYER NAME ------------------ */
+function formatPlayerName(name) {
+  if (!name) return '';
 
-    let displayName = name;
-    let badges = '';
+  let displayName = name;
+  let badges = '';
 
-    // Check for captain
-    const captainRegex = /\s*\(c\)\s*/i;
-    if (captainRegex.test(name)) {
-      displayName = name.replace(captainRegex, ' ').trim();
-      badges += '<span class="captain-badge">C</span>';
-    }
-
-    // Check for goalkeeper
-    const goalkeeperRegex = /\s*\(g\)\s*/i;
-    if (goalkeeperRegex.test(name)) {
-      displayName = name.replace(goalkeeperRegex, ' ').trim();
-      badges += '<span class="goalkeeper-badge">🧤</span>';
-    }
-
-    return displayName + badges;
+  // Check for captain
+  const captainRegex = /\s*\(c\)\s*/i;
+  if (captainRegex.test(name)) {
+    displayName = name.replace(captainRegex, ' ').trim();
+    badges += '<span class="captain-badge">C</span>';
   }
 
-  /* ------------------ TEMPLATE ------------------ */
-  function rowTemplate(id, player, team) {
-    return `
-      <tr>
-        <td>${formatPlayerName(player.name)}</td>
-        <td>${player.goals || 0}</td>
-        <td>${player.matches || 0}</td>
-        <td>
-          <button class="edit-btn" onclick="openRename('${team}','${id}','${player.name}')">Izmeni</button>
-          <button class="del-btn" onclick="deletePlayer('${team}','${id}','${player.name}')">Obriši</button>
-        </td>
-      </tr>
-    `;
+  // Check for goalkeeper
+  const goalkeeperRegex = /\s*\(g\)\s*/i;
+  if (goalkeeperRegex.test(name)) {
+    displayName = name.replace(goalkeeperRegex, ' ').trim();
+    badges += '<span class="goalkeeper-badge">🧤</span>';
   }
 
-  /* ------------------ RENDER WITH SORTING ------------------ */
-  function renderPlayers(team, elementId) {
-    const tbody = document.getElementById(elementId);
-    const data = playersData[team];
+  return displayName + badges;
+}
 
-    // Convert to array
-    let players = Object.entries(data).map(([id, p]) => ({
-      id,
-      name: p.name || "",
-      goals: Number(p.goals) || 0,
-      matches: Number(p.matches) || 0
-    }));
+/* ------------------ TEMPLATE ------------------ */
+function rowTemplate(id, player, team) {
+  return `
+    <tr>
+      <td>${formatPlayerName(player.name)}</td>
+      <td>${player.goals || 0}</td>
+      <td>${player.matches || 0}</td>
+      <td>
+        <button class="edit-btn" onclick="openRename('${team}','${id}','${player.name}')">Izmeni</button>
+        <button class="del-btn" onclick="deletePlayer('${team}','${id}','${player.name}')">Obriši</button>
+      </td>
+    </tr>
+  `;
+}
 
-    // Sort
-    const { field, dir } = sortState[team];
-    players.sort((a, b) => {
-      if (field === 'name') {
-        // Remove badges for sorting
-        const nameA = a.name.replace(/\s*\(c\)\s*/gi, '').replace(/\s*\(g\)\s*/gi, '').trim().toLowerCase();
-        const nameB = b.name.replace(/\s*\(c\)\s*/gi, '').replace(/\s*\(g\)\s*/gi, '').trim().toLowerCase();
-        return dir === 'asc'
-          ? nameA.localeCompare(nameB, 'sr')
-          : nameB.localeCompare(nameA, 'sr');
-      } else {
-        if (a[field] === b[field]) {
-          const nameA = a.name.replace(/\s*\(c\)\s*/gi, '').replace(/\s*\(g\)\s*/gi, '').trim();
-          const nameB = b.name.replace(/\s*\(c\)\s*/gi, '').replace(/\s*\(g\)\s*/gi, '').trim();
-          return nameA.localeCompare(nameB, 'sr');
-        }
-        return dir === 'asc' ? a[field] - b[field] : b[field] - a[field];
+/* ------------------ RENDER WITH SORTING ------------------ */
+function renderPlayers(team, elementId) {
+  const tbody = document.getElementById(elementId);
+  const data = playersData[team];
+
+  // Convert to array
+  let players = Object.entries(data).map(([id, p]) => ({
+    id,
+    name: p.name || "",
+    goals: Number(p.goals) || 0,
+    matches: Number(p.matches) || 0
+  }));
+
+  // Sort
+  const { field, dir } = sortState[team];
+  players.sort((a, b) => {
+    if (field === 'name') {
+      // Remove badges for sorting
+      const nameA = a.name.replace(/\s*\(c\)\s*/gi, '').replace(/\s*\(g\)\s*/gi, '').trim().toLowerCase();
+      const nameB = b.name.replace(/\s*\(c\)\s*/gi, '').replace(/\s*\(g\)\s*/gi, '').trim().toLowerCase();
+      return dir === 'asc'
+        ? nameA.localeCompare(nameB, 'sr')
+        : nameB.localeCompare(nameA, 'sr');
+    } else {
+      if (a[field] === b[field]) {
+        const nameA = a.name.replace(/\s*\(c\)\s*/gi, '').replace(/\s*\(g\)\s*/gi, '').trim();
+        const nameB = b.name.replace(/\s*\(c\)\s*/gi, '').replace(/\s*\(g\)\s*/gi, '').trim();
+        return nameA.localeCompare(nameB, 'sr');
       }
-    });
-
-    // Render
-    tbody.innerHTML = "";
-    players.forEach(p => {
-      tbody.innerHTML += rowTemplate(p.id, p, team);
-    });
-
-    // Update sort indicators
-    updateSortIndicators(team);
-  }
-
-  /* ------------------ UPDATE SORT INDICATORS ------------------ */
-  function updateSortIndicators(team) {
-    const { field, dir } = sortState[team];
-
-    document.querySelectorAll(`th[data-team="${team}"]`).forEach(th => {
-      th.classList.remove('sorted-asc', 'sorted-desc');
-      if (th.dataset.sort === field) {
-        th.classList.add(dir === 'asc' ? 'sorted-asc' : 'sorted-desc');
-      }
-    });
-  }
-
-  /* ------------------ LOAD ------------------ */
-  function loadPlayers(team, elementId) {
-    onValue(window.dbRef("players/" + team), snap => {
-      playersData[team] = snap.val() || {};
-      renderPlayers(team, elementId);
-    });
-  }
-
-  loadPlayers("crveni","redList");
-  loadPlayers("plavi","blueList");
-
-  /* ------------------ SORTING EVENT LISTENERS ------------------ */
-  document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('th[data-sort]').forEach(th => {
-      th.addEventListener('click', () => {
-        const field = th.dataset.sort;
-        const team = th.dataset.team;
-
-        // Toggle direction if same field, otherwise reset to desc
-        if (sortState[team].field === field) {
-          sortState[team].dir = sortState[team].dir === 'asc' ? 'desc' : 'asc';
-        } else {
-          sortState[team].field = field;
-          sortState[team].dir = field === 'name' ? 'asc' : 'desc';
-        }
-
-        renderPlayers(team, team === 'crveni' ? 'redList' : 'blueList');
-      });
-    });
+      return dir === 'asc' ? a[field] - b[field] : b[field] - a[field];
+    }
   });
 
-  /* ------------------ ADD ------------------ */
-  window.addPlayer = team => {
-    const input = document.getElementById(team === "crveni" ? "redInput" : "blueInput");
-    const name = input.value.trim();
-    if (!name) return;
+  // Render
+  tbody.innerHTML = "";
+  players.forEach(p => {
+    tbody.innerHTML += rowTemplate(p.id, p, team);
+  });
 
-    push(window.dbRef("players/" + team), {
-      name, goals: 0, matches: 0
+  // Update sort indicators
+  updateSortIndicators(team);
+}
+
+/* ------------------ UPDATE SORT INDICATORS ------------------ */
+function updateSortIndicators(team) {
+  const { field, dir } = sortState[team];
+
+  document.querySelectorAll(`th[data-team="${team}"]`).forEach(th => {
+    th.classList.remove('sorted-asc', 'sorted-desc');
+    if (th.dataset.sort === field) {
+      th.classList.add(dir === 'asc' ? 'sorted-asc' : 'sorted-desc');
+    }
+  });
+}
+
+/* ------------------ LOAD ------------------ */
+function loadPlayers(team, elementId) {
+  onValue(window.dbRef("players/" + team), snap => {
+    playersData[team] = snap.val() || {};
+    renderPlayers(team, elementId);
+  });
+}
+
+loadPlayers("crveni","redList");
+loadPlayers("plavi","blueList");
+
+/* ------------------ SORTING EVENT LISTENERS ------------------ */
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('th[data-sort]').forEach(th => {
+    th.addEventListener('click', () => {
+      const field = th.dataset.sort;
+      const team = th.dataset.team;
+
+      // Toggle direction if same field, otherwise reset to desc
+      if (sortState[team].field === field) {
+        sortState[team].dir = sortState[team].dir === 'asc' ? 'desc' : 'asc';
+      } else {
+        sortState[team].field = field;
+        sortState[team].dir = field === 'name' ? 'asc' : 'desc';
+      }
+
+      renderPlayers(team, team === 'crveni' ? 'redList' : 'blueList');
     });
+  });
+});
 
-    input.value = "";
-  };
+/* ------------------ ADD ------------------ */
+window.addPlayer = team => {
+  const input = document.getElementById(team === "crveni" ? "redInput" : "blueInput");
+  const name = input.value.trim();
+  if (!name) return;
 
-  /* ------------------ DELETE — HARD DELETE ------------------ */
-  window.deletePlayer = async (team, id, name) => {
-    const cleanName = name.replace(/\s*\(c\)\s*/gi, '').replace(/\s*\(g\)\s*/gi, '').trim();
-    if (!confirm(`Obrisati igrača ${cleanName} i ukloniti ga iz SVIH mečeva?`)) return;
+  push(window.dbRef("players/" + team), {
+    name, goals: 0, matches: 0
+  });
 
-    const matchesSnap = await get(window.dbRef("matches"));
-    const matches = matchesSnap.val() || {};
+  input.value = "";
+};
 
-    for (const matchId of Object.keys(matches)) {
-      const m = matches[matchId];
+/* ------------------ DELETE — HARD DELETE ------------------ */
+window.deletePlayer = async (team, id, name) => {
+  const cleanName = name.replace(/\s*\(c\)\s*/gi, '').replace(/\s*\(g\)\s*/gi, '').trim();
+  if (!confirm(`Obrisati igrača ${cleanName} i ukloniti ga iz SVIH mečeva?`)) return;
 
-      // ukloni iz played (po ID-u)
-      if (m.played && m.played[id]) {
-        delete m.played[id];
-      }
+  const matchesSnap = await get(window.dbRef("matches"));
+  const matches = matchesSnap.val() || {};
 
-      // ukloni iz scorers (po ID-u)
-      if (m.scorers) {
-        m.scorers = m.scorers.filter(s => s.id !== id);
-      }
+  for (const matchId of Object.keys(matches)) {
+    const m = matches[matchId];
 
-      await update(window.dbRef("matches/" + matchId), {
-        played: m.played || {},
-        scorers: m.scorers || []
+    // ukloni iz played (po ID-u)
+    if (m.played && m.played[id]) {
+      delete m.played[id];
+    }
+
+    // ukloni iz scorers (po ID-u)
+    if (m.scorers) {
+      m.scorers = m.scorers.filter(s => s.id !== id);
+    }
+
+    await update(window.dbRef("matches/" + matchId), {
+      played: m.played || {},
+      scorers: m.scorers || []
+    });
+  }
+
+  await remove(window.dbRef(`players/${team}/${id}`));
+};
+
+/* ------------------ RENAME ------------------ */
+let renameTeam = null;
+let renameId   = null;
+
+window.openRename = (team, id, oldName) => {
+  renameTeam = team;
+  renameId = id;
+  document.getElementById("renameInput").value = oldName;
+  document.getElementById("modalOverlay").style.display = "flex";
+};
+
+document.getElementById("renameConfirm").onclick = async () => {
+  const newName = document.getElementById("renameInput").value.trim();
+  if (!newName) return;
+
+  await update(window.dbRef(`players/${renameTeam}/${renameId}`), { name: newName });
+  document.getElementById("modalOverlay").style.display = "none";
+};
+
+document.getElementById("renameCancel").onclick = () => {
+  document.getElementById("modalOverlay").style.display = "none";
+};
+
+/* ------------------ RESET STATISTICS ------------------ */
+document.getElementById("resetStatsBtn").onclick = async () => {
+  if (!confirm("Da li sigurno želiš da resetuješ SVE golove i utakmice?")) return;
+
+  const snap = await get(window.dbRef("players"));
+  const data = snap.val() || {};
+
+  for (const team of ["crveni","plavi"]) {
+    if (!data[team]) continue;
+    for (const id of Object.keys(data[team])) {
+      await update(window.dbRef(`players/${team}/${id}`), {
+        goals: 0,
+        matches: 0
       });
     }
+  }
 
-    await remove(window.dbRef(`players/${team}/${id}`));
-  };
+  alert("Statistika resetovana!");
+};
+</script>
 
-  /* ------------------ RENAME ------------------ */
-  let renameTeam = null;
-  let renameId   = null;
+<script>
+// klik na pozadinu = zatvori modal
+document.getElementById("modalOverlay").onclick = e => {
+  if (e.target.id === "modalOverlay")
+    e.target.style.display = "none";
+};
+</script>
 
-  window.openRename = (team, id, oldName) => {
-    renameTeam = team;
-    renameId = id;
-    document.getElementById("renameInput").value = oldName;
-    document.getElementById("modalOverlay").style.display = "flex";
-  };
-
-  document.getElementById("renameConfirm").onclick = async () => {
-    const newName = document.getElementById("renameInput").value.trim();
-    if (!newName) return;
-
-    await update(window.dbRef(`players/${renameTeam}/${renameId}`), { name: newName });
-    document.getElementById("modalOverlay").style.display = "none";
-  };
-
-  document.getElementById("renameCancel").onclick = () => {
-    document.getElementById("modalOverlay").style.display = "none";
-  };
-
-  /* ------------------ RESET STATISTICS ------------------ */
-  document.getElementById("resetStatsBtn").onclick = async () => {
-    if (!confirm("Da li sigurno želiš da resetuješ SVE golove i utakmice?")) return;
-
-    const snap = await get(window.dbRef("players"));
-    const data = snap.val() || {};
-
-    for (const team of ["crveni","plavi"]) {
-      if (!data[team]) continue;
-      for (const id of Object.keys(data[team])) {
-        await update(window.dbRef(`players/${team}/${id}`), {
-          goals: 0,
-          matches: 0
-        });
-      }
-    }
-
-    alert("Statistika resetovana!");
-  };
-  </script>
-
-  <script>
-  // klik na pozadinu = zatvori modal
-  document.getElementById("modalOverlay").onclick = e => {
-    if (e.target.id === "modalOverlay")
-      e.target.style.display = "none";
-  };
-  </script>
-
-  </body>
-  </html>
+</body>
+</html>
