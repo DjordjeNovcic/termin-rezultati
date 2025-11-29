@@ -114,8 +114,6 @@
   function formatPlayerName(name) {
     if (!name) return '';
 
-    console.log('Original name:', name); // DEBUG
-
     let displayName = name;
     let badges = '';
 
@@ -124,7 +122,6 @@
     if (captainRegex.test(name)) {
       displayName = name.replace(captainRegex, ' ').trim();
       badges += '<span class="captain-badge">C</span>';
-      console.log('Captain detected!'); // DEBUG
     }
 
     // Check for goalkeeper - case insensitive, handles spaces
@@ -132,12 +129,9 @@
     if (goalkeeperRegex.test(name)) {
       displayName = name.replace(goalkeeperRegex, ' ').trim();
       badges += '<span class="goalkeeper-badge">🧤</span>';
-      console.log('Goalkeeper detected!'); // DEBUG
     }
 
-    const result = displayName + badges;
-    console.log('Formatted result:', result); // DEBUG
-    return result;
+    return displayName + badges;
   }
 
   /* ---------------- UPDATE SORT INDICATORS ---------------- */
@@ -202,7 +196,6 @@
   /* ---------------- LOAD ---------------- */
   onValue(window.dbRef("players/crveni"), snap => {
     playersData = snap.val() || {};
-    console.log('Players loaded:', playersData); // DEBUG
     renderTable(playersData);
   });
 
