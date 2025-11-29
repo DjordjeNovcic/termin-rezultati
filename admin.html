@@ -215,6 +215,7 @@ function renderPlayers() {
 /* -------------------------
          TAGOVI STRELACA
 --------------------------*/
+
 function refreshTags(){
   document.getElementById("scorersRedTags").innerHTML = "";
   document.getElementById("scorersBlueTags").innerHTML = "";
@@ -231,6 +232,8 @@ function refreshTags(){
 
 window.removeGoal = i => { scorers.splice(i,1); refreshTags(); };
 
+  
+
 /* -------------------------
            GET PLAYED
 --------------------------*/
@@ -240,6 +243,21 @@ function getPlayed() {
     .forEach(btn => played[btn.dataset.id] = btn.dataset.team);
   return played;
 }
+
+function bindScorerClicks() {
+  document
+    .querySelectorAll("#scorersRedPlayers .player-btn,#scorersBluePlayers .player-btn")
+    .forEach(btn => {
+      btn.onclick = () => {
+        scorers.push({
+          id: btn.dataset.id,
+          team: btn.dataset.team
+        });
+        refreshTags();
+        bindScorerClicks(); // bitno: ponovo veži nakon rerendera tagova
+      };
+    });
+}  
 
 /* -------------------------
         VALIDACIJA
@@ -421,6 +439,7 @@ window.editMatch = async id => {
 
   scorers = [...m.scorers];
   refreshTags();
+  bindScorerClicks();
 
   document.querySelectorAll(".player-btn").forEach(b => b.classList.remove("active"));
 
