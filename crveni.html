@@ -1,397 +1,439 @@
- <!DOCTYPE html>
-  <html lang="sr">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ekipa Crvenih</title>
-    <script type="module" src="firebase.mjs"></script>
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ekipa Crvenih</title>
+  <script type="module" src="firebase.mjs"></script>
 
-    <style>
-      * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-      }
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    header {
+      background: white;
+      border-radius: 16px;
+      padding: 20px 30px;
+      margin-bottom: 30px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 28px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #d63031 0%, #e17055 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 30px;
+      margin: 0 auto;
+      max-width: 900px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      animation: fadeIn 0.5s ease-in;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h1 {
+      color: #d63031;
+      margin-bottom: 25px;
+      font-size: 32px;
+      text-align: center;
+    }
+
+    .team-image {
+      width: 80%;
+      max-width: 500px;
+      border-radius: 12px;
+      margin: 0 auto 30px;
+      display: block;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    }
+
+    .table-wrapper {
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      margin: 0 -10px;
+      padding: 0 10px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 500px;
+    }
+
+    th, td {
+      padding: 14px 12px;
+      text-align: left;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    th {
+      background: linear-gradient(135deg, #d63031 0%, #e17055 100%);
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      user-select: none;
+      position: relative;
+      white-space: nowrap;
+      transition: transform 0.2s ease;
+    }
+
+    th:hover {
+      transform: translateY(-2px);
+    }
+
+    th:active {
+      transform: translateY(0);
+    }
+
+    th.sorted-asc::after {
+      content: " ▲";
+      font-size: 11px;
+      margin-left: 6px;
+    }
+
+    th.sorted-desc::after {
+      content: " ▼";
+      font-size: 11px;
+      margin-left: 6px;
+    }
+
+    th:first-child {
+      border-top-left-radius: 10px;
+    }
+
+    th:last-child {
+      border-top-right-radius: 10px;
+    }
+
+    tbody tr {
+      transition: background 0.2s ease;
+    }
+
+    tbody tr:hover {
+      background: #ffe5e5;
+    }
+
+    td:nth-child(2),
+    td:nth-child(3),
+    th:nth-child(2),
+    th:nth-child(3) {
+      text-align: center;
+    }
+
+    .back-link {
+      display: inline-block;
+      margin-top: 25px;
+      color: white;
+      text-decoration: none;
+      font-size: 16px;
+      font-weight: 500;
+      padding: 12px 24px;
+      background: linear-gradient(135deg, #d63031 0%, #e17055 100%);
+      border-radius: 10px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(214, 48, 49, 0.3);
+    }
+
+    .back-link:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(214, 48, 49, 0.4);
+    }
+
+    .back-link:active {
+      transform: translateY(0);
+    }
+
+    /* Captain and Goalkeeper badges */
+    .captain-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, #ffd700, #ffed4e);
+      color: #333;
+      font-weight: bold;
+      padding: 3px 7px;
+      border-radius: 5px;
+      margin-left: 8px;
+      font-size: 11px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+      border: 1px solid #daa520;
+    }
+
+    .goalkeeper-badge {
+      margin-left: 8px;
+      font-size: 18px;
+    }
+
+    /* MOBILE STYLES */
+    @media (max-width: 768px) {
       body {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        min-height: 100vh;
-        padding: 20px 10px;
+        padding: 15px;
       }
 
-      .container {
-        max-width: 800px;
-        margin: 0 auto;
-      }
-
-      /* HEADER */
       header {
-        background: white;
-        border-radius: 16px;
-        padding: 20px 30px;
+        padding: 15px 20px;
         margin-bottom: 20px;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-        text-align: center;
       }
 
       .logo {
-        font-size: 24px;
-        font-weight: bold;
-        background: linear-gradient(135deg, #d63031 0%, #e17055 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
+        font-size: 22px;
       }
 
-      /* MAIN CARD */
       .card {
-        background: white;
-        border-radius: 16px;
-        padding: 30px;
-        margin-bottom: 20px;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-        text-align: center;
+        padding: 20px;
       }
 
       h1 {
-        font-size: 28px;
-        font-weight: 700;
-        margin-bottom: 25px;
-        color: #d63031;
+        font-size: 26px;
+        margin-bottom: 20px;
       }
 
       .team-image {
-        width: 80%;
-        max-width: 500px;
-        border-radius: 12px;
-        margin-bottom: 25px;
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+        width: 90%;
+        max-width: 350px;
+        margin-bottom: 20px;
       }
 
-      /* TABLE */
       .table-wrapper {
-        overflow-x: auto;
-        margin-top: 20px;
-        border-radius: 12px;
-        border: 2px solid #f0f0f0;
+        margin: 0 -10px;
       }
 
       table {
-        width: 100%;
-        border-collapse: collapse;
         min-width: 400px;
       }
 
-      th {
-        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-        padding: 15px 12px;
-        text-align: left;
+      th, td {
+        padding: 10px 6px;
         font-size: 13px;
-        font-weight: 700;
-        color: #636e72;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        border-bottom: 2px solid #e0e0e0;
-        cursor: pointer;
-        user-select: none;
-        white-space: nowrap;
       }
 
-      th:hover {
-        background: #e0e0e0;
-      }
-
-      th.sorted-asc::after {
-        content: " ▲";
+      th {
         font-size: 12px;
-        color: #d63031;
       }
 
-      th.sorted-desc::after {
-        content: " ▼";
-        font-size: 12px;
-        color: #d63031;
-      }
-
-      td {
-        padding: 15px 12px;
-        border-bottom: 1px solid #f0f0f0;
-        font-size: 14px;
-        color: #2d3436;
+      .back-link {
+        width: 100%;
         text-align: center;
+        font-size: 15px;
+        padding: 14px;
       }
 
-      td:first-child {
-        text-align: left;
-      }
-
-      tr:hover {
-        background: #ffe5e5;
-      }
-
-      /* BADGES */
       .captain-badge {
-        display: inline-block;
-        background: linear-gradient(135deg, #ffd700, #ffed4e);
-        color: #333;
-        font-weight: bold;
-        padding: 2px 6px;
-        border-radius: 4px;
-        margin-left: 6px;
-        font-size: 10px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+        font-size: 9px;
+        padding: 2px 5px;
+        margin-left: 5px;
       }
 
       .goalkeeper-badge {
-        margin-left: 6px;
-        font-size: 16px;
+        font-size: 15px;
+        margin-left: 5px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .card {
+        padding: 15px;
       }
 
-      /* BACK BUTTON */
-      .back-btn {
-        display: inline-block;
-        margin-top: 20px;
-        padding: 14px 28px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        text-decoration: none;
-        font-size: 16px;
-        font-weight: 600;
-        border-radius: 10px;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+      h1 {
+        font-size: 22px;
       }
 
-      .back-btn:hover {
-        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
-        transform: translateY(-2px);
+      .team-image {
+        width: 95%;
+        margin-bottom: 15px;
       }
 
-      /* MOBILE RESPONSIVE */
-      @media (max-width: 768px) {
-        body {
-          padding: 10px 5px;
-        }
-
-        .container {
-          max-width: 100%;
-        }
-
-        header {
-          padding: 15px 20px;
-          border-radius: 12px;
-        }
-
-        .logo {
-          font-size: 20px;
-        }
-
-        .card {
-          padding: 20px;
-          border-radius: 12px;
-        }
-
-        h1 {
-          font-size: 24px;
-          margin-bottom: 20px;
-        }
-
-        .team-image {
-          width: 90%;
-          max-width: 300px;
-          margin-bottom: 20px;
-        }
-
-        table {
-          min-width: 350px;
-        }
-
-        th, td {
-          padding: 8px 6px;
-          font-size: 11px;
-        }
-
-        th {
-          padding: 10px 6px;
-        }
-
-        .back-btn {
-          width: 100%;
-          padding: 14px;
-          font-size: 15px;
-        }
-
-        .captain-badge {
-          font-size: 8px;
-          padding: 1px 4px;
-        }
-
-        .goalkeeper-badge {
-          font-size: 14px;
-        }
+      table {
+        min-width: 400px;
       }
 
-      @media (max-width: 480px) {
-        h1 {
-          font-size: 20px;
-        }
-
-        .team-image {
-          width: 95%;
-        }
-
-        table {
-          min-width: 300px;
-        }
-
-        th, td {
-          padding: 6px 4px;
-          font-size: 10px;
-        }
-
-        th {
-          padding: 8px 4px;
-        }
+      th, td {
+        padding: 6px 2px;
+        font-size: 10px;
       }
-    </style>
-  </head>
-  <body>
 
-  <div class="container">
-   
-    <!-- MAIN CARD -->
-    <div class="card">
-      <h1>Ekipa Crvenih</h1>
+      th {
+        font-size: 10px;
+        padding: 8px 2px;
+      }
 
-      <img src="crveni-team.png" class="team-image" alt="Ekipa Crvenih">
+      th.sorted-asc::after,
+      th.sorted-desc::after {
+        font-size: 9px;
+        margin-left: 3px;
+      }
 
-      <div class="table-wrapper">
-        <table>
-          <thead>
-            <tr>
-              <th data-sort="name">Igrač</th>
-              <th data-sort="matches">Utakmice</th>
-              <th data-sort="goals">Golovi</th>
-            </tr>
-          </thead>
-          <tbody id="teamTable"></tbody>
-        </table>
-      </div>
+      .captain-badge {
+        font-size: 8px;
+        padding: 1px 4px;
+        margin-left: 4px;
+      }
 
-      <a href="index.html" class="back-btn">← Nazad na rezultate</a>
-    </div>
+      .goalkeeper-badge {
+        font-size: 13px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">⚽ Ekipa Crvenih</div>
+</header>
+
+<div class="card">
+  <h1>Ekipa Crvenih</h1>
+
+  <img src="crveni-team.png" class="team-image" alt="Ekipa Crvenih">
+
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th data-sort="name">Igrač</th>
+          <th data-sort="matches">Utakmice</th>
+          <th data-sort="goals">Golovi</th>
+        </tr>
+      </thead>
+      <tbody id="teamTable"></tbody>
+    </table>
   </div>
 
-  <script type="module">
-  import { onValue } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+  <a href="index.html" class="back-link">← Nazad na rezultate</a>
+</div>
 
-  let currentSort = { field: "goals", dir: "desc" };
-  let playersData = {};
+<script type="module">
+import { onValue } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
-  /* ---------------- FORMAT PLAYER NAME ---------------- */
-  function formatPlayerName(name) {
-    if (!name) return '';
+let currentSort = { field: "goals", dir: "desc" };
+let playersData = {};
 
-    let displayName = name;
-    let badges = '';
+/* ---------------- FORMAT PLAYER NAME ---------------- */
+function formatPlayerName(name) {
+  if (!name) return '';
 
-    const captainRegex = /\s*\(c\)\s*/i;
-    if (captainRegex.test(name)) {
-      displayName = name.replace(captainRegex, ' ').trim();
-      badges += '<span class="captain-badge">C</span>';
-    }
+  let displayName = name;
+  let badges = '';
 
-    const goalkeeperRegex = /\s*\(g\)\s*/i;
-    if (goalkeeperRegex.test(name)) {
-      displayName = name.replace(goalkeeperRegex, ' ').trim();
-      badges += '<span class="goalkeeper-badge">🧤</span>';
-    }
-
-    return displayName + badges;
+  const captainRegex = /\s*\(c\)\s*/i;
+  if (captainRegex.test(name)) {
+    displayName = name.replace(captainRegex, ' ').trim();
+    badges += '<span class="captain-badge">C</span>';
   }
 
-  /* ---------------- UPDATE SORT INDICATORS ---------------- */
-  function updateSortIndicators() {
-    const { field, dir } = currentSort;
-
-    document.querySelectorAll("th[data-sort]").forEach(th => {
-      th.classList.remove('sorted-asc', 'sorted-desc');
-      if (th.dataset.sort === field) {
-        th.classList.add(dir === 'asc' ? 'sorted-asc' : 'sorted-desc');
-      }
-    });
+  const goalkeeperRegex = /\s*\(g\)\s*/i;
+  if (goalkeeperRegex.test(name)) {
+    displayName = name.replace(goalkeeperRegex, ' ').trim();
+    badges += '<span class="goalkeeper-badge">🧤</span>';
   }
 
-  /* ---------------- RENDER ---------------- */
-  function renderTable(data) {
-    const tbody = document.getElementById("teamTable");
-    tbody.innerHTML = "";
+  return displayName + badges;
+}
 
-    let list = Object.entries(data)
-      .map(([id, p]) => ({
-        id,
-        name: p.name || "",
-        goals: Number(p.goals) || 0,
-        matches: Number(p.matches) || 0
-      }));
+/* ---------------- UPDATE SORT INDICATORS ---------------- */
+function updateSortIndicators() {
+  const { field, dir } = currentSort;
 
-    list.sort((a, b) => {
-      const f = currentSort.field;
+  document.querySelectorAll("th[data-sort]").forEach(th => {
+    th.classList.remove('sorted-asc', 'sorted-desc');
+    if (th.dataset.sort === field) {
+      th.classList.add(dir === 'asc' ? 'sorted-asc' : 'sorted-desc');
+    }
+  });
+}
 
-      if (f === 'name') {
+/* ---------------- RENDER ---------------- */
+function renderTable(data) {
+  const tbody = document.getElementById("teamTable");
+  tbody.innerHTML = "";
+
+  let list = Object.entries(data)
+    .map(([id, p]) => ({
+      id,
+      name: p.name || "",
+      goals: Number(p.goals) || 0,
+      matches: Number(p.matches) || 0
+    }));
+
+  list.sort((a, b) => {
+    const f = currentSort.field;
+
+    if (f === 'name') {
+      const nameA = a.name.replace(/\s*\(c\)\s*/gi, '').replace(/\s*\(g\)\s*/gi, '').trim().toLowerCase();
+      const nameB = b.name.replace(/\s*\(c\)\s*/gi, '').replace(/\s*\(g\)\s*/gi, '').trim().toLowerCase();
+      return currentSort.dir === "asc"
+        ? nameA.localeCompare(nameB, 'sr')
+        : nameB.localeCompare(nameA, 'sr');
+    } else {
+      if (a[f] === b[f]) {
         const nameA = a.name.replace(/\s*\(c\)\s*/gi, '').replace(/\s*\(g\)\s*/gi, '').trim().toLowerCase();
         const nameB = b.name.replace(/\s*\(c\)\s*/gi, '').replace(/\s*\(g\)\s*/gi, '').trim().toLowerCase();
-        return currentSort.dir === "asc"
-          ? nameA.localeCompare(nameB, 'sr')
-          : nameB.localeCompare(nameA, 'sr');
-      } else {
-        if (a[f] === b[f]) {
-          const nameA = a.name.replace(/\s*\(c\)\s*/gi, '').replace(/\s*\(g\)\s*/gi, '').trim().toLowerCase();
-          const nameB = b.name.replace(/\s*\(c\)\s*/gi, '').replace(/\s*\(g\)\s*/gi, '').trim().toLowerCase();
-          return nameA.localeCompare(nameB, 'sr');
-        }
-        return currentSort.dir === "asc" ? a[f] - b[f] : b[f] - a[f];
+        return nameA.localeCompare(nameB, 'sr');
       }
-    });
-
-    list.forEach(p => {
-      tbody.innerHTML += `
-        <tr>
-          <td>${formatPlayerName(p.name)}</td>
-          <td>${p.matches}</td>
-          <td>${p.goals}</td>
-        </tr>
-      `;
-    });
-
-    updateSortIndicators();
-  }
-
-  /* ---------------- LOAD ---------------- */
-  onValue(window.dbRef("players/crveni"), snap => {
-    playersData = snap.val() || {};
-    renderTable(playersData);
+      return currentSort.dir === "asc" ? a[f] - b[f] : b[f] - a[f];
+    }
   });
 
-  /* ---------------- SORT ---------------- */
-  document.addEventListener("DOMContentLoaded", () => {
-    document.querySelectorAll("th[data-sort]").forEach(th => {
-      th.onclick = () => {
-        const field = th.dataset.sort;
-
-        if (currentSort.field === field) {
-          currentSort.dir = currentSort.dir === "asc" ? "desc" : "asc";
-        } else {
-          currentSort.field = field;
-          currentSort.dir = field === 'name' ? 'asc' : 'desc';
-        }
-
-        renderTable(playersData);
-      };
-    });
+  list.forEach(p => {
+    tbody.innerHTML += `
+      <tr>
+        <td>${formatPlayerName(p.name)}</td>
+        <td>${p.matches}</td>
+        <td>${p.goals}</td>
+      </tr>
+    `;
   });
-  </script>
 
-  </body>
-  </html>
+  updateSortIndicators();
+}
+
+/* ---------------- LOAD ---------------- */
+onValue(window.dbRef("players/crveni"), snap => {
+  playersData = snap.val() || {};
+  renderTable(playersData);
+});
+
+/* ---------------- SORT ---------------- */
+document.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll("th[data-sort]").forEach(th => {
+    th.onclick = () => {
+      const field = th.dataset.sort;
+
+      if (currentSort.field === field) {
+        currentSort.dir = currentSort.dir === "asc" ? "desc" : "asc";
+      } else {
+        currentSort.field = field;
+        currentSort.dir = field === 'name' ? 'asc' : 'desc';
+      }
+
+      renderTable(playersData);
+    };
+  });
+});
+</script>
+
+</body>
+</html>
