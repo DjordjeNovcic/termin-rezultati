@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
   <html lang="sr">
   <head>
     <meta charset="UTF-8">
@@ -49,6 +49,25 @@
       #playedBlue .player-btn.active,
         #scorersBluePlayers .player-btn.active {
         background: #0044cc !important;
+      }
+
+      /* Captain and Goalkeeper badges */
+      .captain-badge {
+        display: inline-block;
+        background: linear-gradient(135deg, #ffd700, #ffed4e);
+        color: #333;
+        font-weight: bold;
+        padding: 1px 4px;
+        border-radius: 3px;
+        margin-left: 4px;
+        font-size: 9px;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        border: 1px solid #daa520;
+      }
+
+      .goalkeeper-badge {
+        margin-left: 4px;
+        font-size: 14px;
       }
 
       /* Strelci tagovi */
@@ -167,6 +186,32 @@
   let pendingPlayed = null;
 
   /* -------------------------
+     FORMAT PLAYER NAME
+  --------------------------*/
+  function formatPlayerName(name) {
+    if (!name) return '';
+
+    let displayName = name;
+    let badges = '';
+
+    // Check for captain
+    const captainRegex = /\s*\(c\)\s*/i;
+    if (captainRegex.test(name)) {
+      displayName = name.replace(captainRegex, ' ').trim();
+      badges += '<span class="captain-badge">C</span>';
+    }
+
+    // Check for goalkeeper
+    const goalkeeperRegex = /\s*\(g\)\s*/i;
+    if (goalkeeperRegex.test(name)) {
+      displayName = name.replace(goalkeeperRegex, ' ').trim();
+      badges += '<span class="goalkeeper-badge">🧤</span>';
+    }
+
+    return displayName + badges;
+  }
+
+  /* -------------------------
      LOAD PLAYERS (WITH IDs)
   --------------------------*/
   onValue(window.dbRef("players"), snap => {
@@ -192,14 +237,14 @@
 
     // CRVENI
     Object.entries(players.crveni).forEach(([id, p]) => {
-      PR.innerHTML  += `<div class="player-btn player-red" data-id="${id}" data-team="crveni">${p.name}</div>`;
-      SRP.innerHTML += `<div class="player-btn player-red" data-id="${id}" data-team="crveni">${p.name}</div>`;
+      PR.innerHTML  += `<div class="player-btn player-red" data-id="${id}" data-team="crveni">${formatPlayerName(p.name)}</div>`;
+      SRP.innerHTML += `<div class="player-btn player-red" data-id="${id}" data-team="crveni">${formatPlayerName(p.name)}</div>`;
     });
 
     // PLAVI
     Object.entries(players.plavi).forEach(([id, p]) => {
-      PB.innerHTML  += `<div class="player-btn player-blue" data-id="${id}" data-team="plavi">${p.name}</div>`;
-      SBP.innerHTML += `<div class="player-btn player-blue" data-id="${id}" data-team="plavi">${p.name}</div>`;
+      PB.innerHTML  += `<div class="player-btn player-blue" data-id="${id}" data-team="plavi">${formatPlayerName(p.name)}</div>`;
+      SBP.innerHTML += `<div class="player-btn player-blue" data-id="${id}" data-team="plavi">${formatPlayerName(p.name)}</div>`;
     });
 
     // Re-apply pending selection after render
@@ -275,7 +320,8 @@
     document.getElementById("scorersBlueTags").innerHTML = "";
 
     scorers.forEach((s,i)=>{
-      const name = players[s.team][s.id]?.name || "(obrisan)";
+      const rawName = players[s.team][s.id]?.name || "(obrisan)";
+      const name = rawName.replace(/\s*\(c\)\s*/gi, '').replace(/\s*\(g\)\s*/gi, '').trim();
       const tag = `<div class="tag">${name}<button onclick="removeGoal(${i})">x</button></div>`;
       if (s.team==="crveni")
         document.getElementById("scorersRedTags").innerHTML += tag;
