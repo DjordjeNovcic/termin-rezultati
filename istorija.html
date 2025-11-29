@@ -73,6 +73,34 @@
         text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
       }
 
+      /* Back button at top */
+      .back-button-top {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      .back-btn {
+        display: inline-block;
+        color: white;
+        text-decoration: none;
+        font-size: 16px;
+        font-weight: 500;
+        padding: 14px 32px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 10px;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+      }
+
+      .back-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+      }
+
+      .back-btn:active {
+        transform: translateY(0);
+      }
+
       #historyList {
         animation: fadeIn 0.5s ease-in;
       }
@@ -167,35 +195,6 @@
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
-      }
-
-      /* Back button at bottom */
-      .back-button-bottom {
-        text-align: center;
-        margin-top: 30px;
-        margin-bottom: 20px;
-      }
-
-      .back-btn {
-        display: inline-block;
-        color: white;
-        text-decoration: none;
-        font-size: 16px;
-        font-weight: 500;
-        padding: 14px 32px;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        border-radius: 10px;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
-      }
-
-      .back-btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
-      }
-
-      .back-btn:active {
-        transform: translateY(0);
       }
 
       /* Captain and Goalkeeper badges */
@@ -339,6 +338,16 @@
           padding: 10px 16px;
         }
 
+        .back-button-top {
+          margin-bottom: 20px;
+        }
+
+        .back-btn {
+          width: 100%;
+          padding: 14px;
+          font-size: 15px;
+        }
+
         .match-box {
           padding: 18px;
           margin-bottom: 15px;
@@ -372,12 +381,6 @@
 
         .score {
           font-size: 32px;
-        }
-
-        .back-btn {
-          width: 100%;
-          padding: 14px;
-          font-size: 15px;
         }
 
         .scorer-item {
@@ -472,11 +475,12 @@
 
   <div class="container">
     <h1>Sve odigrane utakmice</h1>
-    <div id="historyList"></div>
 
-    <div class="back-button-bottom">
+    <div class="back-button-top">
       <a href="index.html" class="back-btn">← Nazad na rezultate</a>
     </div>
+
+    <div id="historyList"></div>
   </div>
 
   <!-- MODAL -->
