@@ -71,50 +71,46 @@
 <script type="module">
 import { onValue } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
-/* ---------------- SORT STATE ---------------- */
-let currentSort = {
-  field: "goals",
-  dir: "desc"   // default: po golovima opadajuće
-};
-
+let currentSort = { field: "goals", dir: "desc" };
 let playersData = {};
 
-/* ---------------- RENDER FUNKCIJA ---------------- */
+/* ---------------- RENDER ---------------- */
 function renderTable(data) {
   const tbody = document.getElementById("teamTable");
   tbody.innerHTML = "";
 
-  let list = Object.values(data);
+  let list = Object.entries(data)
+    .map(([id, p]) => ({
+      id,
+      name: p.name || "",
+      goals: Number(p.goals) || 0,
+      matches: Number(p.matches) || 0
+    }));
 
-  // sortiranje
   list.sort((a, b) => {
-    const field = currentSort.field;
-    const av = a[field] || 0;
-    const bv = b[field] || 0;
-
-    if (av === bv) return a.name.localeCompare(b.name);
-    return currentSort.dir === "asc" ? av - bv : bv - av;
+    const f = currentSort.field;
+    if (a[f] === b[f]) return a.name.localeCompare(b.name);
+    return currentSort.dir === "asc" ? a[f] - b[f] : b[f] - a[f];
   });
 
-  // upis u tabelu
   list.forEach(p => {
     tbody.innerHTML += `
       <tr>
         <td>${p.name}</td>
-        <td>${p.matches || 0}</td>
-        <td>${p.goals || 0}</td>
+        <td>${p.matches}</td>
+        <td>${p.goals}</td>
       </tr>
     `;
   });
 }
 
-/* ---------------- UCITAVANJE ---------------- */
+/* ---------------- LOAD ---------------- */
 onValue(window.dbRef("players/crveni"), snap => {
   playersData = snap.val() || {};
   renderTable(playersData);
 });
 
-/* ---------------- SORTIRANJE NA KLIK ---------------- */
+/* ---------------- SORT ---------------- */
 document.addEventListener("DOMContentLoaded", () => {
   document.querySelectorAll("th[data-sort]").forEach(th => {
     th.onclick = () => {
@@ -124,7 +120,7 @@ document.addEventListener("DOMContentLoaded", () => {
         currentSort.dir = currentSort.dir === "asc" ? "desc" : "asc";
       } else {
         currentSort.field = field;
-        currentSort.dir = "desc"; // prvi klik ide DESC
+        currentSort.dir = "desc";
       }
 
       renderTable(playersData);
@@ -132,6 +128,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 </script>
+
 
 </body>
 </html>
