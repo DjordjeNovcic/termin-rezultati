@@ -103,6 +103,22 @@
       }
       tr.highlight { background: #fff7d1; }
 
+      /* SCORER COLORS */
+      tr.team-crveni {
+        background: #ffe5e5;
+      }
+      tr.team-plavi {
+        background: #e5f0ff;
+      }
+      tr.team-crveni td:first-child {
+        color: #b10000;
+        font-weight: bold;
+      }
+      tr.team-plavi td:first-child {
+        color: #0044cc;
+        font-weight: bold;
+      }
+
       /* FORMA */
       .form-box { margin-top: 30px; }
 
@@ -176,17 +192,30 @@
     <thead>
       <tr>
         <th class="no-sort">Tim</th>
-        <th data-sort="U">Utakmice</th>
-        <th data-sort="P">Pobede</th>
-        <th data-sort="N">Nerešeno</th>
-        <th data-sort="I">Porazi</th>
-        <th data-sort="GD">G. dati</th>
-        <th data-sort="GP">G. primljeni</th>
-        <th data-sort="GR">G. razlika</th>
-        <th data-sort="B">Bodovi</th>
+        <th data-sort="U" data-table="league">Utakmice</th>
+        <th data-sort="P" data-table="league">Pobede</th>
+        <th data-sort="N" data-table="league">Nerešeno</th>
+        <th data-sort="I" data-table="league">Porazi</th>
+        <th data-sort="GD" data-table="league">G. dati</th>
+        <th data-sort="GP" data-table="league">G. primljeni</th>
+        <th data-sort="GR" data-table="league">G. razlika</th>
+        <th data-sort="B" data-table="league">Bodovi</th>
       </tr>
     </thead>
     <tbody id="leagueBody"></tbody>
+  </table>
+
+  <!-- LISTA STRELACA -->
+  <h2>Lista strelaca</h2>
+  <table>
+    <thead>
+      <tr>
+        <th data-sort="name" data-table="scorers">Ime</th>
+        <th data-sort="team" data-table="scorers">Tim</th>
+        <th data-sort="goals" data-table="scorers">Golovi</th>
+      </tr>
+    </thead>
+    <tbody id="scorersBody"></tbody>
   </table>
 
   <!-- FORMA -->
@@ -212,7 +241,11 @@
 
   let allMatches = [];
   let tableData = {};
-  let currentSort = { field: 'B', dir: 'desc' };
+  let scorersData = [];
+  let currentSort = {
+    league: { field: 'B', dir: 'desc' },
+    scorers: { field: 'goals', dir: 'desc' }
+  };
 
   /* LOAD MATCHES */
   onValue(window.dbRef("matches"), snap => {
@@ -223,6 +256,30 @@
     calculateTable(allMatches);
     renderTable();
     renderForm(allMatches);
+  });
+
+  /* LOAD PLAYERS FOR SCORERS */
+  onValue(window.dbRef("players"), snap => {
+    const players = snap.val() || {};
+    scorersData = [];
+
+    ['crveni', 'plavi'].forEach(team => {
+      if (players[team]) {
+        Object.entries(players[team]).forEach(([id, player]) => {
+          const goals = Number(player.goals) || 0;
+          if (goals >= 1) {
+            scorersData.push({
+              name: player.name || '',
+              team: team === 'crveni' ? 'Crveni' : 'Plavi',
+              teamKey: team,
+              goals: goals
+            });
+          }
+        });
+      }
+    });
+
+    renderScorers();
   });
 
   /* -------- MAIN MATCH + RECENT (DOLE) -------- */
@@ -339,17 +396,18 @@
   /* -------- RENDER TABLE WITH SORTING -------- */
   function renderTable() {
     const teams = Object.values(tableData);
+    const { field, dir } = currentSort.league;
 
     // Sort teams
     teams.sort((a, b) => {
-      const valA = a[currentSort.field];
-      const valB = b[currentSort.field];
+      const valA = a[field];
+      const valB = b[field];
 
       if (valA === valB) {
         return b.B - a.B; // Secondary sort by points
       }
 
-      return currentSort.dir === 'asc' ? valA - valB : valB - valA;
+      return dir === 'asc' ? valA - valB : valB - valA;
     });
 
     const tbody = document.getElementById("leagueBody");
@@ -372,14 +430,58 @@
       `;
     });
 
-    updateSortIndicators();
+    updateSortIndicators('league');
+  }
+
+  /* -------- RENDER SCORERS TABLE -------- */
+  function renderScorers() {
+    const scorers = [...scorersData];
+    const { field, dir } = currentSort.scorers;
+
+    // Sort scorers
+    scorers.sort((a, b) => {
+      if (field === 'name') {
+        const nameA = a.name.toLowerCase();
+        const nameB = b.name.toLowerCase();
+        return dir === 'asc'
+          ? nameA.localeCompare(nameB, 'sr')
+          : nameB.localeCompare(nameA, 'sr');
+      } else if (field === 'team') {
+        if (a.team === b.team) {
+          return b.goals - a.goals; // Secondary sort by goals
+        }
+        return dir === 'asc'
+          ? a.team.localeCompare(b.team, 'sr')
+          : b.team.localeCompare(a.team, 'sr');
+      } else { // goals
+        if (a.goals === b.goals) {
+          return a.name.localeCompare(b.name, 'sr');
+        }
+        return dir === 'asc' ? a.goals - b.goals : b.goals - a.goals;
+      }
+    });
+
+    const tbody = document.getElementById("scorersBody");
+    tbody.innerHTML = "";
+
+    scorers.forEach(player => {
+      tbody.innerHTML += `
+        <tr class="team-${player.teamKey}">
+          <td>${player.name}</td>
+          <td>${player.team}</td>
+          <td>${player.goals}</td>
+        </tr>
+      `;
+    });
+
+    updateSortIndicators('scorers');
   }
 
   /* -------- UPDATE SORT INDICATORS -------- */
-  function updateSortIndicators() {
-    const { field, dir } = currentSort;
+  function updateSortIndicators(table) {
+    const { field, dir } = currentSort[table];
 
-    document.querySelectorAll("th[data-sort]").forEach(th => {
+    document.querySelectorAll(`th[data-table="${table}"]`).forEach(th => {
       th.classList.remove('sorted-asc', 'sorted-desc');
       if (th.dataset.sort === field) {
         th.classList.add(dir === 'asc' ? 'sorted-asc' : 'sorted-desc');
@@ -392,15 +494,20 @@
     document.querySelectorAll("th[data-sort]").forEach(th => {
       th.addEventListener("click", () => {
         const field = th.dataset.sort;
+        const table = th.dataset.table;
 
-        if (currentSort.field === field) {
-          currentSort.dir = currentSort.dir === 'asc' ? 'desc' : 'asc';
+        if (currentSort[table].field === field) {
+          currentSort[table].dir = currentSort[table].dir === 'asc' ? 'desc' : 'asc';
         } else {
-          currentSort.field = field;
-          currentSort.dir = 'desc';
+          currentSort[table].field = field;
+          currentSort[table].dir = field === 'name' ? 'asc' : 'desc';
         }
 
-        renderTable();
+        if (table === 'league') {
+          renderTable();
+        } else if (table === 'scorers') {
+          renderScorers();
+        }
       });
     });
   });
