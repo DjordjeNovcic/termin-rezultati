@@ -1,139 +1,176 @@
 <!DOCTYPE html>
-<html lang="sr">
-<head>
-  <meta charset="UTF-8">
-  <title>Ekipa Crvenih</title>
-  <script type="module" src="firebase.mjs"></script>
+  <html lang="sr">
+  <head>
+    <meta charset="UTF-8">
+    <title>Ekipa Crvenih</title>
+    <script type="module" src="firebase.mjs"></script>
 
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      max-width: 800px;
-      margin: 20px auto;
-      padding: 0 20px;
-      text-align: center;
-    }
-
-    h1 {
-      color: #b10000;
-      margin-bottom: 20px;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 25px;
-    }
-
-    th, td {
-      padding: 10px;
-      border-bottom: 1px solid #ddd;
-    }
-
-    th {
-      background: #ececec;
-      border-bottom: 2px solid #bbb;
-      cursor: pointer;
-      user-select: none;
-    }
-
-    td:nth-child(2),
-    td:nth-child(3) {
-      text-align: center;
-    }
-
-    a {
-      display: inline-block;
-      margin-top: 20px;
-      color: #0044cc;
-    }
-  </style>
-</head>
-<body>
-
-<h1>Ekipa Crvenih</h1>
-
-<img src="crveni-team.png" style="width:80%; max-width:500px; border-radius:8px;">
-
-<table>
-  <thead>
-    <tr>
-      <th data-sort="name">Igrač</th>
-      <th data-sort="matches">Utakmice</th>
-      <th data-sort="goals">Golovi ⬍</th>
-    </tr>
-  </thead>
-  <tbody id="teamTable"></tbody>
-</table>
-
-<a href="index.html">← Nazad na rezultate</a>
-
-<script type="module">
-import { onValue } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
-console.log("TEST 1: window.dbRef =", window.dbRef);
-console.log("TEST 2: dbRef('players') =", window.dbRef ? window.dbRef("players") : "NO DBREF");
-
-
-let currentSort = { field: "goals", dir: "desc" };
-let playersData = {};
-
-/* ---------------- RENDER ---------------- */
-function renderTable(data) {
-  const tbody = document.getElementById("teamTable");
-  tbody.innerHTML = "";
-
-  let list = Object.entries(data)
-    .map(([id, p]) => ({
-      id,
-      name: p.name || "",
-      goals: Number(p.goals) || 0,
-      matches: Number(p.matches) || 0
-    }));
-
-  list.sort((a, b) => {
-    const f = currentSort.field;
-    if (a[f] === b[f]) return a.name.localeCompare(b.name);
-    return currentSort.dir === "asc" ? a[f] - b[f] : b[f] - a[f];
-  });
-
-  list.forEach(p => {
-    tbody.innerHTML += `
-      <tr>
-        <td>${p.name}</td>
-        <td>${p.matches}</td>
-        <td>${p.goals}</td>
-      </tr>
-    `;
-  });
-}
-
-/* ---------------- LOAD ---------------- */
-onValue(window.dbRef("players/crveni"), snap => {
-  console.log("🔥 RAW SNAP:", snap.val());   // <--- DODATO
-
-  playersData = snap.val() || {};
-  renderTable(playersData);
-});
-
-/* ---------------- SORT ---------------- */
-document.addEventListener("DOMContentLoaded", () => {
-  document.querySelectorAll("th[data-sort]").forEach(th => {
-    th.onclick = () => {
-      const field = th.dataset.sort;
-
-      if (currentSort.field === field) {
-        currentSort.dir = currentSort.dir === "asc" ? "desc" : "asc";
-      } else {
-        currentSort.field = field;
-        currentSort.dir = "desc";
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 800px;
+        margin: 20px auto;
+        padding: 0 20px;
+        text-align: center;
       }
 
-      renderTable(playersData);
-    };
+      h1 {
+        color: #b10000;
+        margin-bottom: 20px;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 25px;
+      }
+
+      th, td {
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
+      }
+
+      th {
+        background: #ececec;
+        border-bottom: 2px solid #bbb;
+        cursor: pointer;
+        user-select: none;
+        position: relative;
+      }
+
+      th:hover {
+        background: #ddd;
+      }
+
+      th.sorted-asc::after {
+        content: " ▲";
+        font-size: 12px;
+        color: #b10000;
+      }
+
+      th.sorted-desc::after {
+        content: " ▼";
+        font-size: 12px;
+        color: #b10000;
+      }
+
+      td:nth-child(2),
+      td:nth-child(3) {
+        text-align: center;
+      }
+
+      a {
+        display: inline-block;
+        margin-top: 20px;
+        color: #0044cc;
+      }
+    </style>
+  </head>
+  <body>
+
+  <h1>Ekipa Crvenih</h1>
+
+  <img src="crveni-team.png" style="width:80%; max-width:500px; border-radius:8px;">
+
+  <table>
+    <thead>
+      <tr>
+        <th data-sort="name">Igrač</th>
+        <th data-sort="matches">Utakmice</th>
+        <th data-sort="goals">Golovi</th>
+      </tr>
+    </thead>
+    <tbody id="teamTable"></tbody>
+  </table>
+
+  <a href="index.html">← Nazad na rezultate</a>
+
+  <script type="module">
+  import { onValue } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+
+  let currentSort = { field: "goals", dir: "desc" };
+  let playersData = {};
+
+  /* ---------------- UPDATE SORT INDICATORS ---------------- */
+  function updateSortIndicators() {
+    const { field, dir } = currentSort;
+
+    document.querySelectorAll("th[data-sort]").forEach(th => {
+      th.classList.remove('sorted-asc', 'sorted-desc');
+      if (th.dataset.sort === field) {
+        th.classList.add(dir === 'asc' ? 'sorted-asc' : 'sorted-desc');
+      }
+    });
+  }
+
+  /* ---------------- RENDER ---------------- */
+  function renderTable(data) {
+    const tbody = document.getElementById("teamTable");
+    tbody.innerHTML = "";
+
+    let list = Object.entries(data)
+      .map(([id, p]) => ({
+        id,
+        name: p.name || "",
+        goals: Number(p.goals) || 0,
+        matches: Number(p.matches) || 0
+      }));
+
+    list.sort((a, b) => {
+      const f = currentSort.field;
+
+      if (f === 'name') {
+        const nameA = a.name.toLowerCase();
+        const nameB = b.name.toLowerCase();
+        return currentSort.dir === "asc"
+          ? nameA.localeCompare(nameB, 'sr')
+          : nameB.localeCompare(nameA, 'sr');
+      } else {
+        if (a[f] === b[f]) {
+          return a.name.localeCompare(b.name, 'sr');
+        }
+        return currentSort.dir === "asc" ? a[f] - b[f] : b[f] - a[f];
+      }
+    });
+
+    list.forEach(p => {
+      tbody.innerHTML += `
+        <tr>
+          <td>${p.name}</td>
+          <td>${p.matches}</td>
+          <td>${p.goals}</td>
+        </tr>
+      `;
+    });
+
+    // Update visual indicators
+    updateSortIndicators();
+  }
+
+  /* ---------------- LOAD ---------------- */
+  onValue(window.dbRef("players/crveni"), snap => {
+    playersData = snap.val() || {};
+    renderTable(playersData);
   });
-});
-</script>
 
+  /* ---------------- SORT ---------------- */
+  document.addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll("th[data-sort]").forEach(th => {
+      th.onclick = () => {
+        const field = th.dataset.sort;
 
-</body>
-</html>
+        if (currentSort.field === field) {
+          currentSort.dir = currentSort.dir === "asc" ? "desc" : "asc";
+        } else {
+          currentSort.field = field;
+          currentSort.dir = field === 'name' ? 'asc' : 'desc';
+        }
+
+        renderTable(playersData);
+      };
+    });
+  });
+  </script>
+
+  </body>
+  </html>
