@@ -70,6 +70,9 @@
 
 <script type="module">
 import { onValue } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+console.log("TEST 1: window.dbRef =", window.dbRef);
+console.log("TEST 2: dbRef('players') =", window.dbRef ? window.dbRef("players") : "NO DBREF");
+
 
 let currentSort = { field: "goals", dir: "desc" };
 let playersData = {};
@@ -106,6 +109,8 @@ function renderTable(data) {
 
 /* ---------------- LOAD ---------------- */
 onValue(window.dbRef("players/crveni"), snap => {
+  console.log("🔥 RAW SNAP:", snap.val());   // <--- DODATO
+
   playersData = snap.val() || {};
   renderTable(playersData);
 });
