@@ -228,11 +228,18 @@ function refreshTags(){
     else
       document.getElementById("scorersBlueTags").innerHTML += tag;
   });
+  autoSetGoals();
 }
 
 window.removeGoal = i => { scorers.splice(i,1); refreshTags(); };
 
-  
+ function autoSetGoals() {
+  const redGoals = scorers.filter(s => s.team === "crveni").length;
+  const blueGoals = scorers.filter(s => s.team === "plavi").length;
+
+  red.value = redGoals;
+  blue.value = blueGoals;
+} 
 
 /* -------------------------
            GET PLAYED
@@ -267,8 +274,6 @@ function validate(){
   if(!round.value) e.push("Kolo?");
   if(!date.value)  e.push("Datum?");
   if(!time.value)  e.push("Vreme?");
-  if(!red.value)   e.push("Golovi Crveni?");
-  if(!blue.value)  e.push("Golovi Plavi?");
   if(!info.value.trim()) e.push("Info?");
   if(Object.keys(getPlayed()).length===0) e.push("Igrali?");
   if(scorers.length===0)  e.push("Strelci?");
