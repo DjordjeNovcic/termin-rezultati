@@ -2,10 +2,15 @@
   <html lang="sr">
   <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ekipa Crvenih</title>
     <script type="module" src="firebase.mjs"></script>
 
     <style>
+      * {
+        box-sizing: border-box;
+      }
+
       body {
         font-family: Arial, sans-serif;
         max-width: 800px;
@@ -19,10 +24,24 @@
         margin-bottom: 20px;
       }
 
+      .team-image {
+        width: 80%;
+        max-width: 500px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+      }
+
+      .table-wrapper {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        margin: 25px -20px;
+        padding: 0 20px;
+      }
+
       table {
         width: 100%;
         border-collapse: collapse;
-        margin-top: 25px;
+        min-width: 400px;
       }
 
       th, td {
@@ -36,6 +55,7 @@
         cursor: pointer;
         user-select: none;
         position: relative;
+        white-space: nowrap;
       }
 
       th:hover {
@@ -63,6 +83,11 @@
         display: inline-block;
         margin-top: 20px;
         color: #0044cc;
+        text-decoration: none;
+        font-size: 16px;
+        padding: 10px 20px;
+        background: #f0f0f0;
+        border-radius: 6px;
       }
 
       /* Captain and Goalkeeper badges */
@@ -83,24 +108,97 @@
         margin-left: 6px;
         font-size: 18px;
       }
+
+      /* MOBILE STYLES */
+      @media (max-width: 768px) {
+        body {
+          margin: 10px auto;
+          padding: 0 15px;
+        }
+
+        h1 {
+          font-size: 24px;
+        }
+
+        .team-image {
+          width: 90%;
+          max-width: 300px;
+        }
+
+        .table-wrapper {
+          margin: 20px -15px;
+          padding: 0 15px;
+        }
+
+        table {
+          min-width: 350px;
+        }
+
+        th, td {
+          padding: 8px 6px;
+          font-size: 13px;
+        }
+
+        th {
+          font-size: 12px;
+        }
+
+        a {
+          width: 100%;
+          font-size: 15px;
+          padding: 12px;
+        }
+
+        .captain-badge {
+          font-size: 9px;
+          padding: 1px 4px;
+          margin-left: 4px;
+        }
+
+        .goalkeeper-badge {
+          font-size: 14px;
+          margin-left: 4px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        h1 {
+          font-size: 20px;
+        }
+
+        .team-image {
+          width: 95%;
+        }
+
+        th, td {
+          padding: 6px 4px;
+          font-size: 12px;
+        }
+
+        th {
+          font-size: 11px;
+        }
+      }
     </style>
   </head>
   <body>
 
   <h1>Ekipa Crvenih</h1>
 
-  <img src="crveni-team.png" style="width:80%; max-width:500px; border-radius:8px;">
+  <img src="crveni-team.png" class="team-image" alt="Ekipa Crvenih">
 
-  <table>
-    <thead>
-      <tr>
-        <th data-sort="name">Igrač</th>
-        <th data-sort="matches">Utakmice</th>
-        <th data-sort="goals">Golovi</th>
-      </tr>
-    </thead>
-    <tbody id="teamTable"></tbody>
-  </table>
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th data-sort="name">Igrač</th>
+          <th data-sort="matches">Utakmice</th>
+          <th data-sort="goals">Golovi</th>
+        </tr>
+      </thead>
+      <tbody id="teamTable"></tbody>
+    </table>
+  </div>
 
   <a href="index.html">← Nazad na rezultate</a>
 
@@ -117,14 +215,12 @@
     let displayName = name;
     let badges = '';
 
-    // Check for captain - case insensitive, handles spaces
     const captainRegex = /\s*\(c\)\s*/i;
     if (captainRegex.test(name)) {
       displayName = name.replace(captainRegex, ' ').trim();
       badges += '<span class="captain-badge">C</span>';
     }
 
-    // Check for goalkeeper - case insensitive, handles spaces
     const goalkeeperRegex = /\s*\(g\)\s*/i;
     if (goalkeeperRegex.test(name)) {
       displayName = name.replace(goalkeeperRegex, ' ').trim();
@@ -163,7 +259,6 @@
       const f = currentSort.field;
 
       if (f === 'name') {
-        // Remove badges for sorting purposes
         const nameA = a.name.replace(/\s*\(c\)\s*/gi, '').replace(/\s*\(g\)\s*/gi, '').trim().toLowerCase();
         const nameB = b.name.replace(/\s*\(c\)\s*/gi, '').replace(/\s*\(g\)\s*/gi, '').trim().toLowerCase();
         return currentSort.dir === "asc"
@@ -189,7 +284,6 @@
       `;
     });
 
-    // Update visual indicators
     updateSortIndicators();
   }
 
