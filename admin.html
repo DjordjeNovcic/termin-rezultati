@@ -164,6 +164,7 @@
   let players = { crveni:{}, plavi:{} };
   let scorers = [];
   let editingId = null;
+  let pendingPlayed = null;
 
   /* -------------------------
      LOAD PLAYERS (WITH IDs)
@@ -171,6 +172,11 @@
   onValue(window.dbRef("players"), snap => {
     players = snap.val() || { crveni:{}, plavi:{} };
     renderPlayers();
+
+    // Apply pending played selections after render
+    if (pendingPlayed) {
+      applyPlayedSelection(pendingPlayed);
+    }
   });
 
   /* -------------------------
@@ -195,6 +201,29 @@
       PB.innerHTML  += `<div class="player-btn player-blue" data-id="${id}" data-team="plavi">${p.name}</div>`;
       SBP.innerHTML += `<div class="player-btn player-blue" data-id="${id}" data-team="plavi">${p.name}</div>`;
     });
+
+    // Re-apply pending selection after render
+    if (pendingPlayed) {
+      applyPlayedSelection(pendingPlayed);
+    }
+  }
+
+  /* -------------------------
+     APPLY PLAYED SELECTION
+  --------------------------*/
+  function applyPlayedSelection(played) {
+    // Clear all active states first
+    document.querySelectorAll("#playedRed .player-btn, #playedBlue .player-btn")
+      .forEach(b => b.classList.remove("active"));
+
+    // Apply active state to selected players
+    Object.entries(played || {}).forEach(([playerId, team]) => {
+      const container = team === "crveni" ? "#playedRed" : "#playedBlue";
+      const btn = document.querySelector(`${container} .player-btn[data-id="${playerId}"]`);
+      if (btn) {
+        btn.classList.add("active");
+      }
+    });
   }
 
   /* -------------------------
@@ -205,12 +234,14 @@
     document.getElementById("playedRed").addEventListener("click", (e) => {
       if (e.target.classList.contains("player-btn")) {
         e.target.classList.toggle("active");
+        pendingPlayed = getPlayed();
       }
     });
 
     document.getElementById("playedBlue").addEventListener("click", (e) => {
       if (e.target.classList.contains("player-btn")) {
         e.target.classList.toggle("active");
+        pendingPlayed = getPlayed();
       }
     });
 
@@ -395,8 +426,9 @@
            CLEAR FORM
   --------------------------*/
   window.clearForm = function(){
-    editingId=null;
-    scorers=[];
+    editingId = null;
+    scorers = [];
+    pendingPlayed = null;
 
     round.value = "";
     red.value = "";
@@ -405,7 +437,7 @@
     autoFillRound();
 
     document.querySelectorAll(".player-btn.active")
-      .forEach(b=>b.classList.remove("active"));
+      .forEach(b => b.classList.remove("active"));
 
     refreshTags();
 
@@ -413,9 +445,9 @@
     date.value = d.toISOString().split("T")[0];
     time.value = "18:00";
 
-    saveBtn.style.display="block";
-    updateBtn.style.display="none";
-    cancelBtn.style.display="none";
+    saveBtn.style.display = "block";
+    updateBtn.style.display = "none";
+    cancelBtn.style.display = "none";
   };
 
   /* -------------------------
@@ -444,32 +476,29 @@
   /* -------------------------
           EDIT MATCH
   --------------------------*/
-  window.editMatch = async id => {
-    editingId = id;
+  window.editMatch = async matchId => {
+    editingId = matchId;
 
-    const snap = await get(window.dbRef(`matches/${id}`));
+    const snap = await get(window.dbRef(`matches/${matchId}`));
     const m = snap.val();
 
-    round.value=m.round;
-    date.value=m.date;
-    time.value=m.time;
-    red.value=m.red;
-    blue.value=m.blue;
-    info.value=m.info;
+    round.value = m.round;
+    date.value = m.date;
+    time.value = m.time;
+    red.value = m.red;
+    blue.value = m.blue;
+    info.value = m.info;
 
     scorers = [...m.scorers];
     refreshTags();
 
-    document.querySelectorAll(".player-btn").forEach(b => b.classList.remove("active"));
+    // Store played selection and apply it
+    pendingPlayed = m.played || {};
+    applyPlayedSelection(pendingPlayed);
 
-    Object.entries(m.played || {}).forEach(([id, team]) => {
-      const btn = document.querySelector(`.player-btn[data-id="${id}"][data-team="${team}"]`);
-      if (btn) btn.classList.add("active");
-    });
-
-    saveBtn.style.display="none";
-    updateBtn.style.display="block";
-    cancelBtn.style.display="block";
+    saveBtn.style.display = "none";
+    updateBtn.style.display = "block";
+    cancelBtn.style.display = "block";
   };
 
   /* -------------------------
