@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
   <html lang="sr">
   <head>
     <meta charset="UTF-8">
@@ -131,16 +131,6 @@
         margin-top: 0;
       }
 
-      /* Section Title (for recent matches) */
-      .section-title {
-        color: white;
-        font-size: 24px;
-        font-weight: 700;
-        text-align: center;
-        margin-bottom: 20px;
-        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-      }
-
       /* MATCH BOX */
       .match-box {
         padding: 28px;
@@ -237,6 +227,11 @@
 
       .scorers-table-wrapper table {
         min-width: 400px;
+      }
+
+      /* Center align scorers table headers */
+      .scorers-table-wrapper table th {
+        text-align: center;
       }
 
       th {
@@ -399,18 +394,6 @@
         transform: translateY(-2px);
       }
 
-      /* Recent matches wrapper */
-      .recent-matches-section {
-        margin-bottom: 30px;
-      }
-
-      .recent-matches-cards {
-        background: white;
-        border-radius: 16px;
-        padding: 25px;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-      }
-
       /* MODAL */
       #modalOverlay {
         display: none;
@@ -540,18 +523,9 @@
           margin-bottom: 25px;
         }
 
-        .recent-matches-cards {
-          padding: 20px;
-        }
-
         h1, h2 {
           font-size: 20px;
           margin-bottom: 20px;
-        }
-
-        .section-title {
-          font-size: 20px;
-          margin-bottom: 15px;
         }
 
         .match-box {
@@ -685,15 +659,7 @@
           margin-bottom: 20px;
         }
 
-        .recent-matches-cards {
-          padding: 18px;
-        }
-
         h1, h2 {
-          font-size: 18px;
-        }
-
-        .section-title {
           font-size: 18px;
         }
 
@@ -948,9 +914,8 @@
 
     if (recent.length) {
       recentBox.innerHTML += `
-        <div class="recent-matches-section">
-          <div class="section-title">Rezultati prošlih kola</div>
-          <div class="recent-matches-cards">
+        <div class="card">
+          <h2>Rezultati prošlih kola</h2>
       `;
 
       recent.forEach((m, idx) => {
@@ -987,10 +952,9 @@
       });
 
       recentBox.innerHTML += `
-            <button class="more-btn" onclick="window.location='istorija.html'">
-              Vidi sve utakmice →
-            </button>
-          </div>
+          <button class="more-btn" onclick="window.location='istorija.html'">
+            Vidi sve utakmice →
+          </button>
         </div>
       `;
     }
