@@ -9,33 +9,72 @@
     <style>
       * {
         box-sizing: border-box;
+        margin: 0;
+        padding: 0;
       }
 
       body {
-        font-family: Arial, sans-serif;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 20px 10px;
+      }
+
+      .container {
         max-width: 800px;
-        margin: 20px auto;
-        padding: 0 20px;
+        margin: 0 auto;
+      }
+
+      /* HEADER */
+      header {
+        background: white;
+        border-radius: 16px;
+        padding: 20px 30px;
+        margin-bottom: 20px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        text-align: center;
+      }
+
+      .logo {
+        font-size: 24px;
+        font-weight: bold;
+        background: linear-gradient(135deg, #d63031 0%, #e17055 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      /* MAIN CARD */
+      .card {
+        background: white;
+        border-radius: 16px;
+        padding: 30px;
+        margin-bottom: 20px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
         text-align: center;
       }
 
       h1 {
-        color: #b10000;
-        margin-bottom: 20px;
+        font-size: 28px;
+        font-weight: 700;
+        margin-bottom: 25px;
+        color: #d63031;
       }
 
       .team-image {
         width: 80%;
         max-width: 500px;
-        border-radius: 8px;
-        margin-bottom: 20px;
+        border-radius: 12px;
+        margin-bottom: 25px;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
       }
 
+      /* TABLE */
       .table-wrapper {
         overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-        margin: 25px -20px;
-        padding: 0 20px;
+        margin-top: 20px;
+        border-radius: 12px;
+        border: 2px solid #f0f0f0;
       }
 
       table {
@@ -44,53 +83,54 @@
         min-width: 400px;
       }
 
-      th, td {
-        padding: 10px;
-        border-bottom: 1px solid #ddd;
-      }
-
       th {
-        background: #ececec;
-        border-bottom: 2px solid #bbb;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        padding: 15px 12px;
+        text-align: left;
+        font-size: 13px;
+        font-weight: 700;
+        color: #636e72;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border-bottom: 2px solid #e0e0e0;
         cursor: pointer;
         user-select: none;
-        position: relative;
         white-space: nowrap;
       }
 
       th:hover {
-        background: #ddd;
+        background: #e0e0e0;
       }
 
       th.sorted-asc::after {
         content: " ▲";
         font-size: 12px;
-        color: #b10000;
+        color: #d63031;
       }
 
       th.sorted-desc::after {
         content: " ▼";
         font-size: 12px;
-        color: #b10000;
+        color: #d63031;
       }
 
-      td:nth-child(2),
-      td:nth-child(3) {
+      td {
+        padding: 15px 12px;
+        border-bottom: 1px solid #f0f0f0;
+        font-size: 14px;
+        color: #2d3436;
         text-align: center;
       }
 
-      a {
-        display: inline-block;
-        margin-top: 20px;
-        color: #0044cc;
-        text-decoration: none;
-        font-size: 16px;
-        padding: 10px 20px;
-        background: #f0f0f0;
-        border-radius: 6px;
+      td:first-child {
+        text-align: left;
       }
 
-      /* Captain and Goalkeeper badges */
+      tr:hover {
+        background: #ffe5e5;
+      }
+
+      /* BADGES */
       .captain-badge {
         display: inline-block;
         background: linear-gradient(135deg, #ffd700, #ffed4e);
@@ -99,35 +139,68 @@
         padding: 2px 6px;
         border-radius: 4px;
         margin-left: 6px;
-        font-size: 11px;
-        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        border: 1px solid #daa520;
+        font-size: 10px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.15);
       }
 
       .goalkeeper-badge {
         margin-left: 6px;
-        font-size: 18px;
+        font-size: 16px;
       }
 
-      /* MOBILE STYLES */
+      /* BACK BUTTON */
+      .back-btn {
+        display: inline-block;
+        margin-top: 20px;
+        padding: 14px 28px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        text-decoration: none;
+        font-size: 16px;
+        font-weight: 600;
+        border-radius: 10px;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+      }
+
+      .back-btn:hover {
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+        transform: translateY(-2px);
+      }
+
+      /* MOBILE RESPONSIVE */
       @media (max-width: 768px) {
         body {
-          margin: 10px auto;
-          padding: 0 15px;
+          padding: 10px 5px;
+        }
+
+        .container {
+          max-width: 100%;
+        }
+
+        header {
+          padding: 15px 20px;
+          border-radius: 12px;
+        }
+
+        .logo {
+          font-size: 20px;
+        }
+
+        .card {
+          padding: 20px;
+          border-radius: 12px;
         }
 
         h1 {
           font-size: 24px;
+          margin-bottom: 20px;
         }
 
         .team-image {
           width: 90%;
           max-width: 300px;
-        }
-
-        .table-wrapper {
-          margin: 20px -15px;
-          padding: 0 15px;
+          margin-bottom: 20px;
         }
 
         table {
@@ -136,28 +209,26 @@
 
         th, td {
           padding: 8px 6px;
-          font-size: 13px;
+          font-size: 11px;
         }
 
         th {
-          font-size: 12px;
+          padding: 10px 6px;
         }
 
-        a {
+        .back-btn {
           width: 100%;
+          padding: 14px;
           font-size: 15px;
-          padding: 12px;
         }
 
         .captain-badge {
-          font-size: 9px;
+          font-size: 8px;
           padding: 1px 4px;
-          margin-left: 4px;
         }
 
         .goalkeeper-badge {
           font-size: 14px;
-          margin-left: 4px;
         }
       }
 
@@ -170,37 +241,51 @@
           width: 95%;
         }
 
+        table {
+          min-width: 300px;
+        }
+
         th, td {
           padding: 6px 4px;
-          font-size: 12px;
+          font-size: 10px;
         }
 
         th {
-          font-size: 11px;
+          padding: 8px 4px;
         }
       }
     </style>
   </head>
   <body>
 
-  <h1>Ekipa Crvenih</h1>
+  <div class="container">
+    <!-- HEADER -->
+    <header>
+      <div class="logo">⚽ Ekipa Crvenih</div>
+    </header>
 
-  <img src="crveni-team.png" class="team-image" alt="Ekipa Crvenih">
+    <!-- MAIN CARD -->
+    <div class="card">
+      <h1>Ekipa Crvenih</h1>
 
-  <div class="table-wrapper">
-    <table>
-      <thead>
-        <tr>
-          <th data-sort="name">Igrač</th>
-          <th data-sort="matches">Utakmice</th>
-          <th data-sort="goals">Golovi</th>
-        </tr>
-      </thead>
-      <tbody id="teamTable"></tbody>
-    </table>
+      <img src="crveni-team.png" class="team-image" alt="Ekipa Crvenih">
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th data-sort="name">Igrač</th>
+              <th data-sort="matches">Utakmice</th>
+              <th data-sort="goals">Golovi</th>
+            </tr>
+          </thead>
+          <tbody id="teamTable"></tbody>
+        </table>
+      </div>
+
+      <a href="index.html" class="back-btn">← Nazad na rezultate</a>
+    </div>
   </div>
-
-  <a href="index.html">← Nazad na rezultate</a>
 
   <script type="module">
   import { onValue } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
