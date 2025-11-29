@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
     <html lang="sr">
     <head>
       <meta charset="UTF-8">
@@ -31,8 +31,14 @@
           border-radius: 16px;
           padding: 25px 35px;
           margin-bottom: 35px;
-          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
           text-align: center;
+          transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        header:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
         }
 
         .logo {
@@ -116,39 +122,35 @@
         .card {
           background: white;
           border-radius: 16px;
-          padding: 35px;
+          padding: 0;
           margin-bottom: 30px;
-          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+          box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+          overflow: hidden;
+          transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+          transform: translateY(-4px);
+          box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+        }
+
+        /* Section headers with gradient */
+        .card-header {
+          padding: 25px 35px 20px;
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          color: white;
+          margin: 0;
+        }
+
+        .card-content {
+          padding: 30px 35px 35px;
         }
 
         h1, h2 {
           font-size: 24px;
           font-weight: 700;
-          margin-bottom: 25px;
-          color: #2d3436;
-          text-align: center;
-        }
-
-        h2 {
-          margin-top: 0;
-        }
-
-        /* Special styling for recent matches card */
-        .recent-matches-card {
-          padding: 0;
-          overflow: hidden;
-        }
-
-        .recent-matches-card h2 {
           margin: 0;
-          padding: 30px 35px 20px;
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-          color: white;
-          border-radius: 16px 16px 0 0;
-        }
-
-        .recent-matches-content {
-          padding: 25px 35px 35px;
+          text-align: center;
         }
 
         /* MATCH BOX */
@@ -157,7 +159,6 @@
           border-radius: 12px;
           background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
           border: 2px solid #f0f0f0;
-          margin-bottom: 20px;
         }
 
         /* Recent match boxes - lighter styling */
@@ -168,6 +169,11 @@
           border-radius: 0;
           padding: 20px 0;
           margin-bottom: 0;
+          transition: background 0.2s ease;
+        }
+
+        .recent-matches-content .match-box:hover {
+          background: rgba(102, 126, 234, 0.02);
         }
 
         .recent-matches-content .match-box:last-of-type {
@@ -184,7 +190,7 @@
 
         .match-links {
           display: flex;
-          gap: 10px;
+          gap: 8px;
           justify-content: center;
           margin-top: 12px;
           flex-wrap: wrap;
@@ -194,6 +200,11 @@
           width: 90px;
           height: 90px;
           object-fit: contain;
+          transition: transform 0.3s ease;
+        }
+
+        .team-logo:hover {
+          transform: scale(1.1);
         }
 
         .team-name {
@@ -206,42 +217,47 @@
           font-size: 42px;
           font-weight: bold;
           margin: 10px 0;
-          color: #667eea;
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
         }
 
         .score-small {
           font-size: 28px;
           font-weight: bold;
           margin: 5px 0;
-          color: #667eea;
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
         }
 
         .info-link {
           color: white;
           cursor: pointer;
-          font-size: 13px;
+          font-size: 12px;
           text-decoration: none;
           display: inline-block;
-          padding: 8px 16px;
+          padding: 6px 14px;
           background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-          border-radius: 8px;
+          border-radius: 6px;
           transition: all 0.3s ease;
           font-weight: 500;
-          box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+          box-shadow: 0 2px 6px rgba(102, 126, 234, 0.25);
         }
 
         .info-link:hover {
           background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
-          transform: translateY(-2px);
-          box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+          transform: translateY(-1px);
+          box-shadow: 0 3px 10px rgba(102, 126, 234, 0.35);
         }
 
         /* TABLES */
         .table-wrapper {
           overflow-x: auto;
-          margin-top: 25px;
-          border-radius: 12px;
-          border: 2px solid #f0f0f0;
+          margin-top: 0;
+          border-radius: 8px;
         }
 
         table {
@@ -253,9 +269,8 @@
         /* Narrower table for scorers */
         .scorers-table-wrapper {
           overflow-x: auto;
-          margin: 25px auto 0;
-          border-radius: 12px;
-          border: 2px solid #f0f0f0;
+          margin: 0 auto;
+          border-radius: 8px;
           max-width: 600px;
         }
 
@@ -272,7 +287,7 @@
           background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
           padding: 16px 12px;
           text-align: left;
-          font-size: 13px;
+          font-size: 12px;
           font-weight: 700;
           color: #636e72;
           text-transform: uppercase;
@@ -281,10 +296,11 @@
           cursor: pointer;
           user-select: none;
           white-space: nowrap;
+          transition: background 0.2s ease;
         }
 
         th:hover {
-          background: #e0e0e0;
+          background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
         }
 
         th.no-sort {
@@ -297,13 +313,13 @@
 
         th.sorted-asc::after {
           content: " ▲";
-          font-size: 12px;
+          font-size: 11px;
           color: #667eea;
         }
 
         th.sorted-desc::after {
           content: " ▼";
-          font-size: 12px;
+          font-size: 11px;
           color: #667eea;
         }
 
@@ -313,23 +329,40 @@
           font-size: 14px;
           color: #2d3436;
           text-align: center;
+          transition: background 0.2s ease;
         }
 
-        tr:hover {
-          background: #f8f9fa;
+        tbody tr:nth-child(even) {
+          background: #fafafa;
+        }
+
+        tbody tr:hover {
+          background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
         }
 
         tr.highlight {
-          background: #fff7d1;
+          background: linear-gradient(135deg, #fff9e6 0%, #fffbf0 100%) !important;
+        }
+
+        tr.highlight:hover {
+          background: linear-gradient(135deg, #fff5d6 0%, #fff9e0 100%) !important;
         }
 
         /* SCORER COLORS */
         tr.team-crveni {
-          background: #ffe5e5;
+          background: #fff5f5 !important;
         }
 
         tr.team-plavi {
-          background: #e5f0ff;
+          background: #f5f9ff !important;
+        }
+
+        tr.team-crveni:hover {
+          background: #ffebeb !important;
+        }
+
+        tr.team-plavi:hover {
+          background: #ebf3ff !important;
         }
 
         tr.team-crveni td:first-child {
@@ -362,7 +395,7 @@
 
         /* FORM */
         .form-box {
-          margin-top: 25px;
+          margin-top: 0;
           text-align: center;
           font-size: 17px;
           display: flex;
@@ -389,42 +422,50 @@
         }
 
         .dot {
-          width: 18px;
-          height: 18px;
+          width: 20px;
+          height: 20px;
           border-radius: 50%;
           display: inline-block;
-          box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-          transition: transform 0.2s ease;
+          box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+          transition: all 0.2s ease;
+          cursor: pointer;
         }
 
         .dot:hover {
-          transform: scale(1.2);
+          transform: scale(1.3);
+          box-shadow: 0 3px 8px rgba(0,0,0,0.25);
         }
 
-        .win { background: #00b894; }
-        .loss { background: #ff4757; }
-        .draw { background: #fdcb6e; }
+        .win {
+          background: linear-gradient(135deg, #00b894, #00d2a0);
+        }
+        .loss {
+          background: linear-gradient(135deg, #ff4757, #ff6b7a);
+        }
+        .draw {
+          background: linear-gradient(135deg, #fdcb6e, #ffeaa7);
+        }
 
         /* BUTTONS */
         .more-btn {
           width: 100%;
-          padding: 18px;
+          padding: 16px;
           border: none;
-          border-radius: 12px;
-          font-size: 16px;
+          border-radius: 10px;
+          font-size: 15px;
           font-weight: 700;
           cursor: pointer;
           transition: all 0.3s ease;
           margin-top: 25px;
           text-transform: uppercase;
-          letter-spacing: 0.5px;
+          letter-spacing: 1px;
           background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
           color: white;
-          box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+          box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
         }
 
         .more-btn:hover {
-          box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+          box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
           transform: translateY(-2px);
           background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
         }
@@ -440,6 +481,12 @@
           backdrop-filter: blur(4px);
           z-index: 999;
           padding: 20px;
+          animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
         }
 
         #modalBox {
@@ -479,11 +526,12 @@
           font-size: 28px;
           color: #999;
           line-height: 1;
-          transition: color 0.3s ease;
+          transition: all 0.3s ease;
         }
 
         #closeModal:hover {
           color: #333;
+          transform: rotate(90deg);
         }
 
         #modalContent {
@@ -499,6 +547,11 @@
           border-radius: 8px;
           font-size: 15px;
           font-weight: 500;
+          transition: all 0.2s ease;
+        }
+
+        .scorer-item:hover {
+          transform: translateX(5px);
         }
 
         .scorer-item.red {
@@ -553,27 +606,24 @@
           }
 
           .card {
-            padding: 25px;
             border-radius: 12px;
             margin-bottom: 25px;
           }
 
-          .recent-matches-card h2 {
-            padding: 25px 25px 18px;
+          .card-header {
+            padding: 20px 25px 16px;
           }
 
-          .recent-matches-content {
-            padding: 20px 25px 25px;
+          .card-content {
+            padding: 25px;
           }
 
           h1, h2 {
             font-size: 20px;
-            margin-bottom: 20px;
           }
 
           .match-box {
             padding: 20px;
-            margin-bottom: 15px;
           }
 
           .recent-matches-content .match-box {
@@ -585,13 +635,13 @@
           }
 
           .match-links {
-            gap: 8px;
+            gap: 6px;
             margin-top: 10px;
           }
 
           .info-link {
-            font-size: 12px;
-            padding: 7px 14px;
+            font-size: 11px;
+            padding: 5px 12px;
           }
 
           .team-logo {
@@ -610,11 +660,6 @@
 
           .score-small {
             font-size: 22px;
-          }
-
-          .table-wrapper,
-          .scorers-table-wrapper {
-            margin-top: 20px;
           }
 
            /* Hide less important columns on mobile for league table */
@@ -659,13 +704,14 @@
           }
 
           .dot {
-            width: 16px;
-            height: 16px;
+            width: 18px;
+            height: 18px;
           }
 
           .more-btn {
-            padding: 16px;
-            margin-top: 18px;
+            padding: 14px;
+            margin-top: 20px;
+            font-size: 14px;
           }
 
           #modalBox {
@@ -702,20 +748,16 @@
           }
 
           .card {
-            padding: 20px;
+            border-radius: 12px;
             margin-bottom: 20px;
           }
 
-          .recent-matches-card {
-            padding: 0;
+          .card-header {
+            padding: 18px 20px 14px;
           }
 
-          .recent-matches-card h2 {
-            padding: 20px 20px 15px;
-          }
-
-          .recent-matches-content {
-            padding: 18px 20px 20px;
+          .card-content {
+            padding: 20px;
           }
 
           h1, h2 {
@@ -776,8 +818,8 @@
           }
 
           .dot {
-            width: 14px;
-            height: 14px;
+            width: 16px;
+            height: 16px;
           }
         }
       </style>
@@ -798,54 +840,62 @@
 
       <!-- MAIN MATCH -->
       <div class="card">
-        <h1>Rezultat poslednjeg kola</h1>
-        <div id="mainMatch"></div>
+        <h1 class="card-header">Rezultat poslednjeg kola</h1>
+        <div class="card-content">
+          <div id="mainMatch"></div>
+        </div>
       </div>
 
       <!-- TABELA -->
       <div class="card">
-        <h2>Tabela</h2>
-        <div class="table-wrapper">
-          <table>
-            <thead>
-              <tr>
-                <th class="no-sort">Tim</th>
-                <th data-sort="U" data-table="league">Utakmice</th>
-                <th data-sort="P" data-table="league">Pobede</th>
-                <th data-sort="N" data-table="league">Nerešeno</th>
-                <th data-sort="I" data-table="league">Porazi</th>
-                <th data-sort="GD" data-table="league">Dati</th>
-                <th data-sort="GP" data-table="league">Primljeni</th>
-                <th data-sort="GR" data-table="league">Razlika</th>
-                <th data-sort="B" data-table="league">Bodovi</th>
-              </tr>
-            </thead>
-            <tbody id="leagueBody"></tbody>
-          </table>
+        <h2 class="card-header">Tabela</h2>
+        <div class="card-content">
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th class="no-sort">Tim</th>
+                  <th data-sort="U" data-table="league">Utakmice</th>
+                  <th data-sort="P" data-table="league">Pobede</th>
+                  <th data-sort="N" data-table="league">Nerešeno</th>
+                  <th data-sort="I" data-table="league">Porazi</th>
+                  <th data-sort="GD" data-table="league">Dati</th>
+                  <th data-sort="GP" data-table="league">Primljeni</th>
+                  <th data-sort="GR" data-table="league">Razlika</th>
+                  <th data-sort="B" data-table="league">Bodovi</th>
+                </tr>
+              </thead>
+              <tbody id="leagueBody"></tbody>
+            </table>
+          </div>
         </div>
       </div>
 
       <!-- LISTA STRELACA -->
       <div class="card">
-        <h2>Lista strelaca</h2>
-        <div class="scorers-table-wrapper">
-          <table>
-            <thead>
-              <tr>
-                <th data-sort="name" data-table="scorers">Ime</th>
-                <th data-sort="team" data-table="scorers">Tim</th>
-                <th data-sort="goals" data-table="scorers">Golovi</th>
-              </tr>
-            </thead>
-            <tbody id="scorersBody"></tbody>
-          </table>
+        <h2 class="card-header">Lista strelaca</h2>
+        <div class="card-content">
+          <div class="scorers-table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th data-sort="name" data-table="scorers">Ime</th>
+                  <th data-sort="team" data-table="scorers">Tim</th>
+                  <th data-sort="goals" data-table="scorers">Golovi</th>
+                </tr>
+              </thead>
+              <tbody id="scorersBody"></tbody>
+            </table>
+          </div>
         </div>
       </div>
 
       <!-- FORMA -->
       <div class="card">
-        <h2>Forma poslednjih 5 mečeva</h2>
-        <div class="form-box" id="formBox"></div>
+        <h2 class="card-header">Forma poslednjih 5 mečeva</h2>
+        <div class="card-content">
+          <div class="form-box" id="formBox"></div>
+        </div>
       </div>
 
       <!-- RECENT MATCHES -->
@@ -944,8 +994,8 @@
       const latest = matches[0];
 
       const matchLinks = `
-        ${latest.info ? `<div class="info-link" onclick="openMatchInfo(0)">ℹ️ Info o meču</div>` : ""}
-        <div class="info-link" onclick="openMatchScorers(0)">⚽ Lista strelaca</div>
+        ${latest.info ? `<div class="info-link" onclick="openMatchInfo(0)">ℹ️ Info</div>` : ""}
+        <div class="info-link" onclick="openMatchScorers(0)">⚽ Strelci</div>
       `;
 
       mainBox.innerHTML = `
@@ -1012,9 +1062,9 @@
         });
 
         recentBox.innerHTML = `
-          <div class="card recent-matches-card">
-            <h2>Rezultati prošlih kola</h2>
-            <div class="recent-matches-content">
+          <div class="card">
+            <h2 class="card-header">Rezultati prošlih kola</h2>
+            <div class="card-content recent-matches-content">
               ${matchesHTML}
               <button class="more-btn" onclick="window.location='istorija.html'">
                 Vidi sve utakmice →
@@ -1086,7 +1136,7 @@
             <td>${team.GD}</td>
             <td>${team.GP}</td>
             <td>${team.GR}</td>
-            <td>${team.B}</td>
+            <td><strong>${team.B}</strong></td>
           </tr>
         `;
       });
@@ -1131,7 +1181,7 @@
           <tr class="team-${player.teamKey}">
             <td>${formatPlayerName(player.name)}</td>
             <td>${player.team}</td>
-            <td>${player.goals}</td>
+            <td><strong>${player.goals}</strong></td>
           </tr>
         `;
       });
