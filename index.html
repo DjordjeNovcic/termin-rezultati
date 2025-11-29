@@ -596,8 +596,18 @@
           margin-top: 20px;
         }
 
+         /* Hide less important columns on mobile for league table */
+        .table-wrapper table th:nth-child(2),
+        .table-wrapper table td:nth-child(2),  /* Utakmice */
+        .table-wrapper table th:nth-child(5),
+        .table-wrapper table td:nth-child(5),  /* Porazi */
+        .table-wrapper table th:nth-child(8),
+        .table-wrapper table td:nth-child(8) { /* G. razlika */
+        display: none;
+        }
+
         table {
-          min-width: 450px;
+          min-width: 380px;
         }
 
         .scorers-table-wrapper table {
