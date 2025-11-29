@@ -1,113 +1,92 @@
-
-  /* CSS Variables for theming (ready for dark mode) */
-  :root {
-    /* Colors */
-    --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    --bg-body: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    --bg-card: #ffffff;
-    --text-primary: #333;
-    --text-secondary: #666;
-    --text-light: #999;
-
-    /* Team Colors */
-    --team-red: #e53e3e;
-    --team-blue: #3182ce;
-    --team-red-light: rgba(229, 62, 62, 0.1);
-    --team-blue-light: rgba(49, 130, 206, 0.1);
-
-    /* UI Elements */
-    --border-color: #ddd;
-    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.1);
-    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.1);
-    --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.1);
-    --shadow-button: 0 4px 15px rgba(102, 126, 234, 0.4);
-
-    /* Spacing */
-    --spacing-xs: 5px;
-    --spacing-sm: 10px;
-    --spacing-md: 20px;
-    --spacing-lg: 30px;
-
-    /* Border Radius */
-    --radius-sm: 8px;
-    --radius-md: 12px;
-    --radius-lg: 16px;
-
-    /* Transitions */
-    --transition-fast: 0.2s ease;
-    --transition-normal: 0.3s ease;
-  }
-
-  /* Dark theme (ready to implement) */
-  [data-theme="dark"] {
-    --bg-body: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-    --bg-card: #2a2a3e;
-    --text-primary: #e0e0e0;
-    --text-secondary: #b0b0b0;
-    --text-light: #808080;
-    --border-color: #444;
-    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
-    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.3);
-    --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.3);
-  }
-
-  /* ============================================
-     GLOBAL RESET & BASE STYLES
+ /* ============================================
+     GLOBAL STYLES - MATCH APP
      ============================================ */
 
   * {
+    box-sizing: border-box;
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
   }
 
   body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: var(--bg-body);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     min-height: 100vh;
     padding: 20px 10px;
-    color: var(--text-primary);
-    line-height: 1.6;
   }
-
-  /* ============================================
-     TYPOGRAPHY
-     ============================================ */
-
-  h1, h2, h3, h4, h5, h6 {
-    margin-bottom: var(--spacing-sm);
-    font-weight: 600;
-  }
-
-  h1 { font-size: 28px; }
-  h2 { font-size: 24px; }
-  h3 { font-size: 20px; }
-
-  /* ============================================
-     LAYOUT - CONTAINER & CARDS
-     ============================================ */
 
   .container {
-    max-width: 1200px;
+    max-width: 800px;
     margin: 0 auto;
-    padding: 0 var(--spacing-sm);
   }
 
-  .card {
-    background: var(--bg-card);
-    border-radius: var(--radius-lg);
-    padding: var(--spacing-lg);
-    margin-bottom: var(--spacing-md);
-    box-shadow: var(--shadow-lg);
-    transition: transform var(--transition-normal);
-  }
-
-  .card h2 {
-    margin-bottom: var(--spacing-md);
-    color: var(--text-primary);
+  /* HEADER */
+  header {
+    background: white;
+    border-radius: 16px;
+    padding: 20px 30px;
+    margin-bottom: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    gap: var(--spacing-sm);
+    flex-wrap: wrap;
+    gap: 15px;
+  }
+
+  .logo {
+    font-size: 24px;
+    font-weight: bold;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .nav-buttons {
+    display: flex;
+    gap: 10px;
+  }
+
+  .nav-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: #f0f0f0;
+    color: #333;
+  }
+
+  .nav-btn:hover {
+    background: #e0e0e0;
+    transform: translateY(-2px);
+  }
+
+  .nav-btn.active {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+  }
+
+  .nav-btn.logout {
+    background: #ff4757;
+    color: white;
+  }
+
+  .nav-btn.logout:hover {
+    background: #ee5a6f;
+  }
+
+  /* MAIN CARD */
+  .card {
+    background: white;
+    border-radius: 16px;
+    padding: 30px;
+    margin-bottom: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
   }
 
   .card-title {
@@ -116,6 +95,11 @@
     margin-bottom: 25px;
     color: #2d3436;
     text-align: center;
+  }
+
+  /* FORM STYLING */
+  .form-group {
+    margin-bottom: 20px;
   }
 
   .form-label {
@@ -128,21 +112,7 @@
     letter-spacing: 0.5px;
   }
 
-  .form-group {
-    margin-bottom: 20px;
-  }
-
-  /* ============================================
-     FORMS
-     ============================================ */
-
-  input[type="text"],
-  input[type="number"],
-  input[type="date"],
-  input[type="time"],
-  input[type="password"],
-  textarea,
-  select {
+  input, textarea {
     width: 100%;
     padding: 14px 16px;
     border: 2px solid #e0e0e0;
@@ -150,46 +120,182 @@
     font-size: 15px;
     transition: all 0.3s ease;
     font-family: inherit;
-    background: var(--bg-card);
-    color: var(--text-primary);
   }
 
-  input:focus,
-  textarea:focus,
-  select:focus {
+  input:focus, textarea:focus {
     outline: none;
     border-color: #667eea;
     box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
   }
 
   textarea {
-    resize: vertical;
     min-height: 100px;
+    resize: vertical;
   }
 
-  /* ============================================
-     BUTTONS
-     ============================================ */
+  .input-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+  }
 
-  button, .btn {
-    padding: 16px 24px;
+  /* SECTION HEADERS */
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 30px 0 15px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #f0f0f0;
+  }
+
+  .section-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+  }
+
+  .section-icon.red {
+    background: #ffe5e5;
+    color: #d63031;
+  }
+
+  .section-icon.blue {
+    background: #e5f0ff;
+    color: #0984e3;
+  }
+
+  .section-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #2d3436;
+  }
+
+  /* PLAYER BUTTONS */
+  .players-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+
+  .player-btn {
+    padding: 10px 16px;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    background: white;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    user-select: none;
+  }
+
+  .player-btn:hover {
+    border-color: #b2bec3;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
+
+  .player-btn.active {
+    font-weight: 700;
+    color: white;
+    border: 2px solid transparent;
+  }
+
+  #playedRed .player-btn.active,
+  #scorersRedPlayers .player-btn.active {
+    background: linear-gradient(135deg, #d63031 0%, #e17055 100%);
+    box-shadow: 0 4px 15px rgba(214, 48, 49, 0.3);
+  }
+
+  #playedBlue .player-btn.active,
+  #scorersBluePlayers .player-btn.active {
+    background: linear-gradient(135deg, #0984e3 0%, #00b894 100%);
+    box-shadow: 0 4px 15px rgba(9, 132, 227, 0.3);
+  }
+
+  /* BADGES */
+  .captain-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, #ffd700, #ffed4e);
+    color: #333;
+    font-weight: bold;
+    padding: 2px 6px;
+    border-radius: 4px;
+    margin-left: 6px;
+    font-size: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+  }
+
+  .goalkeeper-badge {
+    margin-left: 6px;
+    font-size: 16px;
+  }
+
+  /* SCORER TAGS */
+  .scorers-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  .tag {
+    background: #f0f0f0;
+    padding: 8px 12px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .tag button {
+    width: 22px;
+    height: 22px;
+    border: none;
+    border-radius: 50%;
+    background: #ff4757;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    line-height: 1;
+    transition: all 0.2s ease;
+  }
+
+  .tag button:hover {
+    background: #ee5a6f;
+    transform: scale(1.1);
+  }
+
+  /* ACTION BUTTONS */
+  .btn {
+    width: 100%;
+    padding: 16px;
     border: none;
     border-radius: 12px;
-    cursor: pointer;
     font-size: 16px;
     font-weight: 700;
+    cursor: pointer;
     transition: all 0.3s ease;
     margin-top: 15px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    min-height: 48px;
   }
 
   .btn-primary {
     background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
     color: white;
     box-shadow: 0 4px 15px rgba(0, 184, 148, 0.3);
-    width: 100%;
   }
 
   .btn-primary:hover {
@@ -197,42 +303,77 @@
     transform: translateY(-2px);
   }
 
-  /* Small buttons (for tables) */
-  .edit-btn, .del-btn {
-    padding: 8px 14px;
+  .btn-warning {
+    background: linear-gradient(135deg, #fdcb6e 0%, #e17055 100%);
+    color: white;
+    display: none;
+    box-shadow: 0 4px 15px rgba(253, 203, 110, 0.3);
+  }
+
+  .btn-secondary {
+    background: #636e72;
+    color: white;
+    display: none;
+  }
+
+  .btn-secondary:hover {
+    background: #4a5558;
+  }
+
+  /* MATCHES TABLE */
+  .table-wrapper {
+    overflow-x: auto;
+    margin-top: 25px;
+    border-radius: 12px;
+    border: 2px solid #f0f0f0;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 600px;
+  }
+
+  th {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    padding: 15px 12px;
+    text-align: left;
+    font-size: 13px;
+    font-weight: 700;
+    color: #636e72;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    border-bottom: 2px solid #e0e0e0;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  th:hover {
+    background: #e0e0e0;
+  }
+
+  th.sorted-asc::after {
+    content: " ▲";
     font-size: 12px;
-    font-weight: 600;
-    border-radius: 8px;
-    min-height: 36px;
-    margin-right: 6px;
-    text-transform: none;
-    letter-spacing: normal;
+    color: #667eea;
   }
 
-  .edit-btn {
-    background: #667eea;
-    color: white;
-    border: none;
-    cursor: pointer;
-    transition: all 0.2s ease;
+  th.sorted-desc::after {
+    content: " ▼";
+    font-size: 12px;
+    color: #667eea;
   }
 
-  .edit-btn:hover {
-    background: #5568d3;
-    transform: scale(1.05);
+  td {
+    padding: 15px 12px;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 14px;
+    color: #2d3436;
+    text-align: center;
   }
 
-  .del-btn {
-    background: #ff4757;
-    color: white;
-    border: none;
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
-
-  .del-btn:hover {
-    background: #ee5a6f;
-    transform: scale(1.05);
+  tr:hover {
+    background: #f8f9fa;
   }
 
   .table-btn {
@@ -266,107 +407,93 @@
     transform: scale(1.05);
   }
 
-  /* ============================================
-     TABLES
-     ============================================ */
-
-  .table-wrapper {
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    margin: var(--spacing-md) 0;
-    border-radius: 12px;
-    border: 2px solid #f0f0f0;
-  }
-
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    background: var(--bg-card);
-    min-width: 600px;
-  }
-
-  thead {
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-  }
-
-  th {
-    padding: 15px 12px;
-    text-align: left;
-    font-size: 13px;
-    font-weight: 700;
-    color: #636e72;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    border-bottom: 2px solid #e0e0e0;
-    cursor: pointer;
-    user-select: none;
-    position: relative;
-  }
-
-  th:hover {
-    background: #e9ecef;
-  }
-
-  th.sorted-asc::after {
-    content: " ▲";
-    font-size: 12px;
-    color: #667eea;
-  }
-
-  th.sorted-desc::after {
-    content: " ▼";
-    font-size: 12px;
-    color: #667eea;
-  }
-
-  td {
-    padding: 15px 12px;
-    border-bottom: 1px solid #f0f0f0;
-    font-size: 14px;
-    color: #2d3436;
-    text-align: center;
-  }
-
-  tbody tr {
-    transition: background-color var(--transition-fast);
-  }
-
-  tbody tr:hover {
-    background: #f8f9fa;
-  }
-
-  tbody tr:last-child td {
-    border-bottom: none;
-  }
-
-  /* ============================================
-     BADGES
-     ============================================ */
-
-  .captain-badge {
-    display: inline-block;
-    background: linear-gradient(135deg, #ffd700, #ffed4e);
-    color: #333;
+  /* For admin-igraci.html specific */
+  .team-title {
+    font-size: 22px;
     font-weight: bold;
-    padding: 2px 6px;
-    border-radius: 4px;
-    margin-left: 6px;
-    font-size: 10px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+    margin: 25px 0 15px;
   }
 
-  .goalkeeper-badge {
-    margin-left: 6px;
+  .add-btn {
+    background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 10px;
+    border: none;
+    cursor: pointer;
     font-size: 16px;
+    min-height: 48px;
+    white-space: nowrap;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0, 184, 148, 0.3);
   }
 
-  /* ============================================
-     MOBILE RESPONSIVE
-     ============================================ */
+  .add-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 184, 148, 0.4);
+  }
 
+  .edit-btn, .del-btn {
+    padding: 8px 14px;
+    border: none;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-right: 6px;
+  }
+
+  .edit-btn {
+    background: #667eea;
+    color: white;
+  }
+
+  .edit-btn:hover {
+    background: #5568d3;
+    transform: scale(1.05);
+  }
+
+  .del-btn {
+    background: #ff4757;
+    color: white;
+  }
+
+  .del-btn:hover {
+    background: #ee5a6f;
+    transform: scale(1.05);
+  }
+
+  /* MOBILE RESPONSIVE */
   @media (max-width: 768px) {
     body {
       padding: 10px 5px;
+    }
+
+    .container {
+      max-width: 100%;
+    }
+
+    header {
+      padding: 15px 20px;
+      border-radius: 12px;
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .logo {
+      text-align: center;
+      font-size: 20px;
+    }
+
+    .nav-buttons {
+      flex-direction: column;
+    }
+
+    .nav-btn {
+      width: 100%;
+      text-align: center;
     }
 
     .card {
@@ -378,6 +505,24 @@
       font-size: 20px;
     }
 
+    .input-row {
+      grid-template-columns: 1fr;
+    }
+
+    .section-header {
+      margin: 20px 0 12px;
+    }
+
+    .player-btn {
+      font-size: 13px;
+      padding: 10px 14px;
+    }
+
+    .team-title {
+      font-size: 20px;
+      margin: 20px 0 12px;
+    }
+
     table {
       min-width: 500px;
     }
@@ -387,10 +532,7 @@
       font-size: 12px;
     }
 
-    .edit-btn, .del-btn, .table-btn {
-      padding: 6px 8px;
-      font-size: 11px;
-      min-height: 32px;
+    .table-btn, .edit-btn, .del-btn {
       display: block;
       width: 100%;
       margin: 4px 0;
@@ -402,12 +544,16 @@
       padding: 15px;
     }
 
-    table {
-      min-width: 450px;
+    .section-title, .team-title {
+      font-size: 16px;
     }
 
-    th, td {
-      padding: 10px 6px;
-      font-size: 11px;
+    .player-btn {
+      font-size: 12px;
+      padding: 8px 12px;
+    }
+
+    table {
+      min-width: 450px;
     }
   }
