@@ -285,14 +285,17 @@ async function updateOne(team,id,field,delta){
   await update(ref, { [field]: next });
 }
 
-async function applyStats(match,dir){
-  Object.entries(match.played||{}).forEach(([id,team])=>{
-    updateOne(team,id,"matches",dir);
-  });
+async function applyStats(match, dir) {
+  const played = Object.entries(match.played || {});
+  const scor = match.scorers || [];
 
-  (match.scorers||[]).forEach(s=>{
-    updateOne(s.team,s.id,"goals",dir);
-  });
+  for (const [id, team] of played) {
+    await updateOne(team, id, "matches", dir);
+  }
+
+  for (const s of scor) {
+    await updateOne(s.team, s.id, "goals", dir);
+  }
 }
 
 /* -------------------------
@@ -315,12 +318,13 @@ saveBtn.onclick = async () =>{
     timestamp:Date.now()
   };
 
-  await push(window.dbRef("matches"), match);
+  const newRef = await push(window.dbRef("matches"), match);
+
   await applyStats(match, +1);
 
   clearForm();
 };
-
+  
 /* -------------------------
          UPDATE MATCH
 --------------------------*/
@@ -342,11 +346,13 @@ updateBtn.onclick = async () => {
     blue:+blue.value,
     info:info.value.trim(),
     played:getPlayed(),
-    scorers: scorersCopy
+    scorers: scorersCopy,
+    timestamp: oldMatch.timestamp
   };
 
   await update(window.dbRef(`matches/${editingId}`), newMatch);
   await applyStats(newMatch, +1);
+
   clearForm();
 };
 
