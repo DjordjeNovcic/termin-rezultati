@@ -1,435 +1,509 @@
-<!DOCTYPE html>
-<html lang="sr">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ekipa Crvenih</title>
-  <script type="module" src="firebase.mjs"></script>
+ <!DOCTYPE html>
+  <html lang="sr">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ekipa Crvenih</title>
+    <script type="module" src="firebase.mjs"></script>
 
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      min-height: 100vh;
-      padding: 20px;
-    }
-
-    header {
-      background: white;
-      border-radius: 16px;
-      padding: 20px 30px;
-      margin-bottom: 30px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .logo {
-      font-size: 28px;
-      font-weight: 700;
-      background: linear-gradient(135deg, #d63031 0%, #e17055 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-
-    .card {
-      background: white;
-      border-radius: 16px;
-      padding: 30px;
-      margin: 0 auto;
-      max-width: 900px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-      animation: fadeIn 0.5s ease-in;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    h1 {
-      color: #d63031;
-      margin-bottom: 25px;
-      font-size: 32px;
-      text-align: center;
-    }
-
-    .team-image {
-      width: 80%;
-      max-width: 500px;
-      border-radius: 12px;
-      margin: 0 auto 30px;
-      display: block;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-    }
-
-    .table-wrapper {
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
-      margin: 0 -10px;
-      padding: 0 10px;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      min-width: 500px;
-    }
-
-    th, td {
-      padding: 14px 12px;
-      text-align: left;
-      border-bottom: 1px solid #f0f0f0;
-    }
-
-    th {
-      background: linear-gradient(135deg, #d63031 0%, #e17055 100%);
-      color: white;
-      font-weight: 600;
-      cursor: pointer;
-      user-select: none;
-      position: relative;
-      white-space: nowrap;
-      transition: transform 0.2s ease;
-    }
-
-    th:hover {
-      transform: translateY(-2px);
-    }
-
-    th:active {
-      transform: translateY(0);
-    }
-
-    th.sorted-asc::after {
-      content: " ▲";
-      font-size: 11px;
-      margin-left: 6px;
-    }
-
-    th.sorted-desc::after {
-      content: " ▼";
-      font-size: 11px;
-      margin-left: 6px;
-    }
-
-    th:first-child {
-      border-top-left-radius: 10px;
-    }
-
-    th:last-child {
-      border-top-right-radius: 10px;
-    }
-
-    tbody tr {
-      transition: background 0.2s ease;
-    }
-
-    tbody tr:hover {
-      background: #ffe5e5;
-    }
-
-    td:nth-child(2),
-    td:nth-child(3),
-    th:nth-child(2),
-    th:nth-child(3) {
-      text-align: center;
-    }
-
-    .back-link {
-      display: inline-block;
-      margin-top: 25px;
-      color: white;
-      text-decoration: none;
-      font-size: 16px;
-      font-weight: 500;
-      padding: 12px 24px;
-      background: linear-gradient(135deg, #d63031 0%, #e17055 100%);
-      border-radius: 10px;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 12px rgba(214, 48, 49, 0.3);
-    }
-
-    .back-link:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(214, 48, 49, 0.4);
-    }
-
-    .back-link:active {
-      transform: translateY(0);
-    }
-
-    /* Captain and Goalkeeper badges */
-    .captain-badge {
-      display: inline-block;
-      background: linear-gradient(135deg, #ffd700, #ffed4e);
-      color: #333;
-      font-weight: bold;
-      padding: 3px 7px;
-      border-radius: 5px;
-      margin-left: 8px;
-      font-size: 11px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
-      border: 1px solid #daa520;
-    }
-
-    .goalkeeper-badge {
-      margin-left: 8px;
-      font-size: 18px;
-    }
-
-    /* MOBILE STYLES */
-    @media (max-width: 768px) {
-      body {
-        padding: 15px;
+    <style>
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
       }
 
+      body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 30px 15px;
+      }
+
+      .container {
+        max-width: 900px;
+        margin: 0 auto;
+      }
+
+      /* HEADER */
       header {
-        padding: 15px 20px;
-        margin-bottom: 20px;
+        background: white;
+        border-radius: 16px;
+        padding: 25px 35px;
+        margin-bottom: 35px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        text-align: center;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      header:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
       }
 
       .logo {
-        font-size: 22px;
-      }
-
-      .card {
-        padding: 20px;
-      }
-
-      h1 {
-        font-size: 26px;
-        margin-bottom: 20px;
-      }
-
-      .team-image {
-        width: 90%;
-        max-width: 350px;
-        margin-bottom: 20px;
-      }
-
-      .table-wrapper {
-        margin: 0 -10px;
-      }
-
-      table {
-        min-width: 400px;
-      }
-
-      th, td {
-        padding: 10px 6px;
-        font-size: 13px;
-      }
-
-      th {
-        font-size: 12px;
-      }
-
-      .back-link {
-        width: 100%;
-        text-align: center;
-        font-size: 15px;
-        padding: 14px;
-      }
-
-      .captain-badge {
-        font-size: 9px;
-        padding: 2px 5px;
-        margin-left: 5px;
-      }
-
-      .goalkeeper-badge {
-        font-size: 15px;
-        margin-left: 5px;
-      }
-    }
-
-    @media (max-width: 480px) {
-      .card {
-        padding: 15px;
-      }
-
-      h1 {
-        font-size: 22px;
-      }
-
-      .team-image {
-        width: 95%;
+        font-size: 32px;
+        font-weight: bold;
+        background: linear-gradient(135deg, #d63031 0%, #e17055 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
         margin-bottom: 15px;
       }
 
+      .back-link-header {
+        display: inline-block;
+        color: #666;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 500;
+        padding: 10px 20px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+      }
+
+      .back-link-header:hover {
+        background: #e9ecef;
+        transform: translateY(-2px);
+        color: #333;
+      }
+
+      /* CARD */
+      .card {
+        background: white;
+        border-radius: 16px;
+        padding: 0;
+        margin-bottom: 30px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        animation: fadeIn 0.5s ease;
+      }
+
+      .card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+      }
+
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+
+      /* Section header with gradient */
+      .card-header {
+        padding: 25px 35px 20px;
+        background: linear-gradient(135deg, #d63031 0%, #e17055 100%);
+        color: white;
+        margin: 0;
+      }
+
+      .card-content {
+        padding: 30px 35px 35px;
+      }
+
+      h1 {
+        font-size: 28px;
+        font-weight: 700;
+        margin: 0;
+        text-align: center;
+      }
+
+      /* Team Image */
+      .team-image-wrapper {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      .team-image {
+        width: 70%;
+        max-width: 400px;
+        border-radius: 12px;
+        box-shadow: 0 8px 24px rgba(214, 48, 49, 0.2);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      .team-image:hover {
+        transform: scale(1.05);
+        box-shadow: 0 12px 32px rgba(214, 48, 49, 0.3);
+      }
+
+      /* TABLE */
+      .table-wrapper {
+        overflow-x: auto;
+        border-radius: 8px;
+      }
+
       table {
-        min-width: 400px;
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 500px;
       }
 
       th, td {
-        padding: 6px 2px;
-        font-size: 10px;
+        padding: 16px 12px;
+        text-align: left;
+        border-bottom: 1px solid #f0f0f0;
       }
 
       th {
-        font-size: 10px;
-        padding: 8px 2px;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        color: #636e72;
+        font-weight: 700;
+        font-size: 12px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        cursor: pointer;
+        user-select: none;
+        white-space: nowrap;
+        transition: background 0.2s ease;
+        border-bottom: 2px solid #e0e0e0;
       }
 
-      th.sorted-asc::after,
+      th:hover {
+        background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
+      }
+
+      th.sorted-asc::after {
+        content: " ▲";
+        font-size: 11px;
+        color: #d63031;
+        margin-left: 6px;
+      }
+
       th.sorted-desc::after {
-        font-size: 9px;
-        margin-left: 3px;
+        content: " ▼";
+        font-size: 11px;
+        color: #d63031;
+        margin-left: 6px;
       }
 
+      td {
+        font-size: 14px;
+        color: #2d3436;
+        transition: background 0.2s ease;
+      }
+
+      tbody tr:nth-child(even) {
+        background: #fff5f5;
+      }
+
+      tbody tr:hover {
+        background: linear-gradient(135deg, rgba(214, 48, 49, 0.08) 0%, rgba(225, 112, 85, 0.08) 100%);
+      }
+
+      td:nth-child(2),
+      td:nth-child(3),
+      th:nth-child(2),
+      th:nth-child(3) {
+        text-align: center;
+      }
+
+      /* Captain and Goalkeeper badges */
       .captain-badge {
-        font-size: 8px;
-        padding: 1px 4px;
-        margin-left: 4px;
+        display: inline-block;
+        background: linear-gradient(135deg, #ffd700, #ffed4e);
+        color: #333;
+        font-weight: bold;
+        padding: 3px 7px;
+        border-radius: 4px;
+        margin-left: 8px;
+        font-size: 10px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.15);
       }
 
       .goalkeeper-badge {
-        font-size: 13px;
+        margin-left: 8px;
+        font-size: 16px;
       }
-    }
-  </style>
-</head>
-<body>
 
-<div class="card">
-  <h1>Ekipa Crvenih</h1>
+      /* MOBILE STYLES */
+      @media (max-width: 768px) {
+        body {
+          padding: 15px 10px;
+        }
 
-  <img src="crveni-team.png" class="team-image" alt="Ekipa Crvenih">
+        header {
+          padding: 20px 25px;
+          margin-bottom: 25px;
+        }
 
-  <div class="table-wrapper">
-    <table>
-      <thead>
-        <tr>
-          <th data-sort="name">Igrač</th>
-          <th data-sort="matches">Utakmice</th>
-          <th data-sort="goals">Golovi</th>
-        </tr>
-      </thead>
-      <tbody id="teamTable"></tbody>
-    </table>
+        .logo {
+          font-size: 26px;
+          margin-bottom: 12px;
+        }
+
+        .back-link-header {
+          font-size: 13px;
+          padding: 8px 16px;
+        }
+
+        .card {
+          margin-bottom: 25px;
+        }
+
+        .card-header {
+          padding: 20px 25px 16px;
+        }
+
+        .card-content {
+          padding: 25px;
+        }
+
+        h1 {
+          font-size: 22px;
+        }
+
+        .team-image {
+          width: 80%;
+          max-width: 300px;
+        }
+
+        .team-image-wrapper {
+          margin-bottom: 25px;
+        }
+
+        table {
+          min-width: 400px;
+        }
+
+        th, td {
+          padding: 12px 8px;
+          font-size: 13px;
+        }
+
+        th {
+          font-size: 11px;
+          padding: 14px 10px;
+        }
+
+        .captain-badge {
+          font-size: 9px;
+          padding: 2px 5px;
+          margin-left: 6px;
+        }
+
+        .goalkeeper-badge {
+          font-size: 14px;
+          margin-left: 6px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        body {
+          padding: 12px 8px;
+        }
+
+        header {
+          padding: 18px 20px;
+        }
+
+        .logo {
+          font-size: 24px;
+        }
+
+        .back-link-header {
+          font-size: 12px;
+          padding: 7px 14px;
+        }
+
+        .card-header {
+          padding: 18px 20px 14px;
+        }
+
+        .card-content {
+          padding: 20px;
+        }
+
+        h1 {
+          font-size: 20px;
+        }
+
+        .team-image {
+          width: 90%;
+        }
+
+        .team-image-wrapper {
+          margin-bottom: 20px;
+        }
+
+        table {
+          min-width: 400px;
+        }
+
+        th, td {
+          padding: 10px 6px;
+          font-size: 11px;
+        }
+
+        th {
+          font-size: 10px;
+          padding: 12px 8px;
+        }
+
+        th.sorted-asc::after,
+        th.sorted-desc::after {
+          font-size: 9px;
+          margin-left: 3px;
+        }
+
+        .captain-badge {
+          font-size: 8px;
+          padding: 1px 4px;
+          margin-left: 4px;
+        }
+
+        .goalkeeper-badge {
+          font-size: 13px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+
+  <div class="container">
+    <!-- HEADER -->
+    <header>
+      <div class="logo">🔴 Ekipa Crvenih</div>
+      <a href="index.html" class="back-link-header">← Nazad na rezultate</a>
+    </header>
+
+    <!-- TEAM CARD -->
+    <div class="card">
+      <h1 class="card-header">Igrači</h1>
+      <div class="card-content">
+
+        <div class="team-image-wrapper">
+          <img src="crveni-team.png" class="team-image" alt="Ekipa Crvenih">
+        </div>
+
+        <div class="table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th data-sort="name">Igrač</th>
+                <th data-sort="matches">Utakmice</th>
+                <th data-sort="goals">Golovi</th>
+              </tr>
+            </thead>
+            <tbody id="teamTable"></tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
   </div>
 
-  <a href="index.html" class="back-link">← Nazad na rezultate</a>
-</div>
+  <script type="module">
+  import { onValue } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
-<script type="module">
-import { onValue } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+  let currentSort = { field: "goals", dir: "desc" };
+  let playersData = {};
 
-let currentSort = { field: "goals", dir: "desc" };
-let playersData = {};
+  /* ---------------- FORMAT PLAYER NAME ---------------- */
+  function formatPlayerName(name) {
+    if (!name) return '';
 
-/* ---------------- FORMAT PLAYER NAME ---------------- */
-function formatPlayerName(name) {
-  if (!name) return '';
+    let displayName = name;
+    let badges = '';
 
-  let displayName = name;
-  let badges = '';
-
-  const captainRegex = /\s*\(c\)\s*/i;
-  if (captainRegex.test(name)) {
-    displayName = name.replace(captainRegex, ' ').trim();
-    badges += '<span class="captain-badge">C</span>';
-  }
-
-  const goalkeeperRegex = /\s*\(g\)\s*/i;
-  if (goalkeeperRegex.test(name)) {
-    displayName = name.replace(goalkeeperRegex, ' ').trim();
-    badges += '<span class="goalkeeper-badge">🧤</span>';
-  }
-
-  return displayName + badges;
-}
-
-/* ---------------- UPDATE SORT INDICATORS ---------------- */
-function updateSortIndicators() {
-  const { field, dir } = currentSort;
-
-  document.querySelectorAll("th[data-sort]").forEach(th => {
-    th.classList.remove('sorted-asc', 'sorted-desc');
-    if (th.dataset.sort === field) {
-      th.classList.add(dir === 'asc' ? 'sorted-asc' : 'sorted-desc');
+    const captainRegex = /\s*\(c\)\s*/i;
+    if (captainRegex.test(name)) {
+      displayName = name.replace(captainRegex, ' ').trim();
+      badges += '<span class="captain-badge">C</span>';
     }
-  });
-}
 
-/* ---------------- RENDER ---------------- */
-function renderTable(data) {
-  const tbody = document.getElementById("teamTable");
-  tbody.innerHTML = "";
+    const goalkeeperRegex = /\s*\(g\)\s*/i;
+    if (goalkeeperRegex.test(name)) {
+      displayName = name.replace(goalkeeperRegex, ' ').trim();
+      badges += '<span class="goalkeeper-badge">🧤</span>';
+    }
 
-  let list = Object.entries(data)
-    .map(([id, p]) => ({
-      id,
-      name: p.name || "",
-      goals: Number(p.goals) || 0,
-      matches: Number(p.matches) || 0
-    }));
+    return displayName + badges;
+  }
 
-  list.sort((a, b) => {
-    const f = currentSort.field;
+  /* ---------------- UPDATE SORT INDICATORS ---------------- */
+  function updateSortIndicators() {
+    const { field, dir } = currentSort;
 
-    if (f === 'name') {
-      const nameA = a.name.replace(/\s*\(c\)\s*/gi, '').replace(/\s*\(g\)\s*/gi, '').trim().toLowerCase();
-      const nameB = b.name.replace(/\s*\(c\)\s*/gi, '').replace(/\s*\(g\)\s*/gi, '').trim().toLowerCase();
-      return currentSort.dir === "asc"
-        ? nameA.localeCompare(nameB, 'sr')
-        : nameB.localeCompare(nameA, 'sr');
-    } else {
-      if (a[f] === b[f]) {
+    document.querySelectorAll("th[data-sort]").forEach(th => {
+      th.classList.remove('sorted-asc', 'sorted-desc');
+      if (th.dataset.sort === field) {
+        th.classList.add(dir === 'asc' ? 'sorted-asc' : 'sorted-desc');
+      }
+    });
+  }
+
+  /* ---------------- RENDER ---------------- */
+  function renderTable(data) {
+    const tbody = document.getElementById("teamTable");
+    tbody.innerHTML = "";
+
+    let list = Object.entries(data)
+      .map(([id, p]) => ({
+        id,
+        name: p.name || "",
+        goals: Number(p.goals) || 0,
+        matches: Number(p.matches) || 0
+      }));
+
+    list.sort((a, b) => {
+      const f = currentSort.field;
+
+      if (f === 'name') {
         const nameA = a.name.replace(/\s*\(c\)\s*/gi, '').replace(/\s*\(g\)\s*/gi, '').trim().toLowerCase();
         const nameB = b.name.replace(/\s*\(c\)\s*/gi, '').replace(/\s*\(g\)\s*/gi, '').trim().toLowerCase();
-        return nameA.localeCompare(nameB, 'sr');
-      }
-      return currentSort.dir === "asc" ? a[f] - b[f] : b[f] - a[f];
-    }
-  });
-
-  list.forEach(p => {
-    tbody.innerHTML += `
-      <tr>
-        <td>${formatPlayerName(p.name)}</td>
-        <td>${p.matches}</td>
-        <td>${p.goals}</td>
-      </tr>
-    `;
-  });
-
-  updateSortIndicators();
-}
-
-/* ---------------- LOAD ---------------- */
-onValue(window.dbRef("players/crveni"), snap => {
-  playersData = snap.val() || {};
-  renderTable(playersData);
-});
-
-/* ---------------- SORT ---------------- */
-document.addEventListener("DOMContentLoaded", () => {
-  document.querySelectorAll("th[data-sort]").forEach(th => {
-    th.onclick = () => {
-      const field = th.dataset.sort;
-
-      if (currentSort.field === field) {
-        currentSort.dir = currentSort.dir === "asc" ? "desc" : "asc";
+        return currentSort.dir === "asc"
+          ? nameA.localeCompare(nameB, 'sr')
+          : nameB.localeCompare(nameA, 'sr');
       } else {
-        currentSort.field = field;
-        currentSort.dir = field === 'name' ? 'asc' : 'desc';
+        if (a[f] === b[f]) {
+          const nameA = a.name.replace(/\s*\(c\)\s*/gi, '').replace(/\s*\(g\)\s*/gi, '').trim().toLowerCase();
+          const nameB = b.name.replace(/\s*\(c\)\s*/gi, '').replace(/\s*\(g\)\s*/gi, '').trim().toLowerCase();
+          return nameA.localeCompare(nameB, 'sr');
+        }
+        return currentSort.dir === "asc" ? a[f] - b[f] : b[f] - a[f];
       }
+    });
 
-      renderTable(playersData);
-    };
+    list.forEach(p => {
+      tbody.innerHTML += `
+        <tr>
+          <td>${formatPlayerName(p.name)}</td>
+          <td><strong>${p.matches}</strong></td>
+          <td><strong>${p.goals}</strong></td>
+        </tr>
+      `;
+    });
+
+    updateSortIndicators();
+  }
+
+  /* ---------------- LOAD ---------------- */
+  onValue(window.dbRef("players/crveni"), snap => {
+    playersData = snap.val() || {};
+    renderTable(playersData);
   });
-});
-</script>
 
-</body>
-</html>
+  /* ---------------- SORT ---------------- */
+  document.addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll("th[data-sort]").forEach(th => {
+      th.onclick = () => {
+        const field = th.dataset.sort;
+
+        if (currentSort.field === field) {
+          currentSort.dir = currentSort.dir === "asc" ? "desc" : "asc";
+        } else {
+          currentSort.field = field;
+          currentSort.dir = field === 'name' ? 'asc' : 'desc';
+        }
+
+        renderTable(playersData);
+      };
+    });
+  });
+  </script>
+
+  </body>
+  </html>
