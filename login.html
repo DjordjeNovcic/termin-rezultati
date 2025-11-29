@@ -1,176 +1,191 @@
  <!DOCTYPE html>
-  <html lang="sr">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <html lang="sr">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Login</title>
 
-    <style>
-      * {
-        box-sizing: border-box;
-      }
+      <style>
+        * {
+          box-sizing: border-box;
+        }
 
-      body {
-        font-family: Arial, sans-serif;
-        max-width: 400px;
-        margin: 100px auto;
-        padding: 0 20px;
-        text-align: center;
-      }
-
-      h1 {
-        font-size: 28px;
-        margin-bottom: 30px;
-        color: #333;
-      }
-
-      .input-wrap {
-        position: relative;
-        margin-bottom: 20px;
-        width: 100%;
-      }
-
-      input {
-        padding: 12px 45px 12px 12px;
-        width: 100%;
-        border: 1px solid #aaa;
-        border-radius: 6px;
-        font-size: 16px;
-        outline: none;
-      }
-
-      input:focus {
-        border-color: #0044cc;
-        box-shadow: 0 0 0 3px rgba(0, 68, 204, 0.1);
-      }
-
-      .toggle {
-        position: absolute;
-        right: 12px;
-        top: 50%;
-        transform: translateY(-50%);
-        cursor: pointer;
-        font-size: 20px;
-        color: #444;
-        user-select: none;
-        padding: 5px;
-      }
-
-      button {
-        padding: 14px 30px;
-        width: 100%;
-        background: #0044cc;
-        color: white;
-        border: none;
-        border-radius: 6px;
-        cursor: pointer;
-        font-size: 16px;
-        font-weight: 500;
-        transition: background 0.2s;
-      }
-
-      button:hover {
-        background: #0033aa;
-      }
-
-      button:active {
-        transform: scale(0.98);
-      }
-
-      /* MOBILE STYLES */
-      @media (max-width: 768px) {
         body {
-          margin: 80px auto;
-          padding: 0 15px;
+          font-family: Arial, sans-serif;
+          max-width: 400px;
+          margin: 100px auto;
+          padding: 0 20px;
+          text-align: center;
         }
 
         h1 {
-          font-size: 24px;
-          margin-bottom: 25px;
+          font-size: 28px;
+          margin-bottom: 30px;
+          color: #333;
+        }
+
+        .input-wrap {
+          position: relative;
+          margin-bottom: 20px;
+          width: 100%;
         }
 
         input {
-          padding: 14px 45px 14px 14px;
+          padding: 12px 45px 12px 12px;
+          width: 100%;
+          border: 1px solid #aaa;
+          border-radius: 6px;
           font-size: 16px;
+          outline: none;
         }
 
-        button {
-          padding: 16px;
-          font-size: 16px;
+        input:focus {
+          border-color: #0044cc;
+          box-shadow: 0 0 0 3px rgba(0, 68, 204, 0.1);
         }
 
         .toggle {
-          font-size: 22px;
-          padding: 8px;
-        }
-      }
-
-      @media (max-width: 480px) {
-        body {
-          margin: 60px auto;
-        }
-
-        h1 {
-          font-size: 22px;
-        }
-
-        input {
-          padding: 12px 40px 12px 12px;
+          position: absolute;
+          right: 12px;
+          top: 50%;
+          transform: translateY(-50%);
+          cursor: pointer;
+          font-size: 20px;
+          color: #444;
+          user-select: none;
+          padding: 5px;
         }
 
         button {
-          padding: 14px;
+          padding: 14px 30px;
+          width: 100%;
+          background: #0044cc;
+          color: white;
+          border: none;
+          border-radius: 6px;
+          cursor: pointer;
+          font-size: 16px;
+          font-weight: 500;
+          transition: background 0.2s;
         }
+
+        button:hover {
+          background: #0033aa;
+        }
+
+        button:active {
+          transform: scale(0.98);
+        }
+
+        .back-btn {
+          background: transparent;
+          color: #666;
+          border: 1px solid #ddd;
+          margin-top: 12px;
+          font-weight: normal;
+        }
+
+        .back-btn:hover {
+          background: #f5f5f5;
+          color: #333;
+          border-color: #bbb;
+        }
+
+        /* MOBILE STYLES */
+        @media (max-width: 768px) {
+          body {
+            margin: 80px auto;
+            padding: 0 15px;
+          }
+
+          h1 {
+            font-size: 24px;
+            margin-bottom: 25px;
+          }
+
+          input {
+            padding: 14px 45px 14px 14px;
+            font-size: 16px;
+          }
+
+          button {
+            padding: 16px;
+            font-size: 16px;
+          }
+
+          .toggle {
+            font-size: 22px;
+            padding: 8px;
+          }
+        }
+
+        @media (max-width: 480px) {
+          body {
+            margin: 60px auto;
+          }
+
+          h1 {
+            font-size: 22px;
+          }
+
+          input {
+            padding: 12px 40px 12px 12px;
+          }
+
+          button {
+            padding: 14px;
+          }
+        }
+      </style>
+    </head>
+    <body>
+
+    <script>
+      if (localStorage.getItem("admin") === "1") {
+        window.location.href = "admin.html";
       }
-    </style>
-  </head>
-  <body>
+    </script>
 
-  <script>
-    if (localStorage.getItem("admin") === "1") {
-      window.location.href = "admin.html";
+    <h1>Admin login</h1>
+
+    <div class="input-wrap">
+      <input id="pass" type="password" placeholder="Šifra" autocomplete="current-password">
+      <span id="togglePass" class="toggle">👁️</span>
+    </div>
+
+    <button onclick="login()">Uđi</button>
+    <button class="back-btn" onclick="window.location.href='index.html'">Nazad na početnu</button>
+
+    <script>
+    function login() {
+      const val = document.getElementById("pass").value;
+      if (val === "admin123") {
+        localStorage.setItem("admin", "1");
+        window.location.href = "admin.html";
+      } else {
+        alert("Pogrešna šifra!");
+      }
     }
-  </script>
 
-  <h1>Admin login</h1>
+    /* ENTER ZA LOGIN */
+    document.getElementById("pass").addEventListener("keydown", function(e) {
+      if (e.key === "Enter") {
+        login();
+      }
+    });
 
-  <div class="input-wrap">
-    <input id="pass" type="password" placeholder="Šifra" autocomplete="current-password">
-    <span id="togglePass" class="toggle">👁️</span>
-  </div>
+    /* PRIKAŽI/SAKRIJ ŠIFRU */
+    document.getElementById("togglePass").onclick = function() {
+      const inp = document.getElementById("pass");
+      if (inp.type === "password") {
+        inp.type = "text";
+        this.textContent = "🙈";
+      } else {
+        inp.type = "password";
+        this.textContent = "👁️";
+      }
+    };
+    </script>
 
-  <button onclick="login()">Uđi</button>
-
-  <script>
-  function login() {
-    const val = document.getElementById("pass").value;
-    if (val === "admin123") {
-      localStorage.setItem("admin", "1");
-      window.location.href = "admin.html";
-    } else {
-      alert("Pogrešna šifra!");
-    }
-  }
-
-  /* ENTER ZA LOGIN */
-  document.getElementById("pass").addEventListener("keydown", function(e) {
-    if (e.key === "Enter") {
-      login();
-    }
-  });
-
-  /* PRIKAŽI/SAKRIJ ŠIFRU */
-  document.getElementById("togglePass").onclick = function() {
-    const inp = document.getElementById("pass");
-    if (inp.type === "password") {
-      inp.type = "text";
-      this.textContent = "🙈";
-    } else {
-      inp.type = "password";
-      this.textContent = "👁️";
-    }
-  };
-  </script>
-
-  </body>
-  </html>
+    </body>
+    </html>
