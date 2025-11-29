@@ -9,37 +9,87 @@
 
   <style>
     /* Page-specific styles only */
-    body {
+    .container {
       max-width: 900px;
-      margin: 20px auto;
-      padding: 0 20px;
     }
 
-    h1 {
-      text-align: center;
-      margin-bottom: 25px;
-      font-size: 28px;
+    /* HEADER */
+    header {
+      background: white;
+      border-radius: 16px;
+      padding: 20px 30px;
+      margin-bottom: 20px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: bold;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .nav-buttons {
+      display: flex;
+      gap: 10px;
+    }
+
+    .nav-btn-header {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      background: #f0f0f0;
+      color: #333;
+    }
+
+    .nav-btn-header:hover {
+      background: #e0e0e0;
+      transform: translateY(-2px);
+    }
+
+    .nav-btn-header.active {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: white;
-      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .nav-btn-header.logout {
+      background: #ff4757;
+      color: white;
+    }
+
+    .nav-btn-header.logout:hover {
+      background: #ee5a6f;
     }
 
     .team-title {
       font-size: 22px;
       font-weight: bold;
-      margin: 25px 0 10px;
+      margin: 25px 0 15px;
     }
 
     .input-row {
       display: flex;
       gap: 10px;
-      margin-bottom: 15px;
+      margin-bottom: 20px;
     }
 
     .add-btn {
-      background: green;
+      background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
       color: white;
-      padding: 10px 16px;
-      border-radius: 6px;
+      padding: 10px 20px;
+      border-radius: 10px;
       border: none;
       cursor: pointer;
       font-size: 16px;
@@ -47,19 +97,20 @@
       white-space: nowrap;
       font-weight: 600;
       transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0, 184, 148, 0.3);
     }
 
     .add-btn:hover {
-      background: #006600;
       transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 184, 148, 0.4);
     }
 
     #resetStatsBtn {
-      background: #b10000;
+      background: linear-gradient(135deg, #ff4757 0%, #ee5a6f 100%);
       color: white;
-      padding: 10px 20px;
+      padding: 14px 24px;
       border: none;
-      border-radius: 6px;
+      border-radius: 12px;
       cursor: pointer;
       font-size: 16px;
       margin-bottom: 25px;
@@ -71,50 +122,12 @@
       margin-right: auto;
       font-weight: 600;
       transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(255, 71, 87, 0.3);
     }
 
     #resetStatsBtn:hover {
-      background: #900000;
       transform: translateY(-2px);
-    }
-
-    /* Navigation - override global for this page */
-    .nav-menu {
-      background: rgba(255, 255, 255, 0.95);
-      padding: 12px;
-      margin-bottom: 25px;
-      border-radius: 12px;
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-    }
-
-    .nav-btn {
-      background: rgba(102, 126, 234, 0.1);
-      color: #667eea;
-      border: 2px solid transparent;
-    }
-
-    .nav-btn:hover {
-      background: #667eea;
-      color: white;
-      border-color: #5568d3;
-    }
-
-    .nav-btn.active {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
-    }
-
-    .nav-btn.logout {
-      background: #dc3545;
-      color: white;
-      border-color: #c82333;
-    }
-
-    .nav-btn.logout:hover {
-      background: #c82333;
-      border-color: #bd2130;
+      box-shadow: 0 6px 20px rgba(255, 71, 87, 0.4);
     }
 
     /* Modal specific positioning */
@@ -122,39 +135,58 @@
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(0, 0, 0, 0.55);
+      background: rgba(0, 0, 0, 0.7);
       justify-content: center;
       align-items: center;
-      backdrop-filter: blur(2px);
+      backdrop-filter: blur(4px);
       z-index: 999;
       padding: 20px;
     }
 
     #modalBox {
       background: white;
-      padding: 25px;
-      border-radius: 10px;
+      padding: 30px;
+      border-radius: 16px;
       width: 90%;
       max-width: 420px;
-      box-shadow: 0 0 25px rgba(0, 0, 0, 0.25);
-      animation: fadeIn 0.2s ease-out;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      animation: slideUp 0.3s ease;
       max-height: 90vh;
       overflow-y: auto;
     }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: scale(0.9); }
-      to { opacity: 1; transform: scale(1); }
+    @keyframes slideUp {
+      from {
+        transform: translateY(50px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    #modalBox h3 {
+      margin-top: 0;
+      margin-bottom: 20px;
+      color: #2d3436;
     }
 
     #renameInput {
       width: 100%;
-      padding: 12px;
+      padding: 14px 16px;
       font-size: 16px;
       margin: 15px 0;
-      border-radius: 6px;
-      border: 2px solid #ddd;
+      border-radius: 10px;
+      border: 2px solid #e0e0e0;
       min-height: 48px;
+      transition: all 0.3s ease;
+    }
+
+    #renameInput:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
     }
 
     .modal-buttons {
@@ -165,61 +197,68 @@
     }
 
     .modal-buttons button {
-      padding: 12px 20px;
+      padding: 12px 24px;
       border: none;
-      border-radius: 6px;
+      border-radius: 10px;
       cursor: pointer;
       font-size: 16px;
       min-height: 48px;
       flex: 1;
       font-weight: 600;
+      transition: all 0.3s ease;
     }
 
     #renameCancel {
-      background: #777;
+      background: #636e72;
       color: white;
     }
 
     #renameCancel:hover {
-      background: #666;
+      background: #4a5558;
+      transform: translateY(-2px);
     }
 
     #renameConfirm {
-      background: #667eea;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: white;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
     }
 
     #renameConfirm:hover {
-      background: #5568d3;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
     }
 
     /* MOBILE RESPONSIVE */
     @media (max-width: 768px) {
-      body {
-        margin: 10px auto;
-        padding: 0 15px;
+      .container {
+        max-width: 100%;
       }
 
-      h1 {
-        font-size: 22px;
-        margin-bottom: 20px;
+      header {
+        padding: 15px 20px;
+        border-radius: 12px;
+        flex-direction: column;
+        align-items: stretch;
       }
 
-      .nav-menu {
-        gap: 6px;
-        padding: 10px;
+      .logo {
+        text-align: center;
+        font-size: 20px;
       }
 
-      .nav-btn {
-        padding: 12px 16px;
-        font-size: 13px;
-        min-width: 90px;
-        flex: 1;
+      .nav-buttons {
+        flex-direction: column;
+      }
+
+      .nav-btn-header {
+        width: 100%;
+        text-align: center;
       }
 
       .team-title {
         font-size: 20px;
-        margin: 20px 0 10px;
+        margin: 20px 0 12px;
       }
 
       .input-row {
@@ -228,7 +267,7 @@
 
       #resetStatsBtn {
         font-size: 16px;
-        padding: 12px 16px;
+        padding: 12px 20px;
         margin-bottom: 20px;
       }
 
@@ -247,23 +286,13 @@
     }
 
     @media (max-width: 480px) {
-      body {
-        padding: 0 10px;
+      .logo {
+        font-size: 18px;
       }
 
-      h1 {
-        font-size: 20px;
-      }
-
-      .nav-menu {
-        gap: 8px;
-        padding: 8px;
-      }
-
-      .nav-btn {
-        padding: 12px 12px;
-        font-size: 12px;
-        min-width: 0;
+      .nav-btn-header {
+        padding: 12px 16px;
+        font-size: 13px;
       }
 
       .team-title {
@@ -284,69 +313,77 @@
 
 <body>
 
-<!-- NAV -->
-<div class="nav-menu">
-  <button class="nav-btn" onclick="window.location.href='admin.html'">Mečevi</button>
-  <button class="nav-btn active" onclick="window.location.href='admin-igraci.html'">Igrači</button>
-  <button class="nav-btn logout" onclick="logout()">Logout</button>
-</div>
+<div class="container">
+  <!-- HEADER -->
+  <header>
+    <div class="logo">⚽ Admin Panel</div>
+    <div class="nav-buttons">
+      <button class="nav-btn-header" onclick="window.location.href='admin.html'">Mečevi</button>
+      <button class="nav-btn-header active" onclick="window.location.href='admin-igraci.html'">Igrači</button>
+      <button class="nav-btn-header logout" onclick="logout()">Logout</button>
+    </div>
+  </header>
 
-<script>
-  if (localStorage.getItem("admin") !== "1") window.location.href="login.html";
-  function logout(){ localStorage.removeItem("admin"); window.location.href="index.html"; }
-</script>
+  <script>
+    if (localStorage.getItem("admin") !== "1") window.location.href="login.html";
+    function logout(){ localStorage.removeItem("admin"); window.location.href="index.html"; }
+  </script>
 
-<h1>Upravljanje igračima</h1>
+  <!-- MAIN CARD -->
+  <div class="card">
+    <h1 class="card-title">Upravljanje igračima</h1>
 
-<!-- RESET SVIH STATISTIKA -->
-<button id="resetStatsBtn">
-  Resetuj SVE golove i utakmice
-</button>
+    <!-- RESET SVIH STATISTIKA -->
+    <button id="resetStatsBtn">
+      Resetuj SVE golove i utakmice
+    </button>
 
-<!-- CRVENI -->
-<div class="team-title" style="color:#e53e3e;">Crveni</div>
-<div class="input-row">
-  <input id="redInput" placeholder="Ime igrača">
-  <button class="add-btn" onclick="addPlayer('crveni')">Dodaj</button>
-</div>
-<div class="table-wrapper">
-  <table>
-    <thead>
-    <tr>
-      <th data-sort="name" data-team="crveni">Igrač</th>
-      <th data-sort="goals" data-team="crveni">Golovi</th>
-      <th data-sort="matches" data-team="crveni">Utakmice</th>
-      <th>Akcija</th>
-    </tr>
-    </thead>
-    <tbody id="redList"></tbody>
-  </table>
-</div>
+    <!-- CRVENI -->
+    <div class="team-title" style="color:#d63031;">Crveni</div>
+    <div class="input-row">
+      <input id="redInput" placeholder="Ime igrača">
+      <button class="add-btn" onclick="addPlayer('crveni')">Dodaj</button>
+    </div>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+        <tr>
+          <th data-sort="name" data-team="crveni">Igrač</th>
+          <th data-sort="goals" data-team="crveni">Golovi</th>
+          <th data-sort="matches" data-team="crveni">Utakmice</th>
+          <th>Akcija</th>
+        </tr>
+        </thead>
+        <tbody id="redList"></tbody>
+      </table>
+    </div>
 
-<!-- PLAVI -->
-<div class="team-title" style="color:#3182ce;">Plavi</div>
-<div class="input-row">
-  <input id="blueInput" placeholder="Ime igrača">
-  <button class="add-btn" onclick="addPlayer('plavi')">Dodaj</button>
-</div>
-<div class="table-wrapper">
-  <table>
-    <thead>
-    <tr>
-      <th data-sort="name" data-team="plavi">Igrač</th>
-      <th data-sort="goals" data-team="plavi">Golovi</th>
-      <th data-sort="matches" data-team="plavi">Utakmice</th>
-      <th>Akcija</th>
-    </tr>
-    </thead>
-    <tbody id="blueList"></tbody>
-  </table>
+    <!-- PLAVI -->
+    <div class="team-title" style="color:#0984e3;">Plavi</div>
+    <div class="input-row">
+      <input id="blueInput" placeholder="Ime igrača">
+      <button class="add-btn" onclick="addPlayer('plavi')">Dodaj</button>
+    </div>
+    <div class="table-wrapper">
+      <table>
+        <thead>
+        <tr>
+          <th data-sort="name" data-team="plavi">Igrač</th>
+          <th data-sort="goals" data-team="plavi">Golovi</th>
+          <th data-sort="matches" data-team="plavi">Utakmice</th>
+          <th>Akcija</th>
+        </tr>
+        </thead>
+        <tbody id="blueList"></tbody>
+      </table>
+    </div>
+  </div>
 </div>
 
 <!-- MODAL RENAME -->
 <div id="modalOverlay">
   <div id="modalBox">
-    <h3 style="margin-top:0;">Izmena imena igrača</h3>
+    <h3>Izmena imena igrača</h3>
 
     <input id="renameInput" placeholder="Novo ime...">
 
