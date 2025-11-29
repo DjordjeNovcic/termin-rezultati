@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
     <html lang="sr">
     <head>
       <meta charset="UTF-8">
@@ -133,15 +133,22 @@
           margin-top: 0;
         }
 
-        /* Special spacing for "Rezultati prošlih kola" section */
-        .recent-matches-card h2 {
-          margin-bottom: 10px;
-          padding-bottom: 15px;
-          border-bottom: 2px solid #ecf0f1;
+        /* Special styling for recent matches card */
+        .recent-matches-card {
+          padding: 0;
+          overflow: hidden;
         }
 
-        .recent-matches-card .match-box:first-of-type {
-          margin-top: 15px !important;
+        .recent-matches-card h2 {
+          margin: 0;
+          padding: 30px 35px 20px;
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          color: white;
+          border-radius: 16px 16px 0 0;
+        }
+
+        .recent-matches-content {
+          padding: 25px 35px 35px;
         }
 
         /* MATCH BOX */
@@ -151,6 +158,20 @@
           background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
           border: 2px solid #f0f0f0;
           margin-bottom: 20px;
+        }
+
+        /* Recent match boxes - lighter styling */
+        .recent-matches-content .match-box {
+          background: transparent;
+          border: none;
+          border-bottom: 2px solid #f0f0f0;
+          border-radius: 0;
+          padding: 20px 0;
+          margin-bottom: 0;
+        }
+
+        .recent-matches-content .match-box:last-of-type {
+          border-bottom: none;
         }
 
         .match-info {
@@ -537,18 +558,26 @@
             margin-bottom: 25px;
           }
 
+          .recent-matches-card h2 {
+            padding: 25px 25px 18px;
+          }
+
+          .recent-matches-content {
+            padding: 20px 25px 25px;
+          }
+
           h1, h2 {
             font-size: 20px;
             margin-bottom: 20px;
           }
 
-          .recent-matches-card h2 {
-            margin-bottom: 10px;
-          }
-
           .match-box {
             padding: 20px;
             margin-bottom: 15px;
+          }
+
+          .recent-matches-content .match-box {
+            padding: 18px 0;
           }
 
           .match-info {
@@ -677,12 +706,28 @@
             margin-bottom: 20px;
           }
 
+          .recent-matches-card {
+            padding: 0;
+          }
+
+          .recent-matches-card h2 {
+            padding: 20px 20px 15px;
+          }
+
+          .recent-matches-content {
+            padding: 18px 20px 20px;
+          }
+
           h1, h2 {
             font-size: 18px;
           }
 
           .match-box {
             padding: 16px;
+          }
+
+          .recent-matches-content .match-box {
+            padding: 15px 0;
           }
 
           .team-logo {
@@ -745,8 +790,8 @@
         <div class="logo">⚽ Fudbalski Rezultati</div>
 
         <div class="header-nav">
-          <a href="crveni.html" class="team-link red">Ekipa crvenih</a>
-          <a href="plavi.html" class="team-link blue">Ekipa plavih</a>
+          <a href="crveni.html" class="team-link red">🔴 Crveni</a>
+          <a href="plavi.html" class="team-link blue">🔵 Plavi</a>
           <button id="loginBtn" onclick="window.location='login.html'">Login</button>
         </div>
       </header>
@@ -931,10 +976,7 @@
       const recent = matches.slice(1,4);
 
       if (recent.length) {
-        recentBox.innerHTML += `
-          <div class="card recent-matches-card">
-            <h2>Rezultati prošlih kola</h2>
-        `;
+        let matchesHTML = '';
 
         recent.forEach((m, idx) => {
           const matchIndex = idx + 1;
@@ -943,8 +985,8 @@
             <div class="info-link" onclick="openMatchScorers(${matchIndex})">⚽ Strelci</div>
           `;
 
-          recentBox.innerHTML += `
-            <div class="match-box" style="padding:22px;">
+          matchesHTML += `
+            <div class="match-box">
               <div class="match-info">
                 Kolo ${m.round} — ${m.date} u ${m.time}
                 <div class="match-links">${recentMatchLinks}</div>
@@ -969,10 +1011,15 @@
           `;
         });
 
-        recentBox.innerHTML += `
-            <button class="more-btn" onclick="window.location='istorija.html'">
-              Vidi sve utakmice →
-            </button>
+        recentBox.innerHTML = `
+          <div class="card recent-matches-card">
+            <h2>Rezultati prošlih kola</h2>
+            <div class="recent-matches-content">
+              ${matchesHTML}
+              <button class="more-btn" onclick="window.location='istorija.html'">
+                Vidi sve utakmice →
+              </button>
+            </div>
           </div>
         `;
       }
