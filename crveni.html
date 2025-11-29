@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
   <html lang="sr">
   <head>
     <meta charset="UTF-8">
@@ -64,6 +64,25 @@
         margin-top: 20px;
         color: #0044cc;
       }
+
+      /* Captain and Goalkeeper badges */
+      .captain-badge {
+        display: inline-block;
+        background: linear-gradient(135deg, #ffd700, #ffed4e);
+        color: #333;
+        font-weight: bold;
+        padding: 2px 6px;
+        border-radius: 4px;
+        margin-left: 6px;
+        font-size: 11px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        border: 1px solid #daa520;
+      }
+
+      .goalkeeper-badge {
+        margin-left: 6px;
+        font-size: 18px;
+      }
     </style>
   </head>
   <body>
@@ -90,6 +109,26 @@
 
   let currentSort = { field: "goals", dir: "desc" };
   let playersData = {};
+
+  /* ---------------- FORMAT PLAYER NAME ---------------- */
+  function formatPlayerName(name) {
+    let displayName = name;
+    let badges = '';
+
+    // Check for captain (c)
+    if (name.includes('(c)')) {
+      displayName = name.replace('(c)', '').trim();
+      badges += '<span class="captain-badge">C</span>';
+    }
+
+    // Check for goalkeeper (g)
+    if (name.includes('(g)')) {
+      displayName = name.replace('(g)', '').trim();
+      badges += '<span class="goalkeeper-badge">🧤</span>';
+    }
+
+    return displayName + badges;
+  }
 
   /* ---------------- UPDATE SORT INDICATORS ---------------- */
   function updateSortIndicators() {
@@ -120,14 +159,17 @@
       const f = currentSort.field;
 
       if (f === 'name') {
-        const nameA = a.name.toLowerCase();
-        const nameB = b.name.toLowerCase();
+        // Remove badges for sorting purposes
+        const nameA = a.name.replace(/\(c\)|\(g\)/g, '').trim().toLowerCase();
+        const nameB = b.name.replace(/\(c\)|\(g\)/g, '').trim().toLowerCase();
         return currentSort.dir === "asc"
           ? nameA.localeCompare(nameB, 'sr')
           : nameB.localeCompare(nameA, 'sr');
       } else {
         if (a[f] === b[f]) {
-          return a.name.localeCompare(b.name, 'sr');
+          const nameA = a.name.replace(/\(c\)|\(g\)/g, '').trim().toLowerCase();
+          const nameB = b.name.replace(/\(c\)|\(g\)/g, '').trim().toLowerCase();
+          return nameA.localeCompare(nameB, 'sr');
         }
         return currentSort.dir === "asc" ? a[f] - b[f] : b[f] - a[f];
       }
@@ -136,7 +178,7 @@
     list.forEach(p => {
       tbody.innerHTML += `
         <tr>
-          <td>${p.name}</td>
+          <td>${formatPlayerName(p.name)}</td>
           <td>${p.matches}</td>
           <td>${p.goals}</td>
         </tr>
