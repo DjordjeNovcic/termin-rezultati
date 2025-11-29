@@ -1,4 +1,4 @@
-  <!DOCTYPE html>
+ <!DOCTYPE html>
   <html lang="sr">
   <head>
     <meta charset="UTF-8">
@@ -46,6 +46,52 @@
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
+      }
+
+      .header-nav {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+      }
+
+      .team-link {
+        padding: 10px 18px;
+        border: none;
+        border-radius: 10px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .team-link.red {
+        background: linear-gradient(135deg, #ffe5e5 0%, #ffcccc 100%);
+        color: #d63031;
+        border: 2px solid #d63031;
+      }
+
+      .team-link.red:hover {
+        background: #d63031;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(214, 48, 49, 0.3);
+      }
+
+      .team-link.blue {
+        background: linear-gradient(135deg, #e5f0ff 0%, #cce5ff 100%);
+        color: #0984e3;
+        border: 2px solid #0984e3;
+      }
+
+      .team-link.blue:hover {
+        background: #0984e3;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(9, 132, 227, 0.3);
       }
 
       #loginBtn {
@@ -383,11 +429,25 @@
           border-radius: 12px;
           flex-direction: column;
           align-items: stretch;
+          gap: 12px;
         }
 
         .logo {
           text-align: center;
           font-size: 20px;
+        }
+
+        .header-nav {
+          flex-wrap: wrap;
+          justify-content: center;
+        }
+
+        .team-link {
+          flex: 1;
+          min-width: 120px;
+          justify-content: center;
+          font-size: 13px;
+          padding: 10px 14px;
         }
 
         #loginBtn {
@@ -523,7 +583,12 @@
     <!-- HEADER -->
     <header>
       <div class="logo">⚽ Rezultati</div>
-      <button id="loginBtn" onclick="window.location='login.html'">Login</button>
+
+      <div class="header-nav">
+        <a href="crveni.html" class="team-link red">🔴 Ekipa Crvenih</a>
+        <a href="plavi.html" class="team-link blue">🔵 Ekipa Plavih</a>
+        <button id="loginBtn" onclick="window.location='login.html'">Login</button>
+      </div>
     </header>
 
     <!-- MAIN MATCH -->
@@ -690,7 +755,6 @@
           <div style="text-align:center;">
             <img src="crveni.png" class="team-logo" alt="Crveni">
             <div class="team-name" style="color:#d63031;">Crveni</div>
-            <a href="crveni.html" style="font-size:14px; color:#667eea;">Vidi ekipu</a>
           </div>
 
           <div class="score">${latest.red} - ${latest.blue}</div>
@@ -698,7 +762,6 @@
           <div style="text-align:center;">
             <img src="plavi.png" class="team-logo" alt="Plavi">
             <div class="team-name" style="color:#0984e3;">Plavi</div>
-            <a href="plavi.html" style="font-size:14px; color:#667eea;">Vidi ekipu</a>
           </div>
 
         </div>
