@@ -9,227 +9,334 @@
     <style>
       * {
         box-sizing: border-box;
+        margin: 0;
+        padding: 0;
       }
 
       body {
-        font-family: Arial, sans-serif;
-        max-width: 750px;
-        margin: 20px auto;
-        padding: 0 20px;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 20px 10px;
       }
 
-      h1 {
-        text-align: center;
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+      }
+
+      /* HEADER */
+      header {
+        background: white;
+        border-radius: 16px;
+        padding: 20px 30px;
+        margin-bottom: 20px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 15px;
+      }
+
+      .logo {
+        font-size: 24px;
+        font-weight: bold;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .nav-buttons {
+        display: flex;
+        gap: 10px;
+      }
+
+      .nav-btn {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 10px;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background: #f0f0f0;
+        color: #333;
+      }
+
+      .nav-btn:hover {
+        background: #e0e0e0;
+        transform: translateY(-2px);
+      }
+
+      .nav-btn.active {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+      }
+
+      .nav-btn.logout {
+        background: #ff4757;
+        color: white;
+      }
+
+      .nav-btn.logout:hover {
+        background: #ee5a6f;
+      }
+
+      /* MAIN CARD */
+      .card {
+        background: white;
+        border-radius: 16px;
+        padding: 30px;
+        margin-bottom: 20px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      }
+
+      .card-title {
+        font-size: 22px;
+        font-weight: 700;
         margin-bottom: 25px;
-        font-size: 26px;
+        color: #2d3436;
+        text-align: center;
       }
 
-      h3 {
-        margin-bottom: 8px !important;
-        margin-top: 25px;
+      /* FORM STYLING */
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      .form-label {
+        display: block;
+        font-size: 13px;
+        font-weight: 600;
+        color: #636e72;
+        margin-bottom: 8px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      input, textarea {
+        width: 100%;
+        padding: 14px 16px;
+        border: 2px solid #e0e0e0;
+        border-radius: 10px;
+        font-size: 15px;
+        transition: all 0.3s ease;
+        font-family: inherit;
+      }
+
+      input:focus, textarea:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+      }
+
+      textarea {
+        min-height: 100px;
+        resize: vertical;
+      }
+
+      .input-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+      }
+
+      .input-row-3 {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 15px;
+      }
+
+      /* SECTION HEADERS */
+      .section-header {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 30px 0 15px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #f0f0f0;
+      }
+
+      .section-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
         font-size: 18px;
       }
 
-      #adminNav {
-        display: flex;
-        gap: 8px;
-        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-        padding: 12px;
-        margin-bottom: 25px;
-        border-radius: 12px;
-        justify-content: center;
-        border: 1px solid #dee2e6;
-        flex-wrap: wrap;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      .section-icon.red {
+        background: #ffe5e5;
+        color: #d63031;
       }
 
-      #adminNav button {
-        padding: 10px 20px;
-        border-radius: 8px;
-        border: 2px solid transparent;
+      .section-icon.blue {
+        background: #e5f0ff;
+        color: #0984e3;
+      }
+
+      .section-title {
+        font-size: 18px;
+        font-weight: 700;
+        color: #2d3436;
+      }
+
+      /* PLAYER BUTTONS */
+      .players-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 20px;
+      }
+
+      .player-btn {
+        padding: 10px 16px;
+        border: 2px solid #e0e0e0;
+        border-radius: 10px;
         background: white;
-        color: #495057;
         cursor: pointer;
         font-size: 14px;
         font-weight: 500;
-        min-width: 100px;
-        transition: all 0.3s ease;
-        position: relative;
-        overflow: hidden;
-      }
-
-      #adminNav button::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-        transition: left 0.5s;
-      }
-
-      #adminNav button:hover::before {
-        left: 100%;
-      }
-
-      #adminNav button:hover {
-        background: #0044cc;
-        color: white;
-        border-color: #0033aa;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0, 68, 204, 0.3);
-      }
-
-      #adminNav button:active {
-        transform: translateY(0);
-        box-shadow: 0 2px 6px rgba(0, 68, 204, 0.2);
-      }
-
-      /* Active page indicator */
-      #adminNav button.active {
-        background: #0044cc;
-        color: white;
-        border-color: #0033aa;
-        box-shadow: 0 0 0 3px rgba(0, 68, 204, 0.15);
-        cursor: default;
-      }
-
-      #adminNav button.active:hover {
-        transform: none;
-      }
-
-      /* Logout button - different style */
-      #adminNav button.logout-btn {
-        background: #dc3545;
-        color: white;
-        border-color: #c82333;
-      }
-
-      #adminNav button.logout-btn:hover {
-        background: #c82333;
-        border-color: #bd2130;
-        box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
-      }
-
-      /* Date/Time Row */
-      .date-time-row {
-        display: flex;
-        gap: 10px;
-        width: 100%;
-      }
-
-      .date-time-row input {
-        flex: 1;
-        min-width: 0;
-        margin-bottom: 12px;
-      }
-
-      /* Igraci */
-      .player-btn {
-        padding: 8px 12px;
-        border-radius: 6px;
-        background: #eee;
-        border: 1px solid #bbb;
-        cursor: pointer;
-        margin: 4px;
-        display: inline-block;
-        font-size: 14px;
+        transition: all 0.2s ease;
         user-select: none;
       }
 
+      .player-btn:hover {
+        border-color: #b2bec3;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      }
+
       .player-btn.active {
-        font-weight: bold;
+        font-weight: 700;
         color: white;
-        border-color: #00000022;
-        box-shadow: 0 0 4px #00000033;
+        border: 2px solid transparent;
       }
 
       #playedRed .player-btn.active,
       #scorersRedPlayers .player-btn.active {
-        background: #b10000 !important;
+        background: linear-gradient(135deg, #d63031 0%, #e17055 100%);
+        box-shadow: 0 4px 15px rgba(214, 48, 49, 0.3);
       }
 
       #playedBlue .player-btn.active,
       #scorersBluePlayers .player-btn.active {
-        background: #0044cc !important;
+        background: linear-gradient(135deg, #0984e3 0%, #00b894 100%);
+        box-shadow: 0 4px 15px rgba(9, 132, 227, 0.3);
       }
 
-      /* Captain and Goalkeeper badges */
+      /* BADGES */
       .captain-badge {
         display: inline-block;
         background: linear-gradient(135deg, #ffd700, #ffed4e);
         color: #333;
         font-weight: bold;
-        padding: 1px 4px;
-        border-radius: 3px;
-        margin-left: 4px;
-        font-size: 9px;
-        box-shadow: 0 1px 2px rgba(0,0,0,0.2);
-        border: 1px solid #daa520;
+        padding: 2px 6px;
+        border-radius: 4px;
+        margin-left: 6px;
+        font-size: 10px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.15);
       }
 
       .goalkeeper-badge {
-        margin-left: 4px;
-        font-size: 14px;
+        margin-left: 6px;
+        font-size: 16px;
       }
 
-      /* Strelci tagovi */
-      .tag {
-        background: #ddd;
-        padding: 8px 12px;
-        border-radius: 6px;
-        margin: 4px;
-        display: inline-flex;
-        align-items: center;
+      /* SCORER TAGS */
+      .scorers-tags {
+        display: flex;
+        flex-wrap: wrap;
         gap: 8px;
-        font-size: 14px;
-      }
-
-      .tag button {
-        background: #c00000;
-        border: none;
-        color: white;
-        border-radius: 4px;
-        cursor: pointer;
-        padding: 2px 8px;
-        font-size: 14px;
-      }
-
-      input, textarea {
-        width: 100%;
-        padding: 12px;
-        border-radius: 6px;
-        border: 1px solid #aaa;
-        font-size: 16px;
-        margin-bottom: 12px;
-      }
-
-      textarea {
-        min-height: 120px;
-        resize: vertical;
-      }
-
-      .save-btn, .update-btn, .cancel-btn {
-        width: 100%;
-        padding: 14px;
-        border-radius: 6px;
-        font-size: 16px;
-        cursor: pointer;
         margin-top: 10px;
-        border: none;
+      }
+
+      .tag {
+        background: #f0f0f0;
+        padding: 8px 12px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 14px;
         font-weight: 500;
       }
 
-      .save-btn { background: #008000; color: white; }
-      .update-btn { background: #d48a00; color: white; display: none; }
-      .cancel-btn { background: #555; color: white; display: none; }
+      .tag button {
+        width: 22px;
+        height: 22px;
+        border: none;
+        border-radius: 50%;
+        background: #ff4757;
+        color: white;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 16px;
+        line-height: 1;
+        transition: all 0.2s ease;
+      }
 
+      .tag button:hover {
+        background: #ee5a6f;
+        transform: scale(1.1);
+      }
+
+      /* ACTION BUTTONS */
+      .btn {
+        width: 100%;
+        padding: 16px;
+        border: none;
+        border-radius: 12px;
+        font-size: 16px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 15px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      .btn-primary {
+        background: linear-gradient(135deg, #00b894 0%, #00cec9 100%);
+        color: white;
+        box-shadow: 0 4px 15px rgba(0, 184, 148, 0.3);
+      }
+
+      .btn-primary:hover {
+        box-shadow: 0 6px 20px rgba(0, 184, 148, 0.4);
+        transform: translateY(-2px);
+      }
+
+      .btn-warning {
+        background: linear-gradient(135deg, #fdcb6e 0%, #e17055 100%);
+        color: white;
+        display: none;
+        box-shadow: 0 4px 15px rgba(253, 203, 110, 0.3);
+      }
+
+      .btn-secondary {
+        background: #636e72;
+        color: white;
+        display: none;
+      }
+
+      .btn-secondary:hover {
+        background: #4a5558;
+      }
+
+      /* MATCHES TABLE */
       .table-wrapper {
         overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
-        margin: 25px -20px 0;
-        padding: 0 20px;
+        margin-top: 25px;
+        border-radius: 12px;
+        border: 2px solid #f0f0f0;
       }
 
       table {
@@ -239,114 +346,111 @@
       }
 
       th {
-        background: #ececec;
-        padding: 10px 8px;
-        border-bottom: 2px solid #bbb;
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        padding: 15px 12px;
         text-align: left;
         font-size: 13px;
-        white-space: nowrap;
+        font-weight: 700;
+        color: #636e72;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border-bottom: 2px solid #e0e0e0;
       }
 
       td {
-        padding: 10px 8px;
-        border-bottom: 1px solid #ddd;
-        font-size: 13px;
+        padding: 15px 12px;
+        border-bottom: 1px solid #f0f0f0;
+        font-size: 14px;
+        color: #2d3436;
       }
 
-      .edit-btn, .del-btn {
-        padding: 6px 10px;
-        border-radius: 4px;
-        font-size: 12px;
-        cursor: pointer;
+      tr:hover {
+        background: #f8f9fa;
+      }
+
+      .table-btn {
+        padding: 8px 14px;
         border: none;
-        color: white;
-        margin: 2px;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        margin-right: 6px;
       }
 
-      .edit-btn { background: #0044cc; }
-      .del-btn { background: #c00000; }
+      .table-btn.edit {
+        background: #667eea;
+        color: white;
+      }
 
-      /* MOBILE STYLES */
+      .table-btn.edit:hover {
+        background: #5568d3;
+        transform: scale(1.05);
+      }
+
+      .table-btn.delete {
+        background: #ff4757;
+        color: white;
+      }
+
+      .table-btn.delete:hover {
+        background: #ee5a6f;
+        transform: scale(1.05);
+      }
+
+      /* MOBILE RESPONSIVE */
       @media (max-width: 768px) {
         body {
-          margin: 10px auto;
-          padding: 0 15px;
+          padding: 10px 5px;
         }
 
-        h1 {
-          font-size: 22px;
-          margin-bottom: 20px;
+        .container {
+          max-width: 100%;
         }
 
-        h3 {
-          font-size: 16px;
-          margin-top: 20px;
-        }
-
-        #adminNav {
-          gap: 6px;
-          padding: 10px;
-          border-radius: 10px;
-        }
-
-        #adminNav button {
-          padding: 12px 16px;
-          font-size: 13px;
-          min-width: 90px;
-          flex: 1;
-          border-radius: 8px;
-        }
-
-        #adminNav button:hover {
-          transform: none;
-        }
-
-        #adminNav button:active {
-          transform: scale(0.95);
-        }
-
-        .date-time-row {
+        header {
+          padding: 15px 20px;
+          border-radius: 12px;
           flex-direction: column;
-          gap: 0;
+          align-items: stretch;
         }
 
-        .date-time-row input {
+        .logo {
+          text-align: center;
+          font-size: 20px;
+        }
+
+        .nav-buttons {
+          flex-direction: column;
+        }
+
+        .nav-btn {
           width: 100%;
-          flex: none;
-          margin-bottom: 12px;
+          text-align: center;
+        }
+
+        .card {
+          padding: 20px;
+          border-radius: 12px;
+        }
+
+        .card-title {
+          font-size: 20px;
+        }
+
+        .input-row,
+        .input-row-3 {
+          grid-template-columns: 1fr;
+        }
+
+        .section-header {
+          margin: 20px 0 12px;
         }
 
         .player-btn {
-          padding: 10px 12px;
           font-size: 13px;
-          margin: 3px;
-        }
-
-        .tag {
-          padding: 8px 10px;
-          font-size: 13px;
-        }
-
-        .tag button {
-          padding: 2px 6px;
-          font-size: 13px;
-        }
-
-        input, textarea {
-          padding: 12px;
-          font-size: 16px;
-        }
-
-        .save-btn, .update-btn, .cancel-btn {
-          padding: 14px;
-          font-size: 15px;
-        }
-
-        .table-wrapper {
-          margin: 20px -15px 0;
-          padding: 0 15px;
-          border: 1px solid #ddd;
-          border-radius: 8px;
+          padding: 10px 14px;
         }
 
         table {
@@ -354,93 +458,33 @@
         }
 
         th, td {
-          padding: 8px 4px;
+          padding: 12px 8px;
           font-size: 12px;
         }
 
-        th:first-child, td:first-child {
-          padding-left: 6px;
-        }
-
-        th:last-child, td:last-child {
-          padding-right: 6px;
-        }
-
-        .edit-btn, .del-btn {
-          padding: 6px 8px;
-          font-size: 11px;
-          display: inline-block;
-          margin: 2px 1px;
-        }
-
-        .captain-badge {
-          font-size: 8px;
-          padding: 1px 3px;
-        }
-
-        .goalkeeper-badge {
-          font-size: 12px;
+        .table-btn {
+          display: block;
+          width: 100%;
+          margin: 4px 0;
         }
       }
 
       @media (max-width: 480px) {
-        body {
-          padding: 0 10px;
+        .card {
+          padding: 15px;
         }
 
-        h1 {
-          font-size: 20px;
-        }
-
-        h3 {
-          font-size: 15px;
-        }
-
-        #adminNav {
-          gap: 8px;
-          padding: 8px;
-        }
-
-        #adminNav button {
-          padding: 12px 12px;
-          font-size: 12px;
-          min-width: 0;
-          flex: 1;
+        .section-title {
+          font-size: 16px;
         }
 
         .player-btn {
-          padding: 8px 10px;
           font-size: 12px;
-          margin: 2px;
-        }
-
-        .tag {
-          padding: 6px 8px;
-          font-size: 12px;
+          padding: 8px 12px;
         }
 
         table {
           min-width: 450px;
-          font-size: 11px;
-        }
-
-        th, td {
-          padding: 6px 3px;
-          font-size: 11px;
-        }
-
-        th:first-child, td:first-child {
-          padding-left: 4px;
-        }
-
-        th:last-child, td:last-child {
-          padding-right: 4px;
-        }
-
-        .edit-btn, .del-btn {
-          padding: 5px 6px;
-          font-size: 10px;
-          margin: 1px;
         }
       }
     </style>
@@ -448,68 +492,111 @@
 
   <body>
 
-  <!-- NAV -->
-  <div id="adminNav">
-    <button class="active" onclick="window.location.href='admin.html'">Mečevi</button>
-    <button onclick="window.location.href='admin-igraci.html'">Igrači</button>
-    <button class="logout-btn" onclick="logout()">Logout</button>
-  </div>
+  <div class="container">
+    <!-- HEADER -->
+    <header>
+      <div class="logo">⚽ Admin Panel</div>
+      <div class="nav-buttons">
+        <button class="nav-btn active" onclick="window.location.href='admin.html'">Mečevi</button>
+        <button class="nav-btn" onclick="window.location.href='admin-igraci.html'">Igrači</button>
+        <button class="nav-btn logout" onclick="logout()">Logout</button>
+      </div>
+    </header>
 
-  <script>
-    if (localStorage.getItem("admin") !== "1") window.location.href="login.html";
-    function logout(){ localStorage.removeItem("admin"); window.location.href="index.html"; }
-  </script>
+    <script>
+      if (localStorage.getItem("admin") !== "1") window.location.href="login.html";
+      function logout(){ localStorage.removeItem("admin"); window.location.href="index.html"; }
+    </script>
 
-  <h1>Upravljanje mečevima</h1>
+    <!-- MAIN FORM CARD -->
+    <div class="card">
+      <h1 class="card-title">Upravljanje mečevima</h1>
 
-  <!-- INPUT POLJA -->
-  <input id="round" placeholder="Kolo" type="number">
+      <div class="form-group">
+        <label class="form-label">Kolo</label>
+        <input id="round" type="number" placeholder="Unesite broj kola">
+      </div>
 
-  <div class="date-time-row">
-    <input id="date" type="date">
-    <input id="time" type="time">
-  </div>
+      <div class="input-row">
+        <div class="form-group">
+          <label class="form-label">Datum</label>
+          <input id="date" type="date">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Vreme</label>
+          <input id="time" type="time">
+        </div>
+      </div>
 
-  <input id="red" type="number" placeholder="Golovi Crveni">
-  <input id="blue" type="number" placeholder="Golovi Plavi">
+      <div class="input-row">
+        <div class="form-group">
+          <label class="form-label">Golovi Crveni</label>
+          <input id="red" type="number" placeholder="0">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Golovi Plavi</label>
+          <input id="blue" type="number" placeholder="0">
+        </div>
+      </div>
 
-  <textarea id="info" placeholder="Info o meču"></textarea>
+      <div class="form-group">
+        <label class="form-label">Info o meču</label>
+        <textarea id="info" placeholder="Dodajte dodatne informacije o meču..."></textarea>
+      </div>
 
-  <!-- IGRALI – CRVENI -->
-  <h3 style="color:#b10000;">Igrali – Crveni</h3>
-  <div id="playedRed"></div>
+      <!-- IGRALI CRVENI -->
+      <div class="section-header">
+        <div class="section-icon red">👥</div>
+        <div class="section-title">Igrali – Crveni</div>
+      </div>
+      <div class="players-grid" id="playedRed"></div>
 
-  <!-- STRELCI – CRVENI -->
-  <h3 style="color:#b10000;">Strelci – Crveni</h3>
-  <div id="scorersRedPlayers"></div>
-  <div id="scorersRedTags"></div>
+      <!-- STRELCI CRVENI -->
+      <div class="section-header">
+        <div class="section-icon red">⚽</div>
+        <div class="section-title">Strelci – Crveni</div>
+      </div>
+      <div class="players-grid" id="scorersRedPlayers"></div>
+      <div class="scorers-tags" id="scorersRedTags"></div>
 
-  <!-- IGRALI – PLAVI -->
-  <h3 style="color:#0044cc; margin-top:30px;">Igrali – Plavi</h3>
-  <div id="playedBlue"></div>
+      <!-- IGRALI PLAVI -->
+      <div class="section-header">
+        <div class="section-icon blue">👥</div>
+        <div class="section-title">Igrali – Plavi</div>
+      </div>
+      <div class="players-grid" id="playedBlue"></div>
 
-  <!-- STRELCI – PLAVI -->
-  <h3 style="color:#0044cc;">Strelci – Plavi</h3>
-  <div id="scorersBluePlayers"></div>
-  <div id="scorersBlueTags"></div>
+      <!-- STRELCI PLAVI -->
+      <div class="section-header">
+        <div class="section-icon blue">⚽</div>
+        <div class="section-title">Strelci – Plavi</div>
+      </div>
+      <div class="players-grid" id="scorersBluePlayers"></div>
+      <div class="scorers-tags" id="scorersBlueTags"></div>
 
-  <button class="save-btn" id="saveBtn">Sačuvaj meč</button>
-  <button class="update-btn" id="updateBtn">Sačuvaj izmene</button>
-  <button class="cancel-btn" id="cancelBtn" onclick="clearForm()">Otkaži izmenu</button>
+      <!-- ACTION BUTTONS -->
+      <button class="btn btn-primary" id="saveBtn">Sačuvaj meč</button>
+      <button class="btn btn-warning" id="updateBtn">Sačuvaj izmene</button>
+      <button class="btn btn-secondary" id="cancelBtn" onclick="clearForm()">Otkaži izmenu</button>
+    </div>
 
-  <!-- LISTA MEČEVA -->
-  <div class="table-wrapper">
-    <table>
-      <thead>
-        <tr>
-          <th>Kolo</th>
-          <th>Rezultat</th>
-          <th>Datum</th>
-          <th>Akcije</th>
-        </tr>
-      </thead>
-      <tbody id="matchList"></tbody>
-    </table>
+    <!-- MATCHES LIST CARD -->
+    <div class="card">
+      <h2 class="card-title">Lista mečeva</h2>
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Kolo</th>
+              <th>Rezultat</th>
+              <th>Datum</th>
+              <th>Akcije</th>
+            </tr>
+          </thead>
+          <tbody id="matchList"></tbody>
+        </table>
+      </div>
+    </div>
   </div>
 
   <!-- SCRIPT -->
@@ -522,12 +609,9 @@
   let editingId = null;
   let pendingPlayed = null;
 
-  /* -------------------------
-     FORMAT PLAYER NAME
-  --------------------------*/
+  /* FORMAT PLAYER NAME */
   function formatPlayerName(name) {
     if (!name) return '';
-
     let displayName = name;
     let badges = '';
 
@@ -546,21 +630,14 @@
     return displayName + badges;
   }
 
-  /* -------------------------
-     LOAD PLAYERS (WITH IDs)
-  --------------------------*/
+  /* LOAD PLAYERS */
   onValue(window.dbRef("players"), snap => {
     players = snap.val() || { crveni:{}, plavi:{} };
     renderPlayers();
-
-    if (pendingPlayed) {
-      applyPlayedSelection(pendingPlayed);
-    }
+    if (pendingPlayed) applyPlayedSelection(pendingPlayed);
   });
 
-  /* -------------------------
-          RENDER PLAYERS
-  --------------------------*/
+  /* RENDER PLAYERS */
   function renderPlayers() {
     const PR = document.getElementById("playedRed");
     const PB = document.getElementById("playedBlue");
@@ -569,26 +646,20 @@
 
     PR.innerHTML = PB.innerHTML = SRP.innerHTML = SBP.innerHTML = "";
 
-    // CRVENI
     Object.entries(players.crveni).forEach(([id, p]) => {
-      PR.innerHTML  += `<div class="player-btn player-red" data-id="${id}" data-team="crveni">${formatPlayerName(p.name)}</div>`;
-      SRP.innerHTML += `<div class="player-btn player-red" data-id="${id}" data-team="crveni">${formatPlayerName(p.name)}</div>`;
+      PR.innerHTML  += `<div class="player-btn" data-id="${id}" data-team="crveni">${formatPlayerName(p.name)}</div>`;
+      SRP.innerHTML += `<div class="player-btn" data-id="${id}" data-team="crveni">${formatPlayerName(p.name)}</div>`;
     });
 
-    // PLAVI
     Object.entries(players.plavi).forEach(([id, p]) => {
-      PB.innerHTML  += `<div class="player-btn player-blue" data-id="${id}" data-team="plavi">${formatPlayerName(p.name)}</div>`;
-      SBP.innerHTML += `<div class="player-btn player-blue" data-id="${id}" data-team="plavi">${formatPlayerName(p.name)}</div>`;
+      PB.innerHTML  += `<div class="player-btn" data-id="${id}" data-team="plavi">${formatPlayerName(p.name)}</div>`;
+      SBP.innerHTML += `<div class="player-btn" data-id="${id}" data-team="plavi">${formatPlayerName(p.name)}</div>`;
     });
 
-    if (pendingPlayed) {
-      applyPlayedSelection(pendingPlayed);
-    }
+    if (pendingPlayed) applyPlayedSelection(pendingPlayed);
   }
 
-  /* -------------------------
-     APPLY PLAYED SELECTION
-  --------------------------*/
+  /* APPLY PLAYED SELECTION */
   function applyPlayedSelection(played) {
     document.querySelectorAll("#playedRed .player-btn, #playedBlue .player-btn")
       .forEach(b => b.classList.remove("active"));
@@ -596,15 +667,11 @@
     Object.entries(played || {}).forEach(([playerId, team]) => {
       const container = team === "crveni" ? "#playedRed" : "#playedBlue";
       const btn = document.querySelector(`${container} .player-btn[data-id="${playerId}"]`);
-      if (btn) {
-        btn.classList.add("active");
-      }
+      if (btn) btn.classList.add("active");
     });
   }
 
-  /* -------------------------
-     EVENT DELEGATION SETUP
-  --------------------------*/
+  /* EVENT DELEGATION */
   (function setupEventDelegation() {
     document.getElementById("playedRed").addEventListener("click", (e) => {
       if (e.target.classList.contains("player-btn")) {
@@ -622,28 +689,20 @@
 
     document.getElementById("scorersRedPlayers").addEventListener("click", (e) => {
       if (e.target.classList.contains("player-btn")) {
-        scorers.push({
-          id: e.target.dataset.id,
-          team: e.target.dataset.team
-        });
+        scorers.push({ id: e.target.dataset.id, team: e.target.dataset.team });
         refreshTags();
       }
     });
 
     document.getElementById("scorersBluePlayers").addEventListener("click", (e) => {
       if (e.target.classList.contains("player-btn")) {
-        scorers.push({
-          id: e.target.dataset.id,
-          team: e.target.dataset.team
-        });
+        scorers.push({ id: e.target.dataset.id, team: e.target.dataset.team });
         refreshTags();
       }
     });
   })();
 
-  /* -------------------------
-           TAGOVI STRELACA
-  --------------------------*/
+  /* REFRESH TAGS */
   function refreshTags(){
     document.getElementById("scorersRedTags").innerHTML = "";
     document.getElementById("scorersBlueTags").innerHTML = "";
@@ -651,7 +710,7 @@
     scorers.forEach((s,i)=>{
       const rawName = players[s.team][s.id]?.name || "(obrisan)";
       const name = rawName.replace(/\s*\(c\)\s*/gi, '').replace(/\s*\(g\)\s*/gi, '').trim();
-      const tag = `<div class="tag">${name}<button onclick="removeGoal(${i})">x</button></div>`;
+      const tag = `<div class="tag">${name}<button onclick="removeGoal(${i})">×</button></div>`;
       if (s.team==="crveni")
         document.getElementById("scorersRedTags").innerHTML += tag;
       else
@@ -664,16 +723,11 @@
   window.removeGoal = i => { scorers.splice(i,1); refreshTags(); };
 
   function autoSetGoals() {
-    const redGoals = scorers.filter(s => s.team === "crveni").length;
-    const blueGoals = scorers.filter(s => s.team === "plavi").length;
-
-    red.value = redGoals;
-    blue.value = blueGoals;
+    red.value = scorers.filter(s => s.team === "crveni").length;
+    blue.value = scorers.filter(s => s.team === "plavi").length;
   }
 
-  /* -------------------------
-             GET PLAYED
-  --------------------------*/
+  /* GET PLAYED */
   function getPlayed() {
     const played = {};
     document.querySelectorAll("#playedRed .active,#playedBlue .active")
@@ -681,9 +735,7 @@
     return played;
   }
 
-  /* -------------------------
-          VALIDACIJA
-  --------------------------*/
+  /* VALIDATE */
   function validate(){
     const e=[];
     if(!round.value) e.push("Kolo?");
@@ -700,9 +752,7 @@
     return true;
   }
 
-  /* -------------------------
-       UPDATE STATISTIKA
-  --------------------------*/
+  /* UPDATE STATS */
   async function updateOne(team,id,field,delta){
     const ref = window.dbRef(`players/${team}/${id}`);
     const snap = await get(ref);
@@ -710,7 +760,6 @@
 
     const p = snap.val();
     const next = Math.max(0, (p[field]||0) + delta);
-
     await update(ref, { [field]: next });
   }
 
@@ -727,13 +776,9 @@
     }
   }
 
-  /* -------------------------
-           SAVE NEW MATCH
-  --------------------------*/
+  /* SAVE MATCH */
   saveBtn.onclick = async () =>{
     if(!validate()) return;
-
-    const scorersCopy = JSON.parse(JSON.stringify(scorers));
 
     const match = {
       round:round.value,
@@ -743,27 +788,21 @@
       blue:+blue.value,
       info:info.value.trim(),
       played:getPlayed(),
-      scorers: scorersCopy,
+      scorers: JSON.parse(JSON.stringify(scorers)),
       timestamp:Date.now()
     };
 
     await push(window.dbRef("matches"), match);
     await applyStats(match, +1);
-
     clearForm();
   };
 
-  /* -------------------------
-           UPDATE MATCH
-  --------------------------*/
+  /* UPDATE MATCH */
   updateBtn.onclick = async () => {
     if(!validate()) return;
 
-    const scorersCopy = JSON.parse(JSON.stringify(scorers));
-
     const oldSnap = await get(window.dbRef(`matches/${editingId}`));
     const oldMatch = oldSnap.val();
-
     await applyStats(oldMatch, -1);
 
     const newMatch = {
@@ -774,31 +813,25 @@
       blue:+blue.value,
       info:info.value.trim(),
       played:getPlayed(),
-      scorers: scorersCopy,
+      scorers: JSON.parse(JSON.stringify(scorers)),
       timestamp: oldMatch.timestamp
     };
 
     await update(window.dbRef(`matches/${editingId}`), newMatch);
     await applyStats(newMatch, +1);
-
     clearForm();
   };
 
-  /* -------------------------
-           DELETE MATCH
-  --------------------------*/
+  /* DELETE MATCH */
   window.deleteMatch = async id => {
     if (!confirm("Obrisati meč?")) return;
 
     const snap = await get(window.dbRef(`matches/${id}`));
     await applyStats(snap.val(), -1);
-
     await remove(window.dbRef(`matches/${id}`));
   };
 
-  /* -------------------------
-         FORMAT DATE FOR INPUT
-  --------------------------*/
+  /* FORMAT DATE */
   function formatDateForInput(date) {
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -806,9 +839,7 @@
     return `${year}-${month}-${day}`;
   }
 
-  /* -------------------------
-           CLEAR FORM
-  --------------------------*/
+  /* CLEAR FORM */
   window.clearForm = function(){
     editingId = null;
     scorers = [];
@@ -820,9 +851,7 @@
     info.value = "";
     autoFillRound();
 
-    document.querySelectorAll(".player-btn.active")
-      .forEach(b => b.classList.remove("active"));
-
+    document.querySelectorAll(".player-btn.active").forEach(b => b.classList.remove("active"));
     refreshTags();
 
     const d = getNextThursday();
@@ -834,9 +863,7 @@
     cancelBtn.style.display = "none";
   };
 
-  /* -------------------------
-         LISTA MEČEVA
-  --------------------------*/
+  /* LIST MATCHES */
   onValue(window.dbRef("matches"), snap=>{
     const tbody=document.getElementById("matchList");
     tbody.innerHTML="";
@@ -846,20 +873,18 @@
       .forEach(([id,m])=>{
         tbody.innerHTML+=`
           <tr>
-            <td>${m.round}</td>
-            <td>Crveni ${m.red} - ${m.blue} Plavi</td>
+            <td><strong>${m.round}</strong></td>
+            <td>Crveni <strong>${m.red}</strong> - <strong>${m.blue}</strong> Plavi</td>
             <td>${m.date} ${m.time}</td>
             <td>
-              <button class="edit-btn" onclick="editMatch('${id}')">Izmeni</button>
-              <button class="del-btn"  onclick="deleteMatch('${id}')">Obriši</button>
+              <button class="table-btn edit" onclick="editMatch('${id}')">Izmeni</button>
+              <button class="table-btn delete" onclick="deleteMatch('${id}')">Obriši</button>
             </td>
           </tr>`;
       });
   });
 
-  /* -------------------------
-          EDIT MATCH
-  --------------------------*/
+  /* EDIT MATCH */
   window.editMatch = async matchId => {
     editingId = matchId;
 
@@ -886,9 +911,7 @@
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  /* -------------------------
-         AUTO NEXT THURSDAY
-  --------------------------*/
+  /* AUTO THURSDAY */
   function getNextThursday() {
     const now = new Date();
     let diff = (4 - now.getDay() + 7) % 7;
@@ -905,9 +928,7 @@
     autoFillRound();
   })();
 
-  /* -------------------------
-         AUTO ROUND (KOLO)
-  --------------------------*/
+  /* AUTO ROUND */
   function autoFillRound() {
     onValue(window.dbRef("matches"), snap => {
       const data = snap.val() || {};
