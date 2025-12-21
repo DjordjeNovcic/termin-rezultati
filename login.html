@@ -209,14 +209,19 @@
          
                
          window.login = function () {
+           console.log("LOGIN CLICKED");
            const email = document.getElementById("email").value;
            const password = document.getElementById("password").value;
+
+            console.log("EMAIL:", email);
          
            signInWithEmailAndPassword(auth, email, password)
              .then(() => {
+               console.log("LOGIN OK");
                window.location.href = "admin.html";
              })
              .catch(() => {
+               console.error("LOGIN ERROR:", err.code, err.message);
                alert("Pogrešan email ili lozinka");
              });
          };
