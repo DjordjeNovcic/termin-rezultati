@@ -186,12 +186,12 @@
                <span id="togglePass" class="toggle">👁️</span>
             </div>
             <button type="button" class="login-btn" onclick="login()">Uđi</button>
-            <button class="back-btn" onclick="window.location.href='index.html'">Nazad na početnu</button>
+            <button type="button" class="back-btn" onclick="window.location.href='index.html'">Nazad na početnu</button>
          </div>
       </div>
       <script type="module">
          import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged }
+         import { getAuth, signInWithEmailAndPassword }
            from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
          
          const firebaseConfig = {
@@ -210,22 +210,24 @@
                
          window.login = function () {
            console.log("LOGIN CLICKED");
+            
            const email = document.getElementById("email").value;
            const password = document.getElementById("password").value;
-
+         
             console.log("EMAIL:", email);
          
-           signInWithEmailAndPassword(auth, email, password)
-             .then(() => {
-               console.log("LOGIN OK");
-               window.location.href = "admin.html";
-             })
-             .catch(() => {
-               console.error("LOGIN ERROR:", err.code, err.message);
-               alert("Pogrešan email ili lozinka");
-             });
-         };
+          signInWithEmailAndPassword(auth, email, password)
+         .then(() => {
+         console.log("LOGIN OK");
+         window.location.href = "admin.html";
+         })
+         .catch(err => {
+         console.error("LOGIN ERROR:", err.code, err.message);
+         alert(err.code);
+         });
+            };
          
+       
          /* ENTER za login */
          document.getElementById("password").addEventListener("keydown", e => {
            if (e.key === "Enter") login();
