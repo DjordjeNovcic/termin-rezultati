@@ -1,261 +1,248 @@
-  <!DOCTYPE html>
-  <html lang="sr">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-
-    <style>
-      * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-      }
-
-      body {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        min-height: 100vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 20px;
-      }
-
-      .login-container {
-        max-width: 400px;
-        width: 100%;
-      }
-
-      .logo {
-        text-align: center;
-        font-size: 48px;
-        margin-bottom: 30px;
-        text-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-      }
-
-      .card {
-        background: white;
-        border-radius: 16px;
-        padding: 40px;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-        animation: slideUp 0.4s ease;
-      }
-
-      @keyframes slideUp {
-        from {
-          transform: translateY(30px);
-          opacity: 0;
-        }
-        to {
-          transform: translateY(0);
-          opacity: 1;
-        }
-      }
-
-      h1 {
-        font-size: 28px;
-        margin-bottom: 30px;
-        color: #2d3436;
-        text-align: center;
-        font-weight: 700;
-      }
-
-      .input-wrap {
-        position: relative;
-        margin-bottom: 20px;
-        width: 100%;
-      }
-
-      input {
-        padding: 14px 50px 14px 16px;
-        width: 100%;
-        border: 2px solid #e0e0e0;
-        border-radius: 10px;
-        font-size: 16px;
-        outline: none;
-        font-family: inherit;
-        transition: all 0.3s ease;
-      }
-
-      input:focus {
-        border-color: #667eea;
-        box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
-      }
-
-      .toggle {
-        position: absolute;
-        right: 12px;
-        top: 50%;
-        transform: translateY(-50%);
-        cursor: pointer;
-        font-size: 22px;
-        color: #636e72;
-        user-select: none;
-        padding: 8px;
-        transition: all 0.2s ease;
-      }
-
-      .toggle:hover {
-        color: #2d3436;
-        transform: translateY(-50%) scale(1.1);
-      }
-
-      button {
-        padding: 16px;
-        width: 100%;
-        border: none;
-        border-radius: 12px;
-        cursor: pointer;
-        font-size: 16px;
-        font-weight: 700;
-        transition: all 0.3s ease;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-      }
-
-      .login-btn {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-        margin-bottom: 12px;
-      }
-
-      .login-btn:hover {
-        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
-        transform: translateY(-2px);
-      }
-
-      .login-btn:active {
-        transform: translateY(0);
-      }
-
-      .back-btn {
-        background: transparent;
-        color: #636e72;
-        border: 2px solid #e0e0e0;
-        font-weight: 600;
-        text-transform: none;
-        letter-spacing: normal;
-      }
-
-      .back-btn:hover {
-        background: #f8f9fa;
-        color: #2d3436;
-        border-color: #b2bec3;
-        transform: translateY(-2px);
-      }
-
-      /* MOBILE STYLES */
-      @media (max-width: 768px) {
-        body {
-          padding: 15px;
-        }
-
-        .logo {
-          font-size: 40px;
-          margin-bottom: 25px;
-        }
-
-        .card {
-          padding: 30px;
-          border-radius: 12px;
-        }
-
-        h1 {
-          font-size: 24px;
-          margin-bottom: 25px;
-        }
-
-        input {
-          padding: 14px 45px 14px 14px;
-        }
-
-        .toggle {
-          font-size: 20px;
-          padding: 6px;
-        }
-      }
-
-      @media (max-width: 480px) {
-        .logo {
-          font-size: 36px;
-          margin-bottom: 20px;
-        }
-
-        .card {
-          padding: 25px;
-        }
-
-        h1 {
-          font-size: 22px;
-          margin-bottom: 20px;
-        }
-
-        input {
-          padding: 12px 40px 12px 12px;
-        }
-
-        button {
-          padding: 14px;
-        }
-      }
-    </style>
-  </head>
-  <body>
-
-  <script>
-    if (localStorage.getItem("admin") === "1") {
-      window.location.href = "admin.html";
-    }
-  </script>
-
-  <div class="login-container">
-    <div class="logo">⚽</div>
-
-    <div class="card">
-      <h1>Admin Login</h1>
-
-      <div class="input-wrap">
-        <input id="pass" type="password" placeholder="Šifra" autocomplete="current-password">
-        <span id="togglePass" class="toggle">👁️</span>
+<!DOCTYPE html>
+<html lang="sr">
+   <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Login</title>
+      <style>
+         * {
+         box-sizing: border-box;
+         margin: 0;
+         padding: 0;
+         }
+         body {
+         font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+         min-height: 100vh;
+         display: flex;
+         align-items: center;
+         justify-content: center;
+         padding: 20px;
+         }
+         .login-container {
+         max-width: 400px;
+         width: 100%;
+         }
+         .logo {
+         text-align: center;
+         font-size: 48px;
+         margin-bottom: 30px;
+         text-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+         }
+         .card {
+         background: white;
+         border-radius: 16px;
+         padding: 40px;
+         box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+         animation: slideUp 0.4s ease;
+         }
+         @keyframes slideUp {
+         from {
+         transform: translateY(30px);
+         opacity: 0;
+         }
+         to {
+         transform: translateY(0);
+         opacity: 1;
+         }
+         }
+         h1 {
+         font-size: 28px;
+         margin-bottom: 30px;
+         color: #2d3436;
+         text-align: center;
+         font-weight: 700;
+         }
+         .input-wrap {
+         position: relative;
+         margin-bottom: 20px;
+         width: 100%;
+         }
+         input {
+         padding: 14px 50px 14px 16px;
+         width: 100%;
+         border: 2px solid #e0e0e0;
+         border-radius: 10px;
+         font-size: 16px;
+         outline: none;
+         font-family: inherit;
+         transition: all 0.3s ease;
+         }
+         input:focus {
+         border-color: #667eea;
+         box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+         }
+         .toggle {
+         position: absolute;
+         right: 12px;
+         top: 50%;
+         transform: translateY(-50%);
+         cursor: pointer;
+         font-size: 22px;
+         color: #636e72;
+         user-select: none;
+         padding: 8px;
+         transition: all 0.2s ease;
+         }
+         .toggle:hover {
+         color: #2d3436;
+         transform: translateY(-50%) scale(1.1);
+         }
+         button {
+         padding: 16px;
+         width: 100%;
+         border: none;
+         border-radius: 12px;
+         cursor: pointer;
+         font-size: 16px;
+         font-weight: 700;
+         transition: all 0.3s ease;
+         text-transform: uppercase;
+         letter-spacing: 0.5px;
+         }
+         .login-btn {
+         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+         color: white;
+         box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+         margin-bottom: 12px;
+         }
+         .login-btn:hover {
+         box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+         transform: translateY(-2px);
+         }
+         .login-btn:active {
+         transform: translateY(0);
+         }
+         .back-btn {
+         background: transparent;
+         color: #636e72;
+         border: 2px solid #e0e0e0;
+         font-weight: 600;
+         text-transform: none;
+         letter-spacing: normal;
+         }
+         .back-btn:hover {
+         background: #f8f9fa;
+         color: #2d3436;
+         border-color: #b2bec3;
+         transform: translateY(-2px);
+         }
+         /* MOBILE STYLES */
+         @media (max-width: 768px) {
+         body {
+         padding: 15px;
+         }
+         .logo {
+         font-size: 40px;
+         margin-bottom: 25px;
+         }
+         .card {
+         padding: 30px;
+         border-radius: 12px;
+         }
+         h1 {
+         font-size: 24px;
+         margin-bottom: 25px;
+         }
+         input {
+         padding: 14px 45px 14px 14px;
+         }
+         .toggle {
+         font-size: 20px;
+         padding: 6px;
+         }
+         }
+         @media (max-width: 480px) {
+         .logo {
+         font-size: 36px;
+         margin-bottom: 20px;
+         }
+         .card {
+         padding: 25px;
+         }
+         h1 {
+         font-size: 22px;
+         margin-bottom: 20px;
+         }
+         input {
+         padding: 12px 40px 12px 12px;
+         }
+         button {
+         padding: 14px;
+         }
+         }
+      </style>
+   </head>
+   <body>
+      <div class="login-container">
+         <div class="logo">⚽</div>
+         <div class="card">
+            <h1>Admin Login</h1>
+            <div class="input-wrap">
+               <input id="email" type="email" placeholder="Email">
+            </div>
+            <div class="input-wrap">
+               <input id="password" type="password" placeholder="Lozinka">
+               <span id="togglePass" class="toggle">👁️</span>
+            </div>
+            <button class="login-btn" onclick="login()">Uđi</button>
+            <button class="back-btn" onclick="window.location.href='index.html'">Nazad na početnu</button>
+         </div>
       </div>
-
-      <button class="login-btn" onclick="login()">Uđi</button>
-      <button class="back-btn" onclick="window.location.href='index.html'">Nazad na početnu</button>
-    </div>
-  </div>
-
-  <script>
-  function login() {
-    const val = document.getElementById("pass").value;
-    if (val === "admin123") {
-      localStorage.setItem("admin", "1");
-      window.location.href = "admin.html";
-    } else {
-      alert("Pogrešna šifra!");
-    }
-  }
-
-  /* ENTER ZA LOGIN */
-  document.getElementById("pass").addEventListener("keydown", function(e) {
-    if (e.key === "Enter") {
-      login();
-    }
-  });
-
-  /* PRIKAŽI/SAKRIJ ŠIFRU */
-  document.getElementById("togglePass").onclick = function() {
-    const inp = document.getElementById("pass");
-    if (inp.type === "password") {
-      inp.type = "text";
-      this.textContent = "🙈";
-    } else {
-      inp.type = "password";
-      this.textContent = "👁️";
-    }
-  };
-  </script>
-
-  </body>
-  </html>
+      <script type="module">
+         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+         import { getAuth, signInWithEmailAndPassword, onAuthStateChanged }
+           from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+         
+         const firebaseConfig = {
+           apiKey: "AIzaSyB9C173giGVH0gt_x4W8f-hoJldHXyRfqo",
+           authDomain: "termin-rezultati.firebaseapp.com",
+           databaseURL: "https://termin-rezultati-default-rtdb.europe-west1.firebasedatabase.app",
+           projectId: "termin-rezultati",
+           storageBucket: "termin-rezultati.appspot.com",
+           messagingSenderId: "263582756600",
+           appId: "1:263582756600:web:d40d40c474340122d4950d"
+         };
+         
+         const app = initializeApp(firebaseConfig);
+         const auth = getAuth(app);
+         
+         /* Ako si već ulogovan -> admin */
+         onAuthStateChanged(auth, user => {
+           if (user) {
+             window.location.href = "admin.html";
+           }
+         });
+         
+         window.login = function () {
+           const email = document.getElementById("email").value;
+           const password = document.getElementById("password").value;
+         
+           signInWithEmailAndPassword(auth, email, password)
+             .then(() => {
+               window.location.href = "admin.html";
+             })
+             .catch(() => {
+               alert("Pogrešan email ili lozinka");
+             });
+         };
+         
+         /* ENTER za login */
+         document.getElementById("password").addEventListener("keydown", e => {
+           if (e.key === "Enter") login();
+         });
+         
+         /* show / hide password */
+         document.getElementById("togglePass").onclick = function () {
+           const inp = document.getElementById("password");
+           if (inp.type === "password") {
+             inp.type = "text";
+             this.textContent = "🙈";
+           } else {
+             inp.type = "password";
+             this.textContent = "👁️";
+           }
+         };
+      </script>
+   </body>
+</html>
