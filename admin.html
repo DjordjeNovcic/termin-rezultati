@@ -529,6 +529,9 @@
             </div>
             <div class="players-grid" id="scorersRedPlayers"></div>
             <div class="scorers-tags" id="scorersRedTags"></div>
+            <button type="button" class="btn btn-secondary" id="redOwnGoalBtn">
+  Autogol – Crveni
+</button>
             <!-- IGRALI PLAVI -->
             <div class="section-header">
                <div class="section-icon blue">👥</div>
@@ -542,6 +545,9 @@
             </div>
             <div class="players-grid" id="scorersBluePlayers"></div>
             <div class="scorers-tags" id="scorersBlueTags"></div>
+            <button type="button" class="btn btn-secondary" id="blueOwnGoalBtn">
+  Autogol – Plavi
+</button>
             <!-- ACTION BUTTONS -->
             <button class="btn btn-primary" id="saveBtn">Sačuvaj meč</button>
             <button class="btn btn-warning" id="updateBtn">Sačuvaj izmene</button>
@@ -574,6 +580,25 @@
          let scorers = [];
          let editingId = null;
          let pendingPlayed = null;
+
+         let ownGoalMode = {
+  crveni: false,
+  plavi: false
+};
+
+         redOwnGoalBtn.onclick = () => {
+  ownGoalMode.crveni = !ownGoalMode.crveni;
+  redOwnGoalBtn.textContent = ownGoalMode.crveni
+    ? "AUTOGOL – UKLJUČEN"
+    : "Autogol – Crveni";
+};
+
+blueOwnGoalBtn.onclick = () => {
+  ownGoalMode.plavi = !ownGoalMode.plavi;
+  blueOwnGoalBtn.textContent = ownGoalMode.plavi
+    ? "AUTOGOL – UKLJUČEN"
+    : "Autogol – Plavi";
+};
          
          /* FORMAT PLAYER NAME */
          function formatPlayerName(name) {
@@ -653,20 +678,35 @@
              }
            });
          
-           document.getElementById("scorersRedPlayers").addEventListener("click", (e) => {
-             if (e.target.classList.contains("player-btn")) {
-               scorers.push({ id: e.target.dataset.id, team: e.target.dataset.team });
-               refreshTags();
-             }
-           });
+ document.getElementById("scorersRedPlayers").addEventListener("click", (e) => {
+  if (e.target.classList.contains("player-btn")) {
+    scorers.push({
+      id: e.target.dataset.id,
+      team: e.target.dataset.team,
+      type: ownGoalMode.crveni ? "own_goal" : "goal"
+    });
+
+    ownGoalMode.crveni = false;
+    redOwnGoalBtn.textContent = "Autogol – Crveni";
+
+    refreshTags();
+  }
+});
          
            document.getElementById("scorersBluePlayers").addEventListener("click", (e) => {
-             if (e.target.classList.contains("player-btn")) {
-               scorers.push({ id: e.target.dataset.id, team: e.target.dataset.team });
-               refreshTags();
-             }
-           });
-         })();
+  if (e.target.classList.contains("player-btn")) {
+    scorers.push({
+      id: e.target.dataset.id,
+      team: e.target.dataset.team,
+      type: ownGoalMode.plavi ? "own_goal" : "goal"
+    });
+
+    ownGoalMode.plavi = false;
+    blueOwnGoalBtn.textContent = "Autogol – Plavi";
+
+    refreshTags();
+  }
+});
          
          /* REFRESH TAGS */
          function refreshTags(){
@@ -676,7 +716,9 @@
            scorers.forEach((s,i)=>{
              const rawName = players[s.team][s.id]?.name || "(obrisan)";
              const name = rawName.replace(/\s*\(c\)\s*/gi, '').replace(/\s*\(g\)\s*/gi, '').trim();
-             const tag = `<div class="tag">${name}<button onclick="removeGoal(${i})">×</button></div>`;
+             const ogLabel = s.type === "own_goal" ? " (OG)" : "";
+const tag = `<div class="tag">${name}${ogLabel}<button onclick="removeGoal(${i})">×</button></div>`;
+
              if (s.team==="crveni")
                document.getElementById("scorersRedTags").innerHTML += tag;
              else
@@ -688,10 +730,26 @@
          
          window.removeGoal = i => { scorers.splice(i,1); refreshTags(); };
          
-         function autoSetGoals() {
-           red.value = scorers.filter(s => s.team === "crveni").length;
-           blue.value = scorers.filter(s => s.team === "plavi").length;
-         }
+        function autoSetGoals() {
+  let redGoals = 0;
+  let blueGoals = 0;
+
+  scorers.forEach(s => {
+    if (s.type === "own_goal") {
+      // autogol ide protivničkom timu
+      if (s.team === "crveni") blueGoals++;
+      if (s.team === "plavi") redGoals++;
+    } else {
+      // regularan gol
+      if (s.team === "crveni") redGoals++;
+      if (s.team === "plavi") blueGoals++;
+    }
+  });
+
+  red.value = redGoals;
+  blue.value = blueGoals;
+}
+
          
          /* GET PLAYED */
          function getPlayed() {
@@ -709,7 +767,10 @@
            if(!time.value)  e.push("Vreme?");
            if(!info.value.trim()) e.push("Info?");
            if(Object.keys(getPlayed()).length===0) e.push("Igrali?");
-           if(scorers.length===0)  e.push("Strelci?");
+            
+           if (scorers.length === 0 && (+red.value > 0 || +blue.value > 0)) {
+  e.push("Nedostaju strelci");
+}
          
            if(e.length){
              alert("Greške:\n\n"+e.join("\n"));
@@ -738,9 +799,10 @@
            }
          
            for (const s of scor) {
-             await updateOne(s.team, s.id, "goals", dir);
-           }
-         }
+  if (s.type && s.type === "own_goal") continue;
+
+  await updateOne(s.team, s.id, "goals", dir);
+}
          
          /* SAVE MATCH */
          saveBtn.onclick = async () =>{
@@ -809,6 +871,7 @@
          window.clearForm = function(){
            editingId = null;
            scorers = [];
+           ownGoalMode = { crveni: false, plavi: false };
            pendingPlayed = null;
          
            round.value = "";
