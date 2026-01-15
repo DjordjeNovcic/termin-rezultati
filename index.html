@@ -919,11 +919,11 @@
            const latest = matches[0];
          
            const matchLinks = `
-  ${latest.info ? `<div class="info-link" onclick="openMatchInfo(0)">ℹ️ Info</div>` : ""}
-  <div class="info-link" onclick="openMatchScorers(0)">⚽ Strelci</div>
-  <div class="info-link" onclick="openMatchLineup(0)">🧍 Sastavi</div>
-`;
-
+         ${latest.info ? `<div class="info-link" onclick="openMatchInfo(0)">ℹ️ Info</div>` : ""}
+         <div class="info-link" onclick="openMatchScorers(0)">⚽ Strelci</div>
+         <div class="info-link" onclick="openMatchLineup(0)">🧍 Sastavi</div>
+         `;
+         
          
            mainBox.innerHTML = `
              <div class="match-box">
@@ -958,11 +958,11 @@
              recent.forEach((m, idx) => {
                const matchIndex = idx + 1;
                const recentMatchLinks = `
-  ${m.info ? `<div class="info-link" onclick="openMatchInfo(${matchIndex})">ℹ️ Info</div>` : ""}
-  <div class="info-link" onclick="openMatchScorers(${matchIndex})">⚽ Strelci</div>
-  <div class="info-link" onclick="openMatchLineup(${matchIndex})">🧍 Sastavi</div>
-`;
-
+         ${m.info ? `<div class="info-link" onclick="openMatchInfo(${matchIndex})">ℹ️ Info</div>` : ""}
+         <div class="info-link" onclick="openMatchScorers(${matchIndex})">⚽ Strelci</div>
+         <div class="info-link" onclick="openMatchLineup(${matchIndex})">🧍 Sastavi</div>
+         `;
+         
          
                matchesHTML += `
                  <div class="match-box">
@@ -1183,24 +1183,22 @@
          
          /* -------- MODAL - INFO -------- */
          window.openMatchInfo = idx => {
-  const match = allMatches[idx];
-  if (!match) return;
-
-  document.getElementById("modalTitle").innerText = "ℹ️ Info o meču";
-  document.getElementById("modalContent").innerHTML =
-    `<div style="white-space:pre-line;">${match.info || 'Nema dodatnih informacija'}</div>`;
-
-  document.getElementById("modalOverlay").style.display = "flex";
-};
-
+         const match = allMatches[idx];
+         if (!match) return;
+         
+         document.getElementById("modalTitle").innerText = "ℹ️ Info o meču";
+         document.getElementById("modalContent").innerHTML =
+         `<div style="white-space:pre-line;">${match.info || 'Nema dodatnih informacija'}</div>`;
+         
+         document.getElementById("modalOverlay").style.display = "flex";
+         };
+         
          
          /* -------- MODAL - SCORERS -------- */
          window.openMatchScorers = idx => {
            const match = allMatches[idx];
            if (!match) return;
-         
-            currentModalMatch = match;
-         
+              
            const scorers = match.scorers || [];
          
            document.getElementById("modalTitle").innerText = "Strelci na meču";
@@ -1253,6 +1251,17 @@
          document.getElementById("modalOverlay").style.display = "flex";  
          }
          };
+         
+         window.openMatchLineup = idx => {
+         const match = allMatches[idx];
+         if (!match) return;
+         
+         document.getElementById("modalTitle").innerText = "🧍 Sastavi";
+         
+         renderMatchLineup(match);
+         document.getElementById("modalOverlay").style.display = "flex";
+         };
+         
          
          
          function renderMatchLineup(match) {
