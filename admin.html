@@ -101,6 +101,10 @@
          text-transform: uppercase;
          letter-spacing: 0.5px;
          }
+         input[readonly] {
+         background: #f8f9fa;
+         cursor: not-allowed;
+         }
          input, textarea {
          width: 100%;
          padding: 14px 16px;
@@ -509,11 +513,11 @@
             <div class="input-row">
                <div class="form-group">
                   <label class="form-label">Golovi Crveni</label>
-                  <input id="red" type="number" placeholder="0">
+                  <input id="red" type="number" placeholder="0" readonly>
                </div>
                <div class="form-group">
                   <label class="form-label">Golovi Plavi</label>
-                  <input id="blue" type="number" placeholder="0">
+                  <input id="blue" type="number" placeholder="0" readonly>
                </div>
             </div>
             <div class="form-group">
@@ -585,24 +589,6 @@
          let editingId = null;
          let pendingPlayed = null;
          
-         let ownGoalMode = {
-         crveni: false,
-         plavi: false
-         };
-         
-         redOwnGoalBtn.onclick = () => {
-         ownGoalMode.crveni = !ownGoalMode.crveni;
-         redOwnGoalBtn.textContent = ownGoalMode.crveni
-         ? "AUTOGOL – UKLJUČEN"
-         : "Autogol – Crveni";
-         };
-         
-         blueOwnGoalBtn.onclick = () => {
-         ownGoalMode.plavi = !ownGoalMode.plavi;
-         blueOwnGoalBtn.textContent = ownGoalMode.plavi
-         ? "AUTOGOL – UKLJUČEN"
-         : "Autogol – Plavi";
-         };
          
          /* FORMAT PLAYER NAME */
          function formatPlayerName(name) {
@@ -688,11 +674,8 @@
          scorers.push({
          id: e.target.dataset.id,
          team: e.target.dataset.team,
-         type: ownGoalMode.crveni ? "own_goal" : "goal"
+         type: "goal"
          });
-         
-         ownGoalMode.crveni = false;
-         redOwnGoalBtn.textContent = "Autogol – Crveni";
          
          refreshTags();
          autoSetGoals();
@@ -704,16 +687,14 @@
          scorers.push({
          id: e.target.dataset.id,
          team: e.target.dataset.team,
-         type: ownGoalMode.plavi ? "own_goal" : "goal"
+         type: "goal"
          });
-         
-         ownGoalMode.plavi = false;
-         blueOwnGoalBtn.textContent = "Autogol – Plavi";
          
          refreshTags();
          autoSetGoals();
          }
          });
+         
          
          /* REFRESH TAGS */
          function refreshTags(){
@@ -721,9 +702,18 @@
            document.getElementById("scorersBlueTags").innerHTML = "";
          
            scorers.forEach((s,i)=>{
-             const rawName = players[s.team][s.id]?.name || "(obrisan)";
-             const name = rawName.replace(/\s*\(c\)\s*/gi, '').replace(/\s*\(g\)\s*/gi, '').trim();
-             const ogLabel = s.type === "own_goal" ? " (OG)" : "";
+             const rawName =
+         s.type === "own_goal"
+         ? "Autogol"
+         : players[s.team][s.id]?.name || "(obrisan)";
+         
+         const name = rawName
+         .replace(/\s*\(c\)\s*/gi, '')
+         .replace(/\s*\(g\)\s*/gi, '')
+         .trim();
+         
+         const ogLabel = s.type === "own_goal" ? " (OG)" : "";
+         
          const tag = `<div class="tag">${name}${ogLabel}<button onclick="removeGoal(${i})">×</button></div>`;
          
              if (s.team==="crveni")
@@ -742,20 +732,33 @@
          let blueGoals = 0;
          
          scorers.forEach(s => {
-         if (s.type === "own_goal") {
-         // autogol ide protivničkom timu
+         const type = s.type || "goal";
+         
+         if (type === "own_goal") {
          if (s.team === "crveni") blueGoals++;
          if (s.team === "plavi") redGoals++;
          } else {
-         // regularan gol
          if (s.team === "crveni") redGoals++;
          if (s.team === "plavi") blueGoals++;
          }
          });
          
+         
          red.value = redGoals;
          blue.value = blueGoals;
          }
+         
+         function addOwnGoal(team) {
+         scorers.push({
+         id: "__own_goal__",
+         team: team,
+         type: "own_goal"
+         });
+         
+         refreshTags();
+         autoSetGoals();
+         }
+         
          
          
          /* GET PLAYED */
@@ -879,7 +882,6 @@
          window.clearForm = function(){
            editingId = null;
            scorers = [];
-           ownGoalMode = { crveni: false, plavi: false };
            pendingPlayed = null;
          
            round.value = "";
@@ -974,6 +976,15 @@
              round.value = nextRound;
            }, { onlyOnce: true });
          }
+         
+         redOwnGoalBtn.addEventListener("click", () => {
+         addOwnGoal("crveni");
+         });
+         
+         blueOwnGoalBtn.addEventListener("click", () => {
+         addOwnGoal("plavi");
+         });
+         
          
       </script>
    </body>
