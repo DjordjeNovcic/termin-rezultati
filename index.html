@@ -468,24 +468,26 @@
          text-align: left;
          }
          .scorer-item {
-         padding: 4px 8px;
-         margin: 3px 0;
-         border-radius: 4px;
-         font-size: 12px;
+         display: flex;
+         align-items: center;
+         justify-content: space-between;
+         padding: 6px 10px;
+         margin: 2px 0;
+         font-size: 13px;
          font-weight: 500;
-         line-height: 1.25;
-         transition: none;
+         line-height: 1.2;
+         border-radius: 4px;
          }
          .scorer-item:hover {
          transform: translateX(5px);
          }
          .scorer-item.red {
-         background: #fff1f1;
+         background: #fff5f5;
          color: #d63031;
          border-left: 2px solid #d63031;
          }
          .scorer-item.blue {
-         background: #f1f6ff;
+         background: #f5f9ff;
          color: #0984e3;
          border-left: 2px solid #0984e3;
          }
@@ -1164,9 +1166,14 @@
          html += `
          <div class="scorer-item ${teamClass}">
          ${formatPlayerName(name)}
-         <span style="margin-left:8px; font-weight:600;">
-          ⚽ ×${count}
+         <span style="
+         font-weight:600;
+         font-size:12px;
+         white-space:nowrap;
+         ">
+         ⚽ ×${count}
          </span>
+         
          </div>
          `;
          });
