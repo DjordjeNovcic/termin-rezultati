@@ -47,6 +47,23 @@
          color: white;
          margin: 0;
          }
+         /* IMAGE PREVIEW OVERLAY */
+         #imageOverlay {
+         position: fixed;
+         inset: 0;
+         background: rgba(0, 0, 0, 0.8);
+         display: none;
+         align-items: center;
+         justify-content: center;
+         z-index: 1000;
+         cursor: zoom-out;
+         }
+         #imageOverlay img {
+         max-width: 90%;
+         max-height: 90%;
+         border-radius: 12px;
+         box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+         }
          .card-content {
          padding: 30px 35px 35px;
          }
@@ -284,7 +301,12 @@
             </div>
             <div class="card-content">
                <div class="team-image-wrapper">
-                  <img src="plavi-team.png" class="team-image" alt="Ekipa Plavih">
+                  <img
+                     src="plavi-team.png"
+                     class="team-image"
+                     alt="Ekipa Plavih"
+                     onclick="openImagePreview(this.src)"
+                     >
                </div>
                <div class="table-wrapper">
                   <table>
@@ -409,6 +431,24 @@
              };
            });
          });
+         
+         window.openImagePreview = (src) => {
+         const overlay = document.getElementById("imageOverlay");
+         const img = document.getElementById("imagePreview");
+         
+         img.src = src;
+         overlay.style.display = "flex";
+         };
+         
+         document.getElementById("imageOverlay").onclick = () => {
+         document.getElementById("imageOverlay").style.display = "none";
+         };
+         
+         <!-- IMAGE PREVIEW OVERLAY -->
+         <div id="imageOverlay">
+         <img id="imagePreview" alt="Team preview">
+         </div>
+         
       </script>
    </body>
 </html>
