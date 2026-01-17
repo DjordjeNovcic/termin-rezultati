@@ -156,6 +156,9 @@
          overflow: hidden;
          transition: transform 0.3s ease, box-shadow 0.3s ease;
          }
+         .scorers-table-wrapper tbody tr {
+         border-bottom: 1px solid rgba(0,0,0,0.04);
+         }
          .card:hover {
          transform: translateY(-4px);
          box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
@@ -202,6 +205,23 @@
          border-radius: 12px;
          background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
          border: 2px solid #f0f0f0;
+         }
+         /* === SCORERS TABLE UX IMPROVEMENTS === */
+         /* Ime igraca - jači fokus */
+         .scorers-table-wrapper td:first-child {
+         font-weight: 600;
+         text-align: left;
+         }
+         /* Tim - sekundarna informacija */
+         .scorers-table-wrapper td:nth-child(2) {
+         font-size: 12px;
+         opacity: 0.7;
+         }
+         /* Golovi - primarni signal */
+         .scorers-table-wrapper td:last-child {
+         font-size: 16px;
+         font-weight: 800;
+         color: #5f6eea;
          }
          /* Recent match boxes - lighter styling */
          .recent-matches-content .match-box {
@@ -757,6 +777,29 @@
          .dot {
          width: 16px;
          height: 16px;
+         }
+         }
+         /* === UNIFIED SECTION SPACING === */
+         header {
+         margin-bottom: 28px;
+         }
+         .card {
+         margin-bottom: 28px;
+         }
+         @media (max-width: 768px) {
+         header {
+         margin-bottom: 22px;
+         }
+         .card {
+         margin-bottom: 22px;
+         }
+         }
+         @media (max-width: 480px) {
+         header {
+         margin-bottom: 18px;
+         }
+         .card {
+         margin-bottom: 18px;
          }
          }
       </style>
