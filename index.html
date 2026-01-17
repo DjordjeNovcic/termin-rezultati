@@ -1042,15 +1042,27 @@
            const { field, dir } = currentSort.league;
          
            teams.sort((a, b) => {
-             const valA = a[field];
-             const valB = b[field];
+         // 1. Bodovi (uvek primarno)
+         if (b.B !== a.B) {
+         return b.B - a.B;
+         }
          
-             if (valA === valB) {
-               return b.B - a.B;
-             }
+         // 2. Gol razlika (sekundarno)
+         if (b.GR !== a.GR) {
+         return b.GR - a.GR;
+         }
          
-             return dir === 'asc' ? valA - valB : valB - valA;
-           });
+         // 3. Tek onda aktivni sort (ako klikneš kolonu)
+         const valA = a[field];
+         const valB = b[field];
+         
+         if (typeof valA === "number" && typeof valB === "number") {
+         return dir === 'asc' ? valA - valB : valB - valA;
+         }
+         
+         return 0;
+         });
+         
          
            const tbody = document.getElementById("leagueBody");
            tbody.innerHTML = "";
@@ -1221,33 +1233,44 @@
          
          let html = "";
          
-         Object.entries(grouped).forEach(([key, count]) => {
+         Object.entries(grouped)
+         .map(([key, count]) => {
          let name = "";
          let teamClass = "";
          
          if (key === "__own_goal__") {
          name = "Autogol (OG)";
-         teamClass = "red"; // ili neutralno, kasnije
+         teamClass = "red";
          } else {
          const [team, id] = key.split(":");
          name = allPlayers[team]?.[id]?.name || "(nepoznat)";
          teamClass = team === "crveni" ? "red" : "blue";
          }
          
+         return {
+         name: name.replace(/\s*\(c\)|\s*\(g\)/gi, "").trim(),
+         displayName: name,
+         teamClass,
+         count
+         };
+         })
+         .sort((a, b) => {
+         if (b.count !== a.count) {
+         return b.count - a.count; // više golova prvo
+         }
+         return a.name.localeCompare(b.name, "sr"); // ime A–Z
+         })
+         .forEach(item => {
          html += `
-         <div class="scorer-item ${teamClass}">
-         ${formatPlayerName(name)}
-         <span style="
-         font-weight:600;
-         font-size:12px;
-         white-space:nowrap;
-         ">
-         ⚽ ×${count}
+         <div class="scorer-item ${item.teamClass}">
+         ${formatPlayerName(item.displayName)}
+         <span style="font-weight:600;font-size:12px;white-space:nowrap;">
+          ⚽ ×${item.count}
          </span>
-         
          </div>
          `;
          });
+         
          
          document.getElementById("modalContent").innerHTML = html;
          document.getElementById("modalOverlay").style.display = "flex";  
