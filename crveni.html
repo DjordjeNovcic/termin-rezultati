@@ -32,6 +32,35 @@
          transition: transform 0.3s ease, box-shadow 0.3s ease;
          animation: fadeIn 0.5s ease;
          }
+         .image-zoom-hint {
+         position: relative;
+         display: inline-block;
+         cursor: zoom-in;
+         }
+         .image-zoom-hint::after {
+         content: "🔍";
+         position: absolute;
+         bottom: 12px;
+         right: 12px;
+         background: rgba(0, 0, 0, 0.6);
+         color: #fff;
+         font-size: 16px;
+         padding: 6px 8px;
+         border-radius: 50%;
+         opacity: 0;
+         transition: opacity 0.2s ease;
+         pointer-events: none;
+         }
+         /* Desktop */
+         .image-zoom-hint:hover::after {
+         opacity: 1;
+         }
+         /* Mobile */
+         @media (hover: none) {
+         .image-zoom-hint::after {
+         opacity: 0.85;
+         }
+         }
          .card:hover {
          transform: translateY(-4px);
          box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
@@ -83,6 +112,7 @@
          border-radius: 12px;
          box-shadow: 0 8px 24px rgba(214, 48, 49, 0.2);
          transition: transform 0.3s ease, box-shadow 0.3s ease;
+         cursor: zoom-in;
          }
          .team-image:hover {
          transform: scale(1.05);
@@ -320,12 +350,6 @@
          opacity: 1;
          transform: translateY(0);
          }
-         /* Mobile */
-         @media (hover: none) {
-         .zoom-hint {
-         opacity: 0.85;
-         transform: translateY(0);
-         }
          }
       </style>
    </head>
@@ -341,7 +365,6 @@
                <div class="team-image-wrapper">
                   <div class="image-zoom-hint">
                      <img src="crveni-team.png" class="team-image" alt="Ekipa Crvenih">
-                     <span class="zoom-hint">Tap to zoom</span>
                   </div>
                </div>
                <div class="table-wrapper">
