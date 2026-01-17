@@ -288,6 +288,37 @@
          opacity: 1;
          background: rgba(255,255,255,0.25);
          }
+         .image-zoom-hint {
+         position: relative;
+         display: inline-block;
+         }
+         .zoom-hint {
+         position: absolute;
+         bottom: 12px;
+         right: 12px;
+         background: rgba(0, 0, 0, 0.65);
+         color: #fff;
+         font-size: 11px;
+         font-weight: 600;
+         padding: 6px 10px;
+         border-radius: 16px;
+         opacity: 0;
+         pointer-events: none;
+         transition: opacity 0.25s ease, transform 0.25s ease;
+         transform: translateY(4px);
+         }
+         /* Desktop hover */
+         .image-zoom-hint:hover .zoom-hint {
+         opacity: 1;
+         transform: translateY(0);
+         }
+         /* Mobile – hint uvek blago vidljiv */
+         @media (hover: none) {
+         .zoom-hint {
+         opacity: 0.85;
+         transform: translateY(0);
+         }
+         }
       </style>
    </head>
    <body>
@@ -299,12 +330,9 @@
                <span>Igrači – Plavi</span>
             </div>
             <div class="card-content">
-               <div class="team-image-wrapper">
-                  <img
-                     src="plavi-team.png"
-                     class="team-image"
-                     alt="Ekipa Plavih"
-                     >
+               <div class="team-image-wrapper image-zoom-hint">
+                  <img src="plavi-team.png" class="team-image" alt="Ekipa Plavih">
+                  <span class="zoom-hint">Tap to zoom</span>
                </div>
                <div class="table-wrapper">
                   <table>
