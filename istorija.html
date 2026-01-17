@@ -538,25 +538,48 @@
          });
          
          document.getElementById("modalContent").innerHTML =
-         Object.entries(grouped).map(([key, count]) => {
+         Object.entries(grouped)
+         .map(([key, count]) => {
          if (key === "__og__") {
-          return `
-            <div class="scorer-item red">
-              Autogol
-              <strong>⚽ ×${count}</strong>
-            </div>`;
+         return {
+         isOG: true,
+         name: "Autogol",
+         teamClass: "red",
+         count
+         };
          }
          
          const [team, id] = key.split(":");
-         const name = allPlayers[team]?.[id]?.name || "(nepoznat)";
-         const cls = team === "crveni" ? "red" : "blue";
+         const rawName = allPlayers[team]?.[id]?.name || "(nepoznat)";
          
-         return `
-          <div class="scorer-item ${cls}">
-            ${formatPlayerName(name)}
-            <strong>⚽ ×${count}</strong>
-          </div>`;
-         }).join("");
+         return {
+         isOG: false,
+         name: rawName.replace(/\s*\(c\)|\s*\(g\)/gi, "").trim(),
+         displayName: rawName,
+         teamClass: team === "crveni" ? "red" : "blue",
+         count
+         };
+         })
+         .sort((a, b) => {
+         // autogol uvek na dnu
+         if (a.isOG && !b.isOG) return 1;
+         if (!a.isOG && b.isOG) return -1;
+         
+         // više golova prvo
+         if (b.count !== a.count) {
+         return b.count - a.count;
+         }
+         
+         // ime A–Z
+         return a.name.localeCompare(b.name, "sr");
+         })
+         .map(item => `
+         <div class="scorer-item ${item.teamClass}">
+         ${item.isOG ? item.name : formatPlayerName(item.displayName)}
+         <strong>⚽ ×${item.count}</strong>
+         </div>
+         `)
+         .join("");
          }
          
          document.getElementById("modalOverlay").style.display = "flex";
