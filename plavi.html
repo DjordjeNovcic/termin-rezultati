@@ -47,11 +47,10 @@
          color: white;
          margin: 0;
          }
-         /* IMAGE PREVIEW OVERLAY */
          #imageOverlay {
          position: fixed;
          inset: 0;
-         background: rgba(0, 0, 0, 0.8);
+         background: rgba(0, 0, 0, 0.85);
          display: none;
          align-items: center;
          justify-content: center;
@@ -305,7 +304,6 @@
                      src="plavi-team.png"
                      class="team-image"
                      alt="Ekipa Plavih"
-                     onclick="openImagePreview(this.src)"
                      >
                </div>
                <div class="table-wrapper">
@@ -322,6 +320,9 @@
                </div>
             </div>
          </div>
+      </div>
+      <div id="imageOverlay">
+         <img id="imagePreview" alt="Team preview">
       </div>
       <script type="module">
          import { onValue } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
@@ -350,6 +351,22 @@
          
            return displayName + badges;
          }
+         
+         const teamImage = document.querySelector(".team-image");
+         const overlay = document.getElementById("imageOverlay");
+         const preview = document.getElementById("imagePreview");
+         
+         if (teamImage) {
+         teamImage.addEventListener("click", () => {
+         preview.src = teamImage.src;
+         overlay.style.display = "flex";
+         });
+         }
+         
+         overlay.addEventListener("click", () => {
+         overlay.style.display = "none";
+         });
+         
          
          /* ---------------- UPDATE SORT INDICATORS ---------------- */
          function updateSortIndicators() {
@@ -431,23 +448,6 @@
              };
            });
          });
-         
-         window.openImagePreview = (src) => {
-         const overlay = document.getElementById("imageOverlay");
-         const img = document.getElementById("imagePreview");
-         
-         img.src = src;
-         overlay.style.display = "flex";
-         };
-         
-         document.getElementById("imageOverlay").onclick = () => {
-         document.getElementById("imageOverlay").style.display = "none";
-         };
-         
-         <!-- IMAGE PREVIEW OVERLAY -->
-         <div id="imageOverlay">
-         <img id="imagePreview" alt="Team preview">
-         </div>
          
       </script>
    </body>
