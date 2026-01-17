@@ -15,50 +15,11 @@
          font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
          min-height: 100vh;
-         padding: 30px 15px;
+         padding: 16px 12px;
          }
          .container {
          max-width: 900px;
          margin: 0 auto;
-         }
-         /* HEADER */
-         header {
-         background: white;
-         border-radius: 16px;
-         padding: 25px 35px;
-         margin-bottom: 35px;
-         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-         text-align: center;
-         transition: transform 0.3s ease, box-shadow 0.3s ease;
-         }
-         header:hover {
-         transform: translateY(-2px);
-         box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
-         }
-         .logo {
-         font-size: 32px;
-         font-weight: bold;
-         background: linear-gradient(135deg, #0984e3 0%, #00b894 100%);
-         -webkit-background-clip: text;
-         -webkit-text-fill-color: transparent;
-         background-clip: text;
-         margin-bottom: 15px;
-         }
-         .back-link-header {
-         display: inline-block;
-         color: #666;
-         text-decoration: none;
-         font-size: 14px;
-         font-weight: 500;
-         padding: 10px 20px;
-         background: #f8f9fa;
-         border-radius: 8px;
-         transition: all 0.3s ease;
-         }
-         .back-link-header:hover {
-         background: #e9ecef;
-         transform: translateY(-2px);
-         color: #333;
          }
          /* CARD */
          .card {
@@ -192,18 +153,6 @@
          body {
          padding: 15px 10px;
          }
-         header {
-         padding: 20px 25px;
-         margin-bottom: 25px;
-         }
-         .logo {
-         font-size: 26px;
-         margin-bottom: 12px;
-         }
-         .back-link-header {
-         font-size: 13px;
-         padding: 8px 16px;
-         }
          .card {
          margin-bottom: 25px;
          }
@@ -248,16 +197,6 @@
          body {
          padding: 12px 8px;
          }
-         header {
-         padding: 18px 20px;
-         }
-         .logo {
-         font-size: 24px;
-         }
-         .back-link-header {
-         font-size: 12px;
-         padding: 7px 14px;
-         }
          .card-header {
          padding: 18px 20px 14px;
          }
@@ -299,40 +238,50 @@
          }
          }
          /* === UNIFIED SECTION SPACING === */
-         header {
-         margin-bottom: 28px;
-         }
          .card {
          margin-bottom: 28px;
          }
          @media (max-width: 768px) {
-         header {
-         margin-bottom: 22px;
-         }
          .card {
          margin-bottom: 22px;
          }
          }
          @media (max-width: 480px) {
-         header {
-         margin-bottom: 18px;
-         }
          .card {
          margin-bottom: 18px;
          }
+         }
+         /* === TEAM PAGE HEADER (PLAVI) === */
+         .team-header {
+         display: flex;
+         align-items: center;
+         gap: 16px;
+         }
+         .back-link-inline {
+         font-size: 13px;
+         font-weight: 600;
+         color: #fff;
+         text-decoration: none;
+         opacity: 0.85;
+         padding: 6px 10px;
+         border-radius: 6px;
+         background: rgba(255,255,255,0.15);
+         transition: all 0.2s ease;
+         }
+         .back-link-inline:hover {
+         opacity: 1;
+         background: rgba(255,255,255,0.25);
          }
       </style>
    </head>
    <body>
       <div class="container">
-         <!-- HEADER -->
-         <header>
-            <div class="logo">🔵 Ekipa Plavih</div>
-            <a href="index.html" class="back-link-header">← Nazad na rezultate</a>
-         </header>
          <!-- TEAM CARD -->
          <div class="card">
-            <h1 class="card-header">Igrači</h1>
+            <div class="card-header team-header">
+               <a href="index.html" class="back-link-inline">← Nazad</a>
+               <span>Igrači – Plavi</span>
+            </div>
             <div class="card-content">
                <div class="team-image-wrapper">
                   <img src="plavi-team.png" class="team-image" alt="Ekipa Plavih">
