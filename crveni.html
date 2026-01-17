@@ -40,12 +40,27 @@
          from { opacity: 0; transform: translateY(20px); }
          to { opacity: 1; transform: translateY(0); }
          }
-         /* Section header with gradient */
          .card-header {
          padding: 18px 24px;
          background: linear-gradient(135deg, #d63031 0%, #e17055 100%);
          color: white;
          margin: 0;
+         }
+         #imageOverlay {
+         position: fixed;
+         inset: 0;
+         background: rgba(0, 0, 0, 0.85);
+         display: none;
+         align-items: center;
+         justify-content: center;
+         z-index: 1000;
+         cursor: zoom-out;
+         }
+         #imageOverlay img {
+         max-width: 90%;
+         max-height: 90%;
+         border-radius: 12px;
+         box-shadow: 0 20px 60px rgba(0,0,0,0.4);
          }
          .card-content {
          padding: 30px 35px 35px;
@@ -309,6 +324,9 @@
             </div>
          </div>
       </div>
+      <div id="imageOverlay">
+         <img id="imagePreview" alt="Team preview">
+      </div>
       <script type="module">
          import { onValue } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
          
@@ -336,6 +354,22 @@
          
            return displayName + badges;
          }
+         
+         const teamImage = document.querySelector(".team-image");
+         const overlay = document.getElementById("imageOverlay");
+         const preview = document.getElementById("imagePreview");
+         
+         if (teamImage) {
+         teamImage.addEventListener("click", () => {
+         preview.src = teamImage.src;
+         overlay.style.display = "flex";
+         });
+         }
+         
+         overlay.addEventListener("click", () => {
+         overlay.style.display = "none";
+         });
+         
          
          /* ---------------- UPDATE SORT INDICATORS ---------------- */
          function updateSortIndicators() {
