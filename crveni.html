@@ -60,6 +60,9 @@
          transform: translateY(-2px);
          color: #333;
          }
+         .container > .card:first-of-type {
+         margin-top: 10px;
+         }
          /* CARD */
          .card {
          background: white;
@@ -321,15 +324,33 @@
          margin-bottom: 18px;
          }
          }
+         /* === LIGHT TOP BAR (TEAM PAGES) === */
+         .top-bar {
+         display: flex;
+         justify-content: flex-start;
+         margin-bottom: 12px;
+         }
+         .back-link {
+         font-size: 13px;
+         font-weight: 600;
+         text-decoration: none;
+         color: #d63031;
+         padding: 8px 12px;
+         border-radius: 8px;
+         background: rgba(214, 48, 49, 0.08);
+         transition: all 0.2s ease;
+         }
+         .back-link:hover {
+         background: rgba(214, 48, 49, 0.16);
+         transform: translateX(-2px);
+         }
       </style>
    </head>
    <body>
       <div class="container">
-         <!-- HEADER -->
-         <header>
-            <div class="logo">🔴 Ekipa Crvenih</div>
-            <a href="index.html" class="back-link-header">← Nazad na rezultate</a>
-         </header>
+         <div class="top-bar">
+            <a href="index.html" class="back-link">← Nazad</a>
+         </div>
          <!-- TEAM CARD -->
          <div class="card">
             <h1 class="card-header">Igrači</h1>
