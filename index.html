@@ -292,13 +292,16 @@
          color: #0984e3;
          }
          .score-small {
-         font-size: 36px;
-         font-weight: bold;
+         font-size: 32px;
+         font-weight: 700;
          margin: 5px 0;
-         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-         -webkit-background-clip: text;
-         -webkit-text-fill-color: transparent;
-         background-clip: text;
+         color: #2d3436;
+         }
+         .score-small .red {
+         color: #d63031;
+         }
+         .score-small .blue {
+         color: #0984e3;
          }
          .info-link {
          cursor: pointer;
@@ -1045,7 +1048,10 @@
                        <div class="team-name" style="font-size:14px; color:#d63031;">Crveni</div>
                      </div>
          
-                     <div class="score-small">${m.red} - ${m.blue}</div>
+                    <div class="score-small">
+         <span class="red">${m.red}</span> -
+         <span class="blue">${m.blue}</span>
+         </div>
          
                      <div style="text-align:center;">
                        <img src="plavi.png" class="team-logo" style="width:140px; height:140px;" alt="Plavi">
