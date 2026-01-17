@@ -34,32 +34,10 @@
          }
          .image-zoom-hint {
          position: relative;
-         display: inline-block;
+         width: 100%;
+         display: flex;
+         justify-content: center;
          cursor: zoom-in;
-         }
-         .image-zoom-hint::after {
-         content: "🔍";
-         position: absolute;
-         bottom: 12px;
-         right: 12px;
-         background: rgba(0, 0, 0, 0.6);
-         color: #fff;
-         font-size: 16px;
-         padding: 6px 8px;
-         border-radius: 50%;
-         opacity: 0;
-         transition: opacity 0.2s ease;
-         pointer-events: none;
-         }
-         /* Desktop */
-         .image-zoom-hint:hover::after {
-         opacity: 1;
-         }
-         /* Mobile */
-         @media (hover: none) {
-         .image-zoom-hint::after {
-         opacity: 0.85;
-         }
          }
          .card:hover {
          transform: translateY(-4px);
@@ -351,6 +329,13 @@
          transform: translateY(0);
          }
          }
+         /* Mobile */
+         @media (hover: none) {
+         .zoom-hint {
+         opacity: 0.85;
+         transform: translateY(0);
+         }
+         }
       </style>
    </head>
    <body>
@@ -362,10 +347,9 @@
                <span>Igrači – Crveni</span>
             </div>
             <div class="card-content">
-               <div class="team-image-wrapper">
-                  <div class="image-zoom-hint">
-                     <img src="crveni-team.png" class="team-image" alt="Ekipa Crvenih">
-                  </div>
+               <div class="team-image-wrapper image-zoom-hint">
+                  <img src="crveni-team.png" class="team-image" alt="Ekipa Crvenih">
+                  <span class="zoom-hint">Tap to zoom</span>
                </div>
                <div class="table-wrapper">
                   <table>
