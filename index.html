@@ -168,10 +168,11 @@
          /* Section headers with gradient */
          .card-header {
          padding: 24px 32px;
-         background: linear-gradient(135deg, #6c72e6 0%, #7a6fd6 100%);
-         color: white;
          margin: 0;
          letter-spacing: 0.3px;
+         background: #f7f8fc;
+         color: #2c2f4a;
+         border-bottom: 2px solid #6c72e6;
          }
          .card-content {
          padding: 30px 35px 35px;
@@ -271,12 +272,19 @@
          }
          .score {
          font-size: 42px;
-         font-weight: bold;
          margin: 10px 0;
          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
          -webkit-background-clip: text;
          -webkit-text-fill-color: transparent;
          background-clip: text;
+         font-weight: 800;
+         color: #2d3436;
+         }
+         .score .red {
+         color: #d63031;
+         }
+         .score .blue {
+         color: #0984e3;
          }
          .score-small {
          font-size: 36px;
@@ -989,7 +997,11 @@
                    <div class="team-name" style="color:#d63031;">Crveni</div>
                  </div>
          
-                 <div class="score">${latest.red} - ${latest.blue}</div>
+                 <div class="score">
+         <span class="red">${latest.red}</span> -
+         <span class="blue">${latest.blue}</span>
+         </div>
+         
          
                  <div style="text-align:center;">
                    <img src="plavi.png" class="team-logo" alt="Plavi">
