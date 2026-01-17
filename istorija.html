@@ -152,16 +152,18 @@
          margin-top: 8px;
          }
          .score {
-         font-size: 40px;
+         font-size: 34px;
          font-weight: 800;
          margin: 10px 0;
-         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-         -webkit-background-clip: text;
-         -webkit-text-fill-color: transparent;
-         background-clip: text;
-         letter-spacing: 1px;
+         color: #2d3436;
          min-width: 120px;
          text-align: center;
+         }
+         .score .red {
+         color: #d63031;
+         }
+         .score .blue {
+         color: #0984e3;
          }
          /* Captain and Goalkeeper badges */
          .captain-badge {
@@ -489,7 +491,10 @@
                      <div class="team-name" style="color:#c00000;">Crveni</div>
                    </div>
          
-                   <div class="score">${m.red} - ${m.blue}</div>
+                   <div class="score">
+         <span class="red">${m.red}</span> -
+         <span class="blue">${m.blue}</span>
+         </div>
          
                    <!-- PLAVI -->
                    <div style="text-align:center;">
